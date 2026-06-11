@@ -1,0 +1,2738 @@
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── WALL ── */
+body {
+  min-height: 100vh;
+  background-color: #F0EBE1;
+  background-image:
+    linear-gradient(rgba(240,235,225,0.82), rgba(240,235,225,0.82)),
+    url('images/wall-texture.png');
+  background-size: cover, auto;
+  background-repeat: no-repeat, repeat;
+  background-blend-mode: normal, multiply;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Playfair Display', Georgia, serif;
+  transition: background-color 1.2s ease;
+}
+
+body.lights-off {
+  background-color: #1A1208;
+  background-image:
+    linear-gradient(rgba(26,18,8,0.88), rgba(26,18,8,0.88)),
+    url('images/wall-texture.png');
+  background-size: cover, auto;
+  background-repeat: no-repeat, repeat;
+  background-blend-mode: normal, multiply;
+}
+
+/* ── DARK OVERLAY ── */
+.dark-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 6, 2, 0);
+  pointer-events: none;
+  transition: background 1.2s ease;
+  z-index: 100;
+}
+.dark-overlay.on { background: rgba(10, 6, 2, 0.45); }
+
+/* ── WALL LAYOUT ── */
+.wall {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  width: 100%;
+  padding-top: 55px;
+}
+
+/* ── PORTRAIT ITEM ── */
+.portrait-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 24px;
+  margin-left: 60px;
+  filter: drop-shadow(0 0 0px rgba(255,180,60,0));
+  transition: filter 1.2s ease;
+}
+.portrait-item.lights-off .portrait-frame {
+  filter: brightness(0.95)
+          drop-shadow(0 0 35px rgba(255,180,80,0.5))
+          drop-shadow(0 0 70px rgba(255,140,40,0.25));
+}
+
+/* ── FRAME ── */
+.portrait-frame { width: 600px; background: transparent; }
+
+/* ── FRAME INNER ── */
+.frame-inner {
+  position: relative;
+  width: 100%;
+  padding-top: 114.7%;
+  overflow: hidden;
+  background: transparent;
+}
+
+/* ── ALL AVATAR LAYERS ── */
+.avatar-layer {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  object-fit: contain;
+  object-position: top center;
+}
+.avatar-blink { opacity: 0; z-index: 5; }
+.eyeball { transition: opacity 0.05s ease; }
+
+/* ── NAMEPLATE PNG ── */
+.nameplate-item {
+  position: relative;
+  margin-top: -120px;
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), filter 1.2s ease;
+}
+.nameplate-item:hover { transform: scale(1.06); }
+.nameplate-item:active { transform: scale(0.98); }
+.nameplate-img {
+  width: 480px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(2px 3px 8px rgba(0,0,0,0.2));
+  transition: filter 0.3s ease;
+}
+.nameplate-item:hover .nameplate-img { filter: drop-shadow(2px 5px 14px rgba(0,0,0,0.3)); }
+body.lights-off .nameplate-item { filter: brightness(1.1); }
+
+/* ── LIGHT SWITCH ── */
+.switch-item {
+  position: absolute;
+  left: 30%;
+  bottom: 450px;
+  cursor: pointer;
+  width: 60px;
+  transition: transform 0.25s cubic-bezier(.34,1.56,.64,1);
+  z-index: 50;
+}
+.switch-item:hover { transform: scale(1.12); }
+.switch-item:active { transform: scale(0.96); }
+.switch-img {
+  width: 60px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(2px 3px 6px rgba(0,0,0,0.3));
+  transition: filter 0.3s ease;
+}
+.switch-item:hover .switch-img { filter: drop-shadow(2px 4px 10px rgba(0,0,0,0.4)); }
+body.lights-off .switch-img { filter: drop-shadow(0 0 8px rgba(255,200,80,0.6)); }
+
+/* ── 3D MODEL SHELF ── */
+.shelf-item {
+  position: absolute;
+  bottom: 72%;
+  left: 68%;
+  cursor: pointer;
+  width: 500px;
+  transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), filter 1.2s ease;
+  z-index: 50;
+}
+.shelf-item:hover { transform: scale(1.06); }
+.shelf-item:active { transform: scale(0.98); }
+.shelf-img {
+  width: 500px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(2px 4px 10px rgba(0,0,0,0.25));
+  transition: filter 0.3s ease;
+}
+.shelf-item:hover .shelf-img { filter: drop-shadow(2px 6px 16px rgba(0,0,0,0.35)); }
+body.lights-off .shelf-item { filter: brightness(1.1); }
+
+/* ── GAME TABLE ── */
+.gametable-item {
+  position: absolute;
+  bottom: 8%;
+  left: 0%;
+  cursor: pointer;
+  width: 490px;
+  transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), filter 1.2s ease;
+  z-index: 50;
+}
+.gametable-item:hover { transform: scale(1.08); }
+.gametable-item:active { transform: scale(0.98); }
+.gametable-img {
+  width: 490px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(2px 4px 10px rgba(0,0,0,0.25));
+  transition: filter 0.3s ease;
+}
+.gametable-item:hover .gametable-img { filter: drop-shadow(2px 6px 16px rgba(0,0,0,0.35)); }
+body.lights-off .gametable-item { filter: brightness(1.1); }
+
+/* ── ART EASEL ── */
+.art-item {
+  position: absolute;
+  bottom: 10%;
+  right: -5.5%;
+  cursor: pointer;
+  width: 650px;
+  transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), filter 1.2s ease;
+  z-index: 50;
+}
+.art-item:hover { transform: scale(1.08); }
+.art-item:active { transform: scale(0.98); }
+.art-img {
+  width: 650px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(2px 4px 10px rgba(0,0,0,0.25));
+  transition: filter 0.3s ease;
+}
+.art-item:hover .art-img { filter: drop-shadow(2px 6px 16px rgba(0,0,0,0.35)); }
+body.lights-off .art-item { filter: brightness(1.1); }
+
+/* ── LIGHTING DESIGN ── */
+.lighting-item {
+  position: absolute;
+  top: 0%;
+  left: -3%;
+  cursor: pointer;
+  width: 650px;
+  transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), filter 1.2s ease;
+  z-index: 50;
+}
+.lighting-item:hover { transform: scale(1.06); }
+.lighting-item:active { transform: scale(0.98); }
+.lighting-img {
+  width: 650px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(2px 4px 10px rgba(0,0,0,0.25));
+  transition: filter 0.6s ease;
+}
+.lighting-item:hover .lighting-img {
+  filter:
+    drop-shadow(0 0 30px rgba(30,100,255,0.8))
+    drop-shadow(0 0 60px rgba(255,140,0,0.6))
+    drop-shadow(0 0 80px rgba(0,200,80,0.5))
+    drop-shadow(0 0 100px rgba(220,0,80,0.5));
+}
+body.lights-off .lighting-item { filter: brightness(1.1); }
+
+/* Full page color burst overlay */
+.light-burst {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  z-index: 49;
+  background:
+    radial-gradient(ellipse 300px 900px at 8% 0%, rgba(30,100,255,0.18) 0%, transparent 70%),
+    radial-gradient(ellipse 250px 800px at 22% 0%, rgba(255,140,0,0.15) 0%, transparent 70%),
+    radial-gradient(ellipse 280px 850px at 36% 0%, rgba(0,200,80,0.15) 0%, transparent 70%),
+    radial-gradient(ellipse 260px 820px at 50% 0%, rgba(220,0,80,0.15) 0%, transparent 70%);
+}
+.light-burst.active { opacity: 1; }
+
+/* ── FLOWERS ── */
+.flowers-item {
+  position: absolute;
+  right: calc(50% - 950px);
+  bottom: 40%;
+  cursor: pointer;
+  width: 750px;
+  transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), filter 1.2s ease;
+  z-index: 50;
+}
+.flowers-item:hover { transform: scale(1.08); }
+.flowers-item:active { transform: scale(0.98); }
+.flowers-img {
+  width: 750px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(2px 4px 10px rgba(0,0,0,0.25));
+  transition: filter 0.3s ease;
+}
+.flowers-item:hover .flowers-img { filter: drop-shadow(2px 6px 16px rgba(0,0,0,0.35)); }
+body.lights-off .flowers-item { filter: brightness(1.1); }
+
+/* ── WINDOW (Digital Art) ── */
+.window-item {
+  position: absolute;
+  left: calc(50% - 750px);
+  top: 13%;
+  cursor: pointer;
+  width: 410px;
+  transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), filter 1.2s ease;
+  z-index: 50;
+}
+.window-item:hover { transform: scale(1.06); }
+.window-item:active { transform: scale(0.98); }
+.window-img {
+  width: 410px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(2px 4px 10px rgba(0,0,0,0.25));
+  transition: filter 0.3s ease;
+}
+.window-item:hover .window-img { filter: drop-shadow(2px 6px 16px rgba(0,0,0,0.35)); }
+body.lights-off .window-item { filter: brightness(1.1); }
+
+/* ── HOVER LABELS ── */
+.hover-label {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  text-align: center;
+  transform: translateY(-50%);
+  background: rgba(26, 18, 8, 0.82);
+  color: #E8D5A0;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 14px;
+  font-style: italic;
+  letter-spacing: 0.08em;
+  padding: 8px 18px;
+  border: 1px solid rgba(184,160,112,0.4);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  width: fit-content;
+  margin: 0 auto;
+}
+.shelf-item:hover .hover-label,
+.nameplate-item:hover .hover-label,
+.gametable-item:hover .hover-label,
+.art-item:hover .hover-label,
+.lighting-item:hover .hover-label,
+.flowers-item:hover .hover-label,
+.window-item:hover .hover-label {
+  opacity: 1;
+}
+
+/* ── NOTEBOOK ABOUT OVERLAY ── */
+.notebook-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0);
+  pointer-events: none;
+  transition: background 0.4s ease;
+  z-index: 200;
+}
+.notebook-backdrop.open { background: rgba(0,0,0,0.5); pointer-events: all; }
+
+.notebook-wrap {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translateX(-50%) translateY(-160%);
+  margin-top: calc(-82vh / 2);
+  height: 110vh;
+  width: auto;
+  z-index: 201;
+  pointer-events: none;
+  transition: transform 0.65s cubic-bezier(.34,1.3,.64,1);
+}
+.notebook-wrap.open {
+  transform: translateX(-50%) translateY(-54%);
+  margin-top: 0;
+  pointer-events: all;
+}
+
+.notebook-img {
+  height: 100%;
+  width: auto;
+  display: block;
+  filter: drop-shadow(0 8px 40px rgba(0,0,0,0.45));
+}
+
+/* ── NOTEBOOK CLOSE BUTTON ── */
+.notebook-close {
+  position: absolute;
+  top: calc(50vh - 60vh + 650px);
+  right: -1%;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2.5px solid #3D2810;
+  background: #FAF0DC;
+  color: #3D2810;
+  font-size: 16px;
+  font-family: 'Playfair Display', Georgia, serif;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 2px 2px 0px #3D2810, 3px 3px 0px rgba(0,0,0,0.15);
+  transition: transform 0.2s cubic-bezier(.34,1.56,.64,1), background 0.2s;
+}
+.notebook-close:hover { transform: scale(1.15) rotate(8deg); background: #FFF8E8; }
+.notebook-close:active { transform: scale(0.92); }
+
+/* ══════════════════════════════════
+   SHARED FULL PAGE STYLES
+══════════════════════════════════ */
+.models-page, .games-page, .lighting-page,
+.flowers-page, .window-page {
+  position: fixed;
+  inset: 0;
+  background: #1A1208;
+  background-image:
+    linear-gradient(rgba(26,18,8,0.95), rgba(26,18,8,0.95)),
+    url('images/wall-texture.png');
+  background-size: cover, auto;
+  background-repeat: no-repeat, repeat;
+  z-index: 300;
+  overflow-y: auto;
+  opacity: 0;
+  visibility: hidden;                       /* fully hidden => descendants can't catch clicks */
+  pointer-events: none;
+  transition: opacity 0.4s ease, visibility 0s linear 0.4s;
+}
+.models-page.open, .games-page.open, .lighting-page.open,
+.flowers-page.open, .window-page.open {
+  opacity: 1; pointer-events: all;
+  visibility: visible;
+  transition: opacity 0.4s ease, visibility 0s;
+}
+
+.models-close, .games-close, .lighting-close,
+.flowers-close, .window-close {
+  position: fixed;
+  top: 24px; right: 28px;
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  border: 2px solid rgba(184,160,112,0.5);
+  background: transparent;
+  color: #B8A070;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Playfair Display', Georgia, serif;
+  transition: transform 0.2s cubic-bezier(.34,1.56,.64,1), border-color 0.2s, background 0.2s;
+  z-index: 301;
+}
+.models-close:hover, .games-close:hover, .lighting-close:hover,
+.flowers-close:hover, .window-close:hover {
+  transform: scale(1.15) rotate(8deg);
+  border-color: #B8A070;
+  background: rgba(184,160,112,0.1);
+}
+.models-close:active, .games-close:active, .lighting-close:active,
+.flowers-close:active, .window-close:active { transform: scale(0.92); }
+
+.models-content, .games-content, .lighting-content,
+.flowers-content, .window-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 80px 40px;
+}
+
+.models-title, .games-title, .lighting-title,
+.flowers-title, .window-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 42px;
+  font-style: italic;
+  font-weight: 400;
+  color: #E8D5A0;
+  margin-bottom: 48px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(184,160,112,0.25);
+}
+
+.models-grid, .games-grid, .lighting-grid,
+.flowers-grid, .window-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 32px;
+}
+
+.models-placeholder, .games-placeholder, .lighting-placeholder,
+.flowers-placeholder, .window-placeholder {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 16px;
+  font-style: italic;
+  color: rgba(184,160,112,0.4);
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 0;
+}
+
+.model-video-wrap { display: flex; flex-direction: column; gap: 10px; }
+.model-video-wrap iframe { width: 100%; aspect-ratio: 16/9; border: 1px solid rgba(184,160,112,0.2); }
+.model-caption { font-family: 'Playfair Display', Georgia, serif; font-size: 14px; font-style: italic; color: rgba(184,160,112,0.7); }
+
+/* ── ART PAGE ── */
+.art-page {
+  position: fixed;
+  inset: 0;
+  background: #1A1208;
+  background-image:
+    linear-gradient(rgba(26,18,8,0.95), rgba(26,18,8,0.95)),
+    url('images/wall-texture.png');
+  background-size: cover, auto;
+  background-repeat: no-repeat, repeat;
+  z-index: 300;
+  overflow-y: auto;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+.art-page.open { opacity: 1; pointer-events: all; visibility: visible; }
+
+.art-close {
+  position: fixed;
+  top: 24px; right: 28px;
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  border: 2px solid rgba(184,160,112,0.5);
+  background: transparent;
+  color: #B8A070;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Playfair Display', Georgia, serif;
+  transition: transform 0.2s cubic-bezier(.34,1.56,.64,1), border-color 0.2s, background 0.2s;
+  z-index: 301;
+}
+.art-close:hover { transform: scale(1.15) rotate(8deg); border-color: #B8A070; background: rgba(184,160,112,0.1); }
+.art-close:active { transform: scale(0.92); }
+
+/* Two column layout */
+.art-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 80px 60px 120px;
+}
+
+.art-section-label {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 11px;
+  font-style: italic;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(184,160,112,0.5);
+  margin-bottom: 48px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(184,160,112,0.15);
+}
+
+/* ── SERIES STACK ── */
+.series-stack {
+  margin-bottom: 80px;
+  cursor: pointer;
+}
+
+.stack-label {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 28px;
+  font-style: italic;
+  font-weight: 400;
+  color: #E8D5A0;
+  margin-bottom: 32px;
+  letter-spacing: 0.03em;
+  transition: color 0.3s ease;
+}
+.series-stack.expanded .stack-label { color: #F5C842; }
+
+/* Stacked cards container */
+.stack-cards {
+  position: relative;
+  height: 320px;
+  width: 260px;
+  cursor: pointer;
+}
+
+.stack-card {
+  position: absolute;
+  top: 0; left: 0;
+  width: 240px;
+  height: 300px;
+  border: 1.5px solid rgba(184,160,112,0.3);
+  overflow: hidden;
+  transform: rotate(var(--r)) translateX(var(--tx));
+  transform-origin: bottom center;
+  transition: transform 0.45s cubic-bezier(.34,1.2,.64,1),
+              box-shadow 0.35s ease;
+  box-shadow: 4px 8px 24px rgba(0,0,0,0.55);
+  background: #0f0a05;
+}
+.stack-card img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Hover — fan out slightly */
+.series-stack:not(.expanded):hover .stack-card {
+  transform: rotate(calc(var(--r) * 1.8)) translateX(calc(var(--tx) * 2));
+  box-shadow: 6px 14px 36px rgba(0,0,0,0.65);
+}
+
+/* hint text below stack */
+.stack-hint {
+  margin-top: 16px;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 12px;
+  font-style: italic;
+  color: rgba(184,160,112,0.35);
+  letter-spacing: 0.08em;
+}
+
+/* ── EXPANDED VIEW ── */
+.stack-expanded { display: none; }
+.series-stack.expanded .stack-cards { display: none; }
+.series-stack.expanded .stack-hint  { display: none; }
+.series-stack.expanded .stack-expanded { display: block; }
+
+.expanded-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 24px;
+}
+
+.expanded-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ── MAGNIFIER ── */
+.magnify-wrap {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  cursor: default;
+  border: 1px solid rgba(184,160,112,0.2);
+  transition: border-color 0.2s;
+}
+.magnify-wrap:hover { border-color: rgba(184,160,112,0.5); }
+.magnify-wrap img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+
+.magnifier {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 2px solid #B8A070;
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.5);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  background-repeat: no-repeat;
+  background-size: 350%;
+  z-index: 10;
+}
+.magnify-wrap:hover .magnifier { opacity: 1; }
+
+.expanded-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 15px;
+  font-style: italic;
+  color: rgba(232,213,160,0.85);
+  text-align: center;
+  letter-spacing: 0.05em;
+}
+
+/* ── INDIVIDUAL WORKS ── */
+.art-placeholder {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 16px;
+  font-style: italic;
+  color: rgba(184,160,112,0.4);
+  text-align: center;
+  padding: 60px 0;
+}
+
+.individual-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 20px;
+}
+
+.individual-card {
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(.34,1.2,.64,1);
+}
+.individual-card:hover { transform: scale(1.04); }
+.individual-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+  border: 1px solid rgba(184,160,112,0.2);
+  transition: border-color 0.2s;
+}
+.individual-card:hover img { border-color: rgba(184,160,112,0.6); }
+.individual-card-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 13px;
+  font-style: italic;
+  color: rgba(232,213,160,0.7);
+  text-align: center;
+  padding: 8px 4px 0;
+}
+
+/* ── LIGHTBOX ── */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.88);
+  z-index: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.lightbox.open { opacity: 1; pointer-events: all; }
+
+.lightbox-inner {
+  position: relative;
+  max-width: 80vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: -20px; right: -20px;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(184,160,112,0.5);
+  background: #1A1208;
+  color: #B8A070;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.2s ease;
+  z-index: 5;
+}
+.lightbox-close:hover { transform: scale(1.15) rotate(8deg); }
+
+.lightbox-img {
+  max-width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
+  border: 1px solid rgba(184,160,112,0.2);
+}
+
+.lightbox-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 24px;
+  font-style: italic;
+  font-weight: 400;
+  color: #E8D5A0;
+  text-align: center;
+}
+.lightbox-desc {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 15px;
+  font-style: italic;
+  color: rgba(184,160,112,0.7);
+  max-width: 500px;
+  line-height: 1.8;
+  text-align: center;
+}
+
+
+/* ══════════════════════════════════
+   SERIES FAN OVERLAY
+══════════════════════════════════ */
+
+/* Full screen semi-transparent backdrop */
+.series-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 6, 2, 0.75);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 350;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+  cursor: pointer;
+}
+.series-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+  visibility: visible;
+}
+
+/* The row of fanned cards */
+.series-fan {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 20px;
+  cursor: default;
+  /* prevent clicks on cards from closing overlay */
+  pointer-events: none;
+}
+
+/* Each card in the fan */
+.fan-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  pointer-events: all;
+  /* staggered entrance animation */
+  opacity: 0;
+  transform: translateY(40px) scale(0.9);
+  transition:
+    opacity 0.4s ease calc(var(--fi) * 0.06s),
+    transform 0.45s cubic-bezier(.34,1.2,.64,1) calc(var(--fi) * 0.06s);
+}
+.series-overlay.open .fan-card {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.fan-card .magnify-wrap {
+  width: 170px;
+  cursor: default;
+  border: 1px solid rgba(184,160,112,0.25);
+  transition: border-color 0.2s, transform 0.2s cubic-bezier(.34,1.2,.64,1);
+}
+.fan-card:hover .magnify-wrap {
+  border-color: rgba(184,160,112,0.7);
+  transform: scale(1.06) translateY(-6px);
+}
+.fan-card .magnify-wrap img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+}
+
+.fan-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 14px;
+  font-style: italic;
+  color: rgba(232,213,160,0.8);
+  letter-spacing: 0.06em;
+  text-align: center;
+}
+
+.series-overlay-hint {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 12px;
+  font-style: italic;
+  color: rgba(184,160,112,0.35);
+  letter-spacing: 0.1em;
+  pointer-events: none;
+}
+
+
+/* ══════════════════════════════════
+   PIECE VIEWER — enlarged single drawing
+══════════════════════════════════ */
+.piece-viewer {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 4, 2, 0.88);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+  cursor: pointer;
+}
+.piece-viewer.open {
+  opacity: 1;
+  pointer-events: all;
+  visibility: visible;
+}
+
+.piece-viewer-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  cursor: default;
+  pointer-events: none;
+}
+
+.piece-img-wrap {
+  position: relative;
+  cursor: default;
+  pointer-events: all;
+}
+
+.piece-viewer-img {
+  max-height: 80vh;
+  max-width: 85vw;
+  object-fit: contain;
+  display: block;
+  border: 1px solid rgba(184,160,112,0.2);
+  transition: opacity 0.3s ease;
+}
+
+/* Large magnifier on the piece viewer */
+.piece-viewer-mag {
+  position: absolute;
+  width: 350px;
+  height: 350px;
+  border-radius: 50%;
+  border: 2.5px solid #B8A070;
+  box-shadow:
+    0 0 0 2px rgba(0,0,0,0.6),
+    inset 0 0 12px rgba(0,0,0,0.2);
+  pointer-events: none;
+  opacity: 0;
+  background-repeat: no-repeat;
+  background-size: 600%;
+  z-index: 10;
+  transition: opacity 0.15s ease;
+}
+
+.piece-viewer-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 22px;
+  font-style: italic;
+  font-weight: 400;
+  color: #E8D5A0;
+  letter-spacing: 0.06em;
+  pointer-events: none;
+}
+
+/* ── SMOOTHER FAN CARDS ── */
+/* Override the previous fan styles for smoother feel */
+.fan-card {
+  transition:
+    opacity 0.5s cubic-bezier(.4,0,.2,1) calc(var(--fi) * 0.07s),
+    transform 0.55s cubic-bezier(.4,0,.2,1) calc(var(--fi) * 0.07s) !important;
+}
+
+.fan-card .magnify-wrap {
+  transition:
+    border-color 0.3s ease,
+    transform 0.35s cubic-bezier(.4,0,.2,1) !important;
+}
+
+.fan-card:hover .magnify-wrap {
+  transform: scale(1.05) translateY(-8px) !important;
+}
+
+.magnifier {
+  transition: opacity 0.2s ease !important;
+}
+
+
+/* ── REMOVE MAGNIFIER FROM FAN CARDS ── */
+/* magnifier only works in piece viewer */
+.fan-card .magnifier { display: none !important; }
+.fan-card .magnify-wrap { cursor: pointer !important; }
+
+/* ── FIX CLICKABILITY — all fan cards must be clickable ── */
+.series-fan {
+  /* allow overlay backdrop clicks to pass through gaps */
+  pointer-events: none;
+}
+.fan-card {
+  /* each card must catch its own clicks */
+  pointer-events: all !important;
+  position: relative;
+  z-index: 2;
+}
+
+/* Align z-indexes evenly to fix middle-card click blockages */
+.fan-card:nth-child(1) { z-index: 2; }
+.fan-card:nth-child(2) { z-index: 2; }
+.fan-card:nth-child(3) { z-index: 2; }
+.fan-card:nth-child(4) { z-index: 2; }
+.fan-card:nth-child(5) { z-index: 2; }
+.fan-card:nth-child(6) { z-index: 2; }
+.fan-card:nth-child(7) { z-index: 2; }
+
+/* hover raises any card cleanly above its neighbours */
+.fan-card:hover {
+  z-index: 20 !important;
+}
+
+/* ── FAN OVERLAY — click backdrop exits smoothly ── */
+.series-overlay {
+  /* ensure the backdrop layer itself is always clickable */
+  cursor: pointer;
+}
+.series-fan {
+  cursor: default;
+}
+
+/* ── PIECE VIEWER BACKDROP CURSOR ── */
+.piece-viewer {
+  cursor: pointer;
+}
+.piece-viewer-inner {
+  cursor: default;
+}
+
+/* Strict restriction to isolate pile clicks completely */
+.stack-card,
+.stack-card img {
+  pointer-events: none !important;
+}
+
+/* ══════════════════════════════════
+   DIGITAL ART THREE-COLUMN GRID
+══════════════════════════════════ */
+.digital-art-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 perfectly equal columns */
+  gap: 50px;
+  width: 100%;
+  align-items: start;
+  margin-top: 20px;
+}
+
+.digital-art-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.digital-art-label {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 11px;
+  font-style: italic;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(184,160,112,0.5);
+  margin-bottom: 36px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(184,160,112,0.15);
+}
+
+/* Vertical linearly-stacked column layout */
+.digital-art-list {
+  display: flex;
+  flex-direction: column;
+  gap: 40px; /* spacing between pieces when scrolling down */
+}
+
+/* Individual card styles */
+.digital-art-card {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  transition: transform 0.3s cubic-bezier(.34,1.2,.64,1);
+}
+
+.digital-art-card:hover {
+  transform: scale(1.03) translateY(-4px); /* clean micro-lift animation */
+}
+
+.digital-img-container {
+  width: 100%;
+  border: 1px solid rgba(184,160,112,0.2);
+  box-shadow: 4px 8px 24px rgba(0,0,0,0.45);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+  background: #0f0a05;
+}
+
+.digital-art-card:hover .digital-img-container {
+  border-color: rgba(184,160,112,0.6);
+  box-shadow: 6px 12px 32px rgba(0,0,0,0.6);
+}
+
+.digital-img-container img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+
+.digital-card-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 16px;
+  font-style: italic;
+  color: rgba(232,213,160,0.85);
+  text-align: center;
+  letter-spacing: 0.05em;
+}
+
+.digital-art-placeholder {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 15px;
+  font-style: italic;
+  color: rgba(184,160,112,0.3);
+  text-align: center;
+  padding: 40px 0;
+}
+
+/* ── ART MODULE LAYOUT EXTENSIONS ── */
+.series-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(12, 8, 4, 0.95);
+  z-index: 400;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+.series-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* Linear un-overlapped display alignment flow grid container */
+.series-fan {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 44px;
+  max-width: 90%;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Individual Item Card Structure */
+.fan-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(.25, 1, .2, 1);
+  width: 175px;
+}
+.fan-card:hover {
+  transform: scale(1.06) translateY(-6px);
+}
+.fan-card img {
+  width: 100%;
+  height: auto;
+  border: 1px solid rgba(184, 160, 112, 0.25);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55);
+  background: #0d0905;
+}
+.fan-card-label {
+  margin-top: 12px;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 15px;
+  font-style: italic;
+  color: #E8D5A0;
+  text-align: center;
+}
+
+.series-overlay-hint {
+  position: absolute;
+  bottom: 35px;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 13px;
+  font-style: italic;
+  color: rgba(184, 160, 112, 0.35);
+  letter-spacing: 0.05em;
+}
+
+/* ── LARGE VIEWER WITH PRECISION LENS OVERLAYS ── */
+.piece-viewer {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 5, 2, 0.97);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.piece-viewer.open {
+  opacity: 1;
+  pointer-events: all;
+}
+.piece-viewer-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  max-width: 85vw;
+}
+.piece-img-wrap {
+  position: relative;
+  display: inline-block;
+  cursor: crosshair;
+}
+.piece-viewer-img {
+  max-width: 75vw;
+  max-height: 72vh;
+  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.85);
+  border: 1px solid rgba(184, 160, 112, 0.2);
+  display: block;
+}
+
+/* Circular Inspector Magnifier Element Window */
+.piece-viewer-mag {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  border: 2px solid #E8D5A0;
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px rgba(0,0,0,0.4), inset 0 0 12px rgba(0,0,0,0.25), 0 10px 30px rgba(0,0,0,0.6);
+  pointer-events: none;
+  display: none;
+  background-repeat: no-repeat;
+  z-index: 520;
+}
+.piece-viewer-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 24px;
+  font-style: italic;
+  color: #E8D5A0;
+  letter-spacing: 0.02em;
+}
+
+/* ── FIXED ART OVERLAY DISPLAY RULES ── */
+.series-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(12, 8, 4, 0.96);
+  z-index: 400;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+.series-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.series-fan {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  max-width: 90%;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.fan-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(.25, 1, .2, 1);
+  width: 170px;
+}
+.fan-card:hover {
+  transform: scale(1.06) translateY(-6px);
+}
+.fan-card img {
+  width: 100%;
+  height: auto;
+  border: 1px solid rgba(184, 160, 112, 0.25);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6);
+  background: #0d0905;
+}
+.fan-card-label {
+  margin-top: 12px;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 15px;
+  font-style: italic;
+  color: #E8D5A0;
+  text-align: center;
+}
+
+.series-overlay-hint {
+  position: absolute;
+  bottom: 35px;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 13px;
+  font-style: italic;
+  color: rgba(184, 160, 112, 0.4);
+  letter-spacing: 0.05em;
+}
+
+/* ── FIXED DETAILED MAGNIFIER OVERLAY PROPERTIES ── */
+.piece-viewer {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 5, 2, 0.98);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.piece-viewer.open {
+  opacity: 1;
+  pointer-events: all;
+}
+.piece-viewer-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  max-width: 85vw;
+}
+.piece-img-wrap {
+  position: relative;
+  display: inline-block;
+  cursor: crosshair;
+}
+.piece-viewer-img {
+  max-width: 75vw;
+  max-height: 72vh;
+  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.9);
+  border: 1px solid rgba(184, 160, 112, 0.2);
+  display: block;
+}
+
+/* Large and forced magnifier circular mirror layout */
+.piece-viewer-mag {
+  position: absolute;
+  width: 260px;  /* Big frame to see macro details */
+  height: 260px; /* Big frame to see macro details */
+  border: 2px solid #E8D5A0;
+  border-radius: 50%;
+  box-shadow: 0 0 0 6px rgba(0,0,0,0.5), inset 0 0 16px rgba(0,0,0,0.3), 0 12px 36px rgba(0,0,0,0.7);
+  pointer-events: none;
+  display: block !important; /* Force browser node override */
+  background-repeat: no-repeat;
+  background-color: #080502;
+  z-index: 600;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.1s ease, visibility 0.1s ease;
+}
+.piece-viewer-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 24px;
+  font-style: italic;
+  color: #E8D5A0;
+  letter-spacing: 0.02em;
+}
+
+/* ── ART MODULE LAYOUT EXTENSIONS ── */
+.series-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(12, 8, 4, 0.96);
+  z-index: 400;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+.series-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.series-fan {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  max-width: 90%;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.fan-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(.25, 1, .2, 1);
+  width: 170px;
+}
+.fan-card:hover {
+  transform: scale(1.06) translateY(-6px);
+}
+.fan-card img {
+  width: 100%;
+  height: auto;
+  border: 1px solid rgba(184, 160, 112, 0.25);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6);
+  background: #0d0905;
+}
+.fan-card-label {
+  margin-top: 12px;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 15px;
+  font-style: italic;
+  color: #E8D5A0;
+  text-align: center;
+}
+
+.series-overlay-hint {
+  position: absolute;
+  bottom: 35px;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 13px;
+  font-style: italic;
+  color: rgba(184, 160, 112, 0.4);
+  letter-spacing: 0.05em;
+}
+
+/* ── 3-COLUMN EQUAL GRID LAYOUT FOR INDIVIDUAL WORKS ── */
+.individual-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 elements across equally distributed */
+  gap: 32px 24px;
+  padding-top: 10px;
+  width: 100%;
+}
+
+.individual-art-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  width: 100%;
+}
+.individual-art-card:hover {
+  transform: translateY(-4px);
+}
+
+.individual-img-container {
+  width: 100%;
+  aspect-ratio: 1 / 1; /* uniform boxes keep grid alignment perfectly straight */
+  border: 1px solid rgba(184, 160, 112, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  background: #0d0905;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.individual-img-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* balances landscape vs portrait frames nicely inside the box grid */
+  transition: transform 0.4s ease;
+}
+.individual-art-card:hover .individual-img-container img {
+  transform: scale(1.04);
+}
+
+.individual-card-label {
+  margin-top: 10px;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 14px;
+  font-style: italic;
+  color: #E8D5A0;
+  text-align: center;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+}
+
+/* ── MAGNIFIER PROPERTIES ── */
+.piece-viewer {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 5, 2, 0.98);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.piece-viewer.open {
+  opacity: 1;
+  pointer-events: all;
+}
+.piece-viewer-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  max-width: 85vw;
+}
+.piece-img-wrap {
+  position: relative;
+  display: inline-block;
+  cursor: crosshair;
+}
+.piece-viewer-img {
+  max-width: 75vw;
+  max-height: 72vh;
+  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.9);
+  border: 1px solid rgba(184, 160, 112, 0.2);
+  display: block;
+}
+
+.piece-viewer-mag {
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  border: 2px solid #E8D5A0;
+  border-radius: 50%;
+  box-shadow: 0 0 0 6px rgba(0,0,0,0.5), inset 0 0 16px rgba(0,0,0,0.3), 0 12px 36px rgba(0,0,0,0.7);
+  pointer-events: none;
+  display: block !important;
+  background-repeat: no-repeat;
+  background-color: #080502;
+  z-index: 600;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.1s ease, visibility 0.1s ease;
+}
+.piece-viewer-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 24px;
+  font-style: italic;
+  color: #E8D5A0;
+  letter-spacing: 0.02em;
+}
+/* ── ART MODULE LAYOUT EXTENSIONS ── */
+.series-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(12, 8, 4, 0.96);
+  z-index: 400;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+.series-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.series-fan {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  max-width: 90%;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.fan-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(.25, 1, .2, 1);
+  width: 170px;
+}
+.fan-card:hover {
+  transform: scale(1.06) translateY(-6px);
+}
+.fan-card img {
+  width: 100%;
+  height: auto;
+  border: 1px solid rgba(184, 160, 112, 0.25);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6);
+  background: #0d0905;
+}
+.fan-card-label {
+  margin-top: 12px;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 15px;
+  font-style: italic;
+  color: #E8D5A0;
+  text-align: center;
+}
+
+.series-overlay-hint {
+  position: absolute;
+  bottom: 35px;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 13px;
+  font-style: italic;
+  color: rgba(184, 160, 112, 0.4);
+  letter-spacing: 0.05em;
+}
+
+/* ── 2-COLUMN BIG GER GRID LAYOUT FOR INDIVIDUAL WORKS ── */
+.individual-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Exactly 2 columns across for a larger view */
+  gap: 40px 32px;
+  padding-top: 10px;
+  width: 100%;
+}
+
+.individual-art-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  width: 100%;
+}
+.individual-art-card:hover {
+  transform: translateY(-5px);
+}
+
+.individual-img-container {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border: 1px solid rgba(184, 160, 112, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+  background: #0d0905;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.individual-img-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+.individual-art-card:hover .individual-img-container img {
+  transform: scale(1.04);
+}
+
+.individual-card-label {
+  margin-top: 14px;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 16px; /* Slightly larger text to match larger images */
+  font-style: italic;
+  color: #E8D5A0;
+  text-align: center;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+}
+
+/* ── MAGNIFIER PROPERTIES ── */
+.piece-viewer {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 5, 2, 0.98);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.piece-viewer.open {
+  opacity: 1;
+  pointer-events: all;
+}
+.piece-viewer-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  max-width: 85vw;
+}
+.piece-img-wrap {
+  position: relative;
+  display: inline-block;
+  cursor: crosshair;
+}
+.piece-viewer-img {
+  max-width: 75vw;
+  max-height: 72vh;
+  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.9);
+  border: 1px solid rgba(184, 160, 112, 0.2);
+  display: block;
+}
+
+.piece-viewer-mag {
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  border: 2px solid #E8D5A0;
+  border-radius: 50%;
+  box-shadow: 0 0 0 6px rgba(0,0,0,0.5), inset 0 0 16px rgba(0,0,0,0.3), 0 12px 36px rgba(0,0,0,0.7);
+  pointer-events: none;
+  display: block !important;
+  background-repeat: no-repeat;
+  background-color: #080502;
+  z-index: 600;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.1s ease, visibility 0.1s ease;
+}
+.piece-viewer-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 24px;
+  font-style: italic;
+  color: #E8D5A0;
+  letter-spacing: 0.02em;
+}
+
+/* ── CENTER SERIES STACKS LAYOUT ── */
+.art-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;    /* Horizontally centers piles on left column side */
+  justify-content: flex-start; /* Vertically centers them within the height profile */
+  gap: 50px;              /* Clean layout separation between all 3 stacked series decks */
+  text-align: center;
+}
+
+/* Ensure the title label remains cleanly aligned above stacks */
+.art-left .art-section-label {
+  text-align: center;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+/* ── IMMERSIVE FLORAL DESIGN GALLERY STACK ── */
+.flowers-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px 100px 20px;
+}
+
+.flowers-page-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 38px;
+  font-weight: 400;
+  color: #E8D5A0;
+  text-align: center;
+  margin-bottom: 50px;
+  letter-spacing: 0.05em;
+}
+
+/* Linear vertical flow for screen-filling pieces */
+.floral-gallery-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 60px; /* Elegant spacing between large image viewports */
+  width: 100%;
+}
+
+/* Each container occupies almost the full height of the viewing window */
+.floral-item {
+  width: 100%;
+  max-width: 1000px; /* Restricts overly wide stretching on wide monitors */
+  height: 82vh;       /* Spans 82% of the total screen display height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #0b0704;
+  border: 1px solid rgba(184, 160, 112, 0.15);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65);
+  border-radius: 2px;
+  transition: transform 0.4s ease, border-color 0.4s ease;
+}
+
+.floral-item:hover {
+  border-color: rgba(232, 213, 160, 0.4);
+  transform: translateY(-2px);
+}
+
+.floral-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Assures the full cropped photography frame fits inside without clipping edges */
+  background: #0b0704;
+  padding: 10px;       /* Adds a subtle canvas border outline space around the images */
+}
+
+
+/* ── DIGITAL ART MODAL STYLES ── */
+.window-page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(20, 20, 20, 0.95);
+  z-index: 200;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+  overflow-y: auto;
+}
+
+.window-page.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.window-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 20px;
+  color: #ffffff;
+}
+
+.window-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 40px;
+  letter-spacing: 1px;
+}
+
+.window-close {
+  position: fixed;
+  top: 30px;
+  right: 40px;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 2rem;
+  cursor: pointer;
+  z-index: 210;
+  transition: transform 0.2s ease;
+}
+
+.window-close:hover {
+  transform: scale(1.1);
+}
+
+/* Multi-Column Grid Inside Modal */
+.window-grid {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.digital-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Individual Art Cards */
+.digital-art-card {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.digital-art-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+}
+
+.digital-art-card img {
+  width: 100%;
+  display: block;
+  height: auto;
+}
+
+.digital-card-title {
+  padding: 12px 15px;
+  font-size: 0.95rem;
+  color: #ddd;
+  text-align: center;
+  border-top: 1px solid #262626;
+  background-color: #161616;
+}
+
+@media (max-width: 768px) {
+  .window-grid {
+    flex-direction: column;
+  }
+}
+
+/* ── DIGITAL ART OVERLAY LAYOUT ── */
+.window-page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(15, 15, 15, 0.98); /* Keeps backdrop solid and contained */
+  z-index: 200;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+  overflow-y: auto;
+}
+
+.window-page.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.window-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 80px 40px;
+  color: #ffffff;
+}
+
+.window-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.8rem;
+  text-align: center;
+  margin-bottom: 50px;
+  color: #E8D5A0;
+}
+
+.digital-section-subtitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 400;
+  margin-bottom: 25px;
+  border-bottom: 1px solid rgba(232, 213, 160, 0.2);
+  padding-bottom: 10px;
+  color: #E8D5A0;
+}
+
+/* Flexbox Split: 1/3 to 2/3 ratio */
+.window-split-container {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+  width:100%
+}
+
+/* Left side takes exactly 1 portion (1/3) */
+.digital-column-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+/* Right side takes exactly 2 portions (2/3) */
+.digital-column-right {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+
+/* Cards & Presentation Styles */
+.digital-art-card {
+  background: #161616;
+  border: 1px solid #2a2a2a;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s ease;
+}
+
+.digital-art-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.6);
+  border-color: #E8D5A0;
+}
+
+.digital-art-card img {
+  width: 100%;
+  display: block;
+  height: auto;
+}
+
+.digital-card-title {
+  padding: 14px;
+  font-size: 0.9rem;
+  color: #cccccc;
+  text-align: center;
+  background-color: #111111;
+}
+
+.window-close {
+  position: fixed;
+  top: 30px;
+  right: 40px;
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 2.2rem;
+  cursor: pointer;
+  z-index: 210;
+}
+
+/* Responsive Fallback for Tablets/Mobiles */
+@media (max-width: 992px) {
+  .window-split-container {
+    flex-direction: column;
+    gap: 50px;
+  }
+
+.individual-digital-subgrid {
+  flex-direction: column;
+}}
+
+.sub-column {
+  flex: 1;                    /* Keeps both sub-columns equal width (50% each of the 2/3 space) */
+  display: flex;
+  flex-direction: column;     /* Stack cards inside the column vertically */
+  gap: 25px;                  /* Vertical padding between individual cards */
+}
+
+/* ── DIGITAL ART SECTION SUBTITLES ── */
+.digital-section-subtitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 400;
+  margin-bottom: 25px;
+  border-bottom: 1px solid rgba(232, 213, 160, 0.2);
+  padding-bottom: 10px;
+  color: #E8D5A0;
+  
+  /* Centering properties */
+  text-align: center;      /* Centers the text string */
+  width: 100%;             /* Ensures it spans full column width to calculate the true center */
+}
+
+/* ── INNER SUBGRID (RIGHT COLUMN CARDS) ── */
+.individual-digital-subgrid {
+  display: flex;
+  gap: 25px;
+  justify-content: center; /* Ensures the image columns themselves balance perfectly in the center */
+  width: 100%;
+}
+.sub-column {
+  flex: 1;                    /* Keeps both sub-columns equal width (50% each of the 2/3 space) */
+  display: flex;
+  flex-direction: column;     /* Stack cards inside the column vertically */
+  gap: 25px;                  /* Vertical padding between individual cards */
+}
+
+/* Base Card Tweaks */
+.digital-art-card {
+  background: #161616;
+  border: 1px solid #2a2a2a;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+  width: 100%;                /* Assures image card matches parent column restrictions */
+}
+
+.digital-art-card:hover {
+  transform: translateY(-5px);
+  border-color: #E8D5A0;
+}
+
+.digital-art-card img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.art-page-title {
+  grid-column: 1 / -1;        /* spans both columns so it sits above them */
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 38px;
+  font-weight: 400;
+  color: #E8D5A0;             /* same gold as your other page titles */
+  text-align: center;
+  margin-bottom: 50px;
+  letter-spacing: 0.05em;
+}
+
+/* ═══ TRADITIONAL ART → MATCH DIGITAL ART (paste at very end) ═══ */
+
+/* Main title — identical to Digital Art's .window-title */
+.art-page-title {
+  grid-column: 1 / -1;               /* keep spanning both columns */
+  font-family: 'Playfair Display', serif;
+  font-size: 2.8rem;
+  font-weight: 400;
+  color: #E8D5A0;
+  text-align: center;
+  margin-bottom: 50px;
+  letter-spacing: normal;
+}
+
+/* Layout split — Series 1/3, Individual Works 2/3 */
+.art-content {
+  grid-template-columns: 1fr 2fr;
+  gap: 40px;
+}
+
+/* Series pile ≈ same footprint as a Daily Texan card.
+   Tweak these two pairs up/down to taste. */
+.stack-cards { width: 340px; height: 420px; }
+.stack-card  { width: 320px; height: 400px; }
+
+/* Individual Works cards — identical to .digital-art-card */
+.individual-grid {
+  display: block;
+  column-count: 2;                   /* two columns, masonry flow */
+  column-gap: 25px;
+  padding-top: 0;
+}
+.individual-art-card {
+  display: block;
+  width: 100%;
+  background: #161616;
+  border: 1px solid #2a2a2a;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  break-inside: avoid;               /* don't split a card across columns */
+  margin-bottom: 25px;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+.individual-art-card:hover {
+  transform: translateY(-5px);
+  border-color: #E8D5A0;
+}
+.individual-img-container {
+  width: 100%;
+  aspect-ratio: auto;                /* drop the forced square */
+  border: none;
+  box-shadow: none;
+  background: none;
+  display: block;
+}
+.individual-img-container img {
+  width: 100%;
+  height: auto;                      /* full image, no crop — like Digital Art */
+  object-fit: initial;
+  display: block;
+  transition: none;
+}
+.individual-art-card:hover .individual-img-container img {
+  transform: none;                   /* remove the zoom Digital cards don't have */
+}
+.individual-card-label {
+  margin-top: 0;
+  padding: 14px;
+  font-family: inherit;              /* Digital titles use body font, not italic serif */
+  font-style: normal;
+  font-size: 0.9rem;
+  color: #cccccc;
+  text-align: center;
+  letter-spacing: normal;
+  background-color: #111111;
+}
+
+/* Series header → match Individual Works (gold + underline),
+   overriding any leftover .art-section-label styling in the left column */
+.art-left .digital-section-subtitle,
+.art-left .art-section-label {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 400;
+  font-style: normal;
+  text-transform: none;
+  letter-spacing: normal;
+  color: #E8D5A0;
+  text-align: center;
+  width: 100%;
+  padding-bottom: 10px;
+  margin-bottom: 25px;
+  border-bottom: 1px solid rgba(232, 213, 160, 0.2);
+}
+
+/* Smaller piles, closer together vertically */
+.stack-cards  { width: 180*1.1px; height: 220*1.1px; }   /* was 340 × 420 */
+.stack-card   { width: 165*1.1px; height: 205*1.1px; }   /* was 320 × 400 */
+.stack-label  { margin-bottom: 20px; }           /* tightens label → pile */
+.series-stack { margin-bottom: 25px; }           /* space under each pile */
+.art-left     { gap: 28px; }                     /* space between piles */
+
+/* ═══════════════════════════════════════════════════════════
+   3D MODELS — VINTAGE TV CAROUSEL
+   ═══════════════════════════════════════════════════════════ */
+
+/* keep the page hidden until the shelf is clicked */
+#modelsPage { opacity: 0; visibility: hidden; pointer-events: none; }
+#modelsPage.open { opacity: 1; visibility: visible; pointer-events: all; }
+
+.models-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;   /* title pinned to the top */
+  padding: 18px 0 0;
+  overflow: hidden;
+}
+.models-page .models-title {
+  position: relative; z-index: 3;
+  margin: 0 0 8px; text-align: center;
+}
+
+/* gentle vignette — corners only, wall still shows */
+.tv-vignette {
+  position: absolute; inset: 0; pointer-events: none; z-index: 2;
+  background: radial-gradient(ellipse at center,
+              rgba(0,0,0,0) 55%, rgba(0,0,0,0.32) 85%, rgba(0,0,0,0.6) 100%);
+}
+
+/* carousel viewport.  --tv-w controls how wide each TV is (and thus how
+   much of the neighbours peek in).  Smaller = more peek. */
+.tv-carousel {
+  --tv-w: min(74vw, 94vh * (740 / 420));   /* ◄ raise for bigger TV, lower to show more of the side TVs */
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* the sliding row of TVs */
+.tv-track {
+  display: flex;
+  align-items: center;
+  gap: 1.5vw;
+  padding: 18px 0;                 /* room for the drop-shadow */
+  transition: transform 0.55s cubic-bezier(.4,0,.2,1);
+  will-change: transform;
+}
+
+/* each TV — stretched wider than the original PNG so 16:9 video fits */
+.tv-stage {
+  flex: 0 0 var(--tv-w);
+  width: var(--tv-w);
+  aspect-ratio: 740 / 420;         /* wider than the source 740/493 */
+  position: relative;
+  cursor: pointer;
+  opacity: 0.5;                    /* side TVs dimmed */
+  transition: opacity 0.45s ease;
+}
+.tv-stage.is-active { opacity: 1; cursor: default; }
+
+.tv-frame {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: fill;                /* stretch the PNG to the wider stage */
+  pointer-events: none;
+  z-index: 1;
+  filter: drop-shadow(0 22px 30px rgba(0,0,0,0.6));   /* 3D shadow */
+}
+
+/* glass opening — tune these 4 if the video isn't perfectly inside */
+.tv-screen {
+  position: absolute;
+  top: 10%; left: 18%;
+  width: 55%; height: 70%;   /* intentionally bigger than the glass; the frame masks the overflow */
+  overflow: hidden;
+  border-radius: 6% / 9%;
+  background: #000;
+  z-index: 0;
+}
+.tv-screen-media {
+  width: 100%; height: 100%;
+  object-fit: cover;               /* fill the glass (no black bars). use 'contain' to show the whole frame instead */
+  display: block;
+}
+
+/* play button — centred on the glass, only on the active TV */
+.tv-play-btn {
+  position: absolute;
+  left: 47%; top: 47%;           /* = screen left+width/2 , top+height/2 */
+  transform: translate(-50%, -50%);
+  width: 76px; height: 76px;
+  padding: 0; border: none; background: none;
+  cursor: pointer; z-index: 5;
+  transition: transform 0.2s ease, opacity 0.25s ease;
+}
+.tv-play-btn:hover { transform: translate(-50%, -50%) scale(1.08); }
+.tv-play-btn circle  { fill: rgba(10,8,6,0.55); stroke: #E8D5A0; stroke-width: 3; }
+.tv-play-btn polygon { fill: #E8D5A0; }
+.tv-stage:not(.is-active) .tv-play-btn { display: none; }
+.tv-stage.is-playing .tv-play-btn { opacity: 0; pointer-events: none; }
+
+/* arrows pinned just outside the centre TV's edges */
+.tv-arrows {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(var(--tv-w) + 96px);
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;            /* buttons re-enable */
+  z-index: 6;
+}
+.tv-arrow {
+  pointer-events: auto;
+  width: 54px; height: 54px;
+  border-radius: 50%;
+  border: 2px solid rgba(184,160,112,0.6);
+  background: rgba(10,8,6,0.6);
+  color: #E8D5A0;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 30px; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+.tv-arrow:hover { transform: scale(1.12); background: rgba(184,160,112,0.18); border-color: #E8D5A0; }
+.tv-arrow:disabled { opacity: 0.2; cursor: default; }
+
+.tv-label {
+  margin-top: 14px;
+  text-align: center;
+
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 18px;
+  font-style: italic;
+  letter-spacing: 0.05em;
+
+  color: #E8D5A0;
+}
+.model-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ── TV CAROUSEL TEXT LABELS ── */
+.tv-title-label {
+  position: absolute;
+  bottom: -45px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 18px;
+  font-style: italic;
+  color: #E8D5A0;
+  letter-spacing: 0.05em;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+  opacity: 0.4;
+  transition: opacity 0.4s ease, color 0.4s ease;
+}
+
+.tv-stage.is-active .tv-title-label {
+  opacity: 1;
+  color: #F5C842;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   GAMES — SCROLLING PARALLAX SKY
+   ═══════════════════════════════════════════════════════════ */
+
+/* Page becomes a top-to-bottom column: title pinned on top, sky fills the rest. */
+.games-page {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;                 /* no scrollbars — the sky fills the screen */
+}
+
+/* Two category titles, each centered in its half. */
+.games-header {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-start;
+  padding: 28px 48px 18px;
+  border-bottom: 1px solid rgba(184, 160, 112, 0.25);
+  position: relative;
+  z-index: 6;
+}
+.games-col-title {
+  flex: 1 1 0;                         /* each title owns half the width */
+  text-align: center;                  /* and is centered within it */
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(26px, 3.4vw, 42px);
+  font-style: italic;
+  font-weight: 400;
+  color: #E8D5A0;
+  margin: 0;
+}
+
+/* The sky stage fills all remaining height, edge to edge. */
+.games-sky-stage {
+  position: relative;
+  flex: 1 1 auto;                   /* take all space under the title, down to the bottom */
+  width: 100%;
+  overflow: hidden;                 /* clip the scrolling images */
+  background: #bfe3f5;              /* fallback sky tone while images load */
+}
+
+/* Each parallax layer = a row of 3 copies of the image.
+   No `right` value, so the layer is as wide as its content (the 3 images),
+   which makes the -33.3333% translate equal exactly one copy → seamless loop. */
+.games-sky-layer {
+  position: absolute;
+  top: 0; bottom: 0; left: 0;       /* height = stage height, width = content width */
+  display: flex;
+  will-change: transform;
+  animation-play-state: paused;     /* idle until the Games page is open (saves CPU) */
+}
+.games-sky-layer img {
+  height: 100%;                     /* image height fills the screen */
+  width: auto;                      /* keep aspect ratio */
+  display: block;
+  flex: 0 0 auto;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* BACK layer — slow sky. Bigger number = slower. */
+.games-sky-back  { z-index: 1; animation: gamesScroll 90s linear infinite; }
+
+/* FRONT layer — faster clouds. Smaller number = faster.
+   clouds.jpg is a JPEG with no transparency, so it must be blended:
+     • multiply → best when clouds sit on a WHITE background (current default)
+     • screen   → best for bright/white clouds on a DARK background
+   For a perfect cutout, export clouds as a transparent PNG (clouds.png)
+   and remove the mix-blend-mode line below. */
+.games-sky-front {
+  z-index: 2;
+  mix-blend-mode: multiply;         /* ← swap to `screen` (or delete) depending on your clouds.jpg */
+  animation: gamesScroll 40s linear infinite;
+}
+
+/* Only run the animation while the page is actually open. */
+.games-page.open .games-sky-layer { animation-play-state: running; }
+
+/* Shift the track left by exactly one of its 3 copies, then loop. */
+@keyframes gamesScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-33.3333%); }
+}
+
+/* Respect users who turn off motion. */
+@media (prefers-reduced-motion: reduce) {
+  .games-sky-layer { animation: none !important; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   GAMES — FLOATING ISLAND + GAME LAUNCHER
+   ═══════════════════════════════════════════════════════════ */
+
+/* Two scatter zones over the sky: left half = Interactive Builds, right half = Video Games. */
+.island-zone {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  z-index: 5;                          /* above sky (1) and clouds (2) */
+  pointer-events: none;                /* only the islands themselves catch clicks */
+}
+.island-zone-left  { left: 0; }
+.island-zone-right { right: 0; }
+
+/* Faint divider between the two categories. */
+.games-sky-stage::after {
+  content: "";
+  position: absolute;
+  top: 6%;
+  bottom: 6%;
+  left: 50%;
+  width: 1px;
+  background: rgba(184, 160, 112, 0.22);
+  z-index: 4;
+  pointer-events: none;
+}
+
+/* Each island is absolutely placed within its zone via --top / --left. Straight (no tilt). */
+.city-island {
+  position: absolute;
+  top: var(--top, 50%);
+  left: var(--left, 50%);
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  pointer-events: none;                /* off by default so islands don't cover the home wall */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Islands only catch clicks/hover while the Games page is actually open. */
+.games-page.open .city-island { pointer-events: auto; }
+
+/* Inner wrapper handles the hover zoom so it never fights the centering. */
+.city-island-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  transform: scale(1);
+  transition: transform 0.3s cubic-bezier(.34, 1.56, .64, 1);
+}
+.city-island:hover  .city-island-inner,
+.city-island:focus-visible .city-island-inner { transform: scale(1.08); }
+.city-island:active .city-island-inner { transform: scale(1.02); }
+
+.city-island-img {
+  width: var(--w, clamp(180px, 18vw, 300px));  /* per-island --w override; bigger default */
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 18px 32px rgba(0, 0, 0, 0.35));
+}
+
+/* Readable label that floats under the island. */
+.city-island-tag {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 16px;
+  font-style: italic;
+  letter-spacing: 0.04em;
+  color: #E8D5A0;
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: rgba(20, 14, 6, 0.55);
+  border: 1px solid rgba(184, 160, 112, 0.5);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+  transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+}
+.city-island:hover  .city-island-tag,
+.city-island:focus-visible .city-island-tag {
+  color: #F5C842;
+  border-color: #E8D5A0;
+  background: rgba(20, 14, 6, 0.72);
+}
+
+/* Fullscreen launcher that holds the Ren'Py web build in an iframe. */
+.game-launch {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  background: #000;
+  display: flex;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+.game-launch.open { opacity: 1; pointer-events: all; }
+.game-launch-frame {
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+.game-launch-close {
+  position: fixed;
+  top: 18px;
+  right: 22px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 2px solid rgba(184, 160, 112, 0.6);
+  background: rgba(10, 8, 6, 0.75);
+  color: #E8D5A0;
+  font-size: 18px;
+  font-family: 'Playfair Display', Georgia, serif;
+  cursor: pointer;
+  z-index: 401;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+.game-launch-close:hover { transform: scale(1.12); background: rgba(184, 160, 112, 0.2); }
+/* ═══════════════════════════════════════════════════════════
+   INTERACTIVE BUILDS VIEWER (PDFs + embedded links)
+   ═══════════════════════════════════════════════════════════ */
+.viewer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  background: #0b0906;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  visibility: hidden;                  /* hidden => never catches clicks when closed */
+  pointer-events: none;
+  transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+}
+.viewer-overlay.open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
+  transition: opacity 0.3s ease, visibility 0s;
+}
+
+/* Top bar holds the close (exit) button + a new-tab fallback. */
+.viewer-bar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  padding: 10px 18px;
+  background: rgba(10, 8, 6, 0.96);
+  border-bottom: 1px solid rgba(184, 160, 112, 0.3);
+}
+.viewer-newtab {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  font-size: 15px;
+  color: #E8D5A0;
+  text-decoration: none;
+  border: 1px solid rgba(184, 160, 112, 0.5);
+  border-radius: 999px;
+  padding: 6px 16px;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+.viewer-newtab:hover { color: #F5C842; border-color: #E8D5A0; background: rgba(184, 160, 112, 0.12); }
+
+.viewer-close {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid rgba(184, 160, 112, 0.6);
+  background: rgba(10, 8, 6, 0.75);
+  color: #E8D5A0;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+.viewer-close:hover { transform: scale(1.1); background: rgba(184, 160, 112, 0.2); }
+
+.viewer-frame {
+  flex: 1 1 auto;                      /* fills the screen below the bar; scrolls internally */
+  width: 100%;
+  border: 0;
+  display: block;
+  background: #1a1410;
+}
+/* ═══════════════════════════════════════════════════════════
+   LIGHTING DESIGN — LAYERED STAGE WITH VIDEO
+   ═══════════════════════════════════════════════════════════ */
+.lighting-page {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.lighting-page .lighting-title {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 28px 40px 18px;
+  text-align: center;
+  border-bottom: 1px solid rgba(184, 160, 112, 0.25);
+}
+
+/* Area below the title that holds the stage (full width, like the games sky). */
+.lighting-stage-area {
+  flex: 1 1 auto;
+  position: relative;
+  overflow: hidden;
+}
+
+/* The stage keeps stage.jpg's aspect ratio so the video lines up with the green box.
+   Full width, pinned to the top; if it's taller than the area the bottom is clipped. */
+.lighting-stage {
+  /* ── green-screen box position (% of the stage). Tweak these to line the video up. ── */
+  --green-top:  10%;
+  --green-left: 22%;
+  --green-w:    57.5%;
+  --green-h:    57.5%;
+
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 95%;
+  aspect-ratio: 3788 / 2021;        /* stage.jpg's real dimensions */
+}
+
+.stage-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  z-index: 1;
+}
+
+/* Video slot = the green box. */
+.stage-video-slot {
+  position: absolute;
+  top: var(--green-top);
+  left: var(--green-left);
+  width: var(--green-w);
+  height: var(--green-h);
+  z-index: 2;
+  overflow: hidden;
+  background: #000;
+}
+.stage-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;                /* fills the green box; switch to 'contain' to letterbox */
+  display: block;
+}
+
+/* Overlay that sits on top of the video. Never blocks clicks. */
+.stage-top {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* Play button, centered on the green box, above all layers (same look as the 3D TVs). */
+.stage-play-btn {
+  position: absolute;
+  top:  calc(var(--green-top)  + var(--green-h) / 2);
+  left: calc(var(--green-left) + var(--green-w) / 2);
+  transform: translate(-50%, -50%);
+  width: 84px;
+  height: 84px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  z-index: 4;
+  transition: transform 0.2s ease, opacity 0.3s ease;
+}
+.stage-play-btn:hover { transform: translate(-50%, -50%) scale(1.08); }
+.stage-play-btn circle  { fill: rgba(10, 8, 6, 0.55); stroke: #E8D5A0; stroke-width: 3; }
+.stage-play-btn polygon { fill: #E8D5A0; }
+.lighting-stage.is-playing .stage-play-btn { opacity: 0; pointer-events: none; }

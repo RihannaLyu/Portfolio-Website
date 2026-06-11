@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rihanna Lyu — Portfolio</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <div class="dark-overlay" id="darkOverlay"></div>
+  <div class="light-burst" id="lightBurst"></div>
+
+  <!-- ABOUT NOTEBOOK -->
+  <div class="notebook-backdrop" id="notebookBackdrop" onclick="closeAbout()"></div>
+  <div class="notebook-wrap" id="notebookWrap">
+    <img src="images/about-notebook.png" class="notebook-img" alt="About Me" />
+    <button class="notebook-close" onclick="closeAbout()">✕</button>
+  </div>
+
+  <!-- 3D MODELS PAGE -->
+  <div class="models-page" id="modelsPage">
+    <div class="tv-vignette"></div>
+    <button class="models-close" id="modelsClose">✕</button>
+    <h1 class="models-title">3D Model Builds</h1>
+
+    <!-- carousel of TVs; each slide is generated from MODEL_VIDEOS in script.js -->
+    <div class="tv-carousel" id="tvCarousel">
+      <div class="tv-track" id="tvTrack"></div>
+      <div class="tv-arrows">
+        <button class="tv-arrow tv-arrow-left"  id="tvArrowLeft"  aria-label="Previous model">&#8249;</button>
+        <button class="tv-arrow tv-arrow-right" id="tvArrowRight" aria-label="Next model">&#8250;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GAMES PAGE -->
+  <div class="games-page" id="gamesPage">
+    <button class="games-close" id="gamesClose">✕</button>
+
+    <!-- two category titles across the top -->
+    <div class="games-header">
+      <h1 class="games-col-title">Interactive Builds</h1>
+      <h1 class="games-col-title">Video Games</h1>
+    </div>
+
+    <!-- scrolling parallax sky: fills everything below the titles -->
+    <div class="games-sky-stage" aria-hidden="true">
+      <!-- BACK layer: slow sky (3 copies = seamless loop) -->
+      <div class="games-sky-layer games-sky-back">
+        <img src="images/gamedesign/sky.jpg" alt="" />
+        <img src="images/gamedesign/sky.jpg" alt="" />
+        <img src="images/gamedesign/sky.jpg" alt="" />
+      </div>
+      <!-- FRONT layer: faster clouds (3 copies = seamless loop) -->
+      <div class="games-sky-layer games-sky-front">
+        <img src="images/gamedesign/clouds.PNG" alt="" />
+        <img src="images/gamedesign/clouds.png" alt="" />
+        <img src="images/gamedesign/clouds.PNG" alt="" />
+      </div>
+
+      <!-- LEFT: Interactive Builds (no data-game yet = not clickable; add when ready) -->
+      <div class="island-zone island-zone-left">
+          <button class="city-island" id="lbjIsland" type="button"
+                aria-label="Games and Guides for LBJ"
+                style="--top:34%; --left:55%; --w:18vw" data-view="images/gamedesign/lbj.pdf">
+          <span class="city-island-inner">
+            <img class="city-island-img" src="images/gamedesign/lbjisland.png" alt="" />
+            <span class="city-island-tag">Games and Guides for LBJ</span>
+          </span>
+        </button>
+        
+        <button class="city-island" id="debateIsland" type="button"
+                aria-label="The Glorious Debate"
+                style="--top:6%; --left:8%; --w:18vw" data-view="images/gamedesign/debate.pdf">
+          <span class="city-island-inner">
+            <img class="city-island-img" src="images/gamedesign/facelessisland.PNG" alt="" />
+            <span class="city-island-tag">The Glorious Debate</span>
+          </span>
+        </button>
+
+    
+
+        <button class="city-island" id="nianIsland" type="button"
+                aria-label="The Monster Nian"
+                style="--top:54%; --left:8%; --w:18vw" data-view="images/gamedesign/nian.pdf">
+          <span class="city-island-inner">
+            <img class="city-island-img" src="images/gamedesign/nianisland.png" alt="" />
+            <span class="city-island-tag">The Monster Nian</span>
+          </span>
+        </button>
+      </div>
+
+      <!-- RIGHT: Video Games -->
+      <div class="island-zone island-zone-right">
+        <button class="city-island" id="cityIsland" type="button"
+                aria-label="Play Second Chance"
+                data-game="images/gamedesign/secondchance/index.html"
+                style="--top:8%; --left:8%; --w:20vw">
+          <span class="city-island-inner">
+            <img class="city-island-img" src="images/gamedesign/cityisland.png" alt="" />
+            <span class="city-island-tag">Second Chance</span>
+          </span>
+        </button>
+
+        <button class="city-island" id="kungfuIsland" type="button"
+                aria-label="Play OTW To Be A KungFu Master"
+                data-game="images/gamedesign/kungfugame/index.html"
+                style="--top:50%; --left:50%; --w:18vw">
+          <span class="city-island-inner">
+            <img class="city-island-img" src="images/gamedesign/kungfuisland.png" alt="" />
+            <span class="city-island-tag">OTW To Be A KungFu Master</span>
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+<div class="art-page" id="artPage">
+    <button class="art-close" id="artClose">✕</button>
+    <div class="art-content">
+        <h1 class="art-page-title">Traditional Art</h1>
+      <div class="art-left">
+        <h2 class="digital-section-subtitle">Series</h2>
+
+        <div class="series-stack" data-series="weightless">
+          <div class="stack-label">Weightless Series</div>
+          <div class="stack-cards">
+            <div class="stack-card" style="--r:10deg; --tx:22px">
+              <img src="images/submerged.jpg" alt="Submerged" />
+            </div>
+            <div class="stack-card" style="--r:2deg; --tx:0px">
+              <img src="images/gemini.jpg" alt="Gemini" />
+            </div>
+            <div class="stack-card" style="--r:-7deg; --tx:-22px">
+              <img src="images/above.jpg" alt="Above" />
+            </div>
+          </div>
+          <p class="stack-hint">Click to explore the series</p>
+        </div>
+
+        <div class="series-stack" data-series="faceless">
+          <div class="stack-label">Faceless Series</div>
+          <div class="stack-cards">
+            <div class="stack-card" style="--r:12deg; --tx:24px">
+              <img src="images/Faceless/diverface2.jpg" alt="Diverface2" />
+            </div>
+            <div class="stack-card" style="--r:-3deg; --tx:2px">
+              <img src="images/Faceless/clockface1.jpg" alt="Clockface1" />
+            </div>
+            <div class="stack-card" style="--r:-10deg; --tx:-22px">
+              <img src="images/Faceless/flowerface1.jpg" alt="Flowerface1" />
+            </div>
+          </div>
+          <p class="stack-hint">Click to explore the series</p>
+        </div>
+
+        <div class="series-stack" data-series="chinese_traditional">
+          <div class="stack-label">Chinese Traditional</div>
+          <div class="stack-cards">
+            <div class="stack-card" style="--r:8deg; --tx:20px">
+              <img src="images/Chinesetraditional/godless.jpg" alt="Meihua" />
+            </div>
+            <div class="stack-card" style="--r:-2deg; --tx:2px">
+              <img src="images/Chinesetraditional/meihua.jpg" alt="Zhuazi" />
+            </div>
+            <div class="stack-card" style="--r:-9deg; --tx:-20px">
+              <img src="images/Chinesetraditional/zhuazi.jpg" alt="Still Life 1" />
+            </div>
+          </div>
+          <p class="stack-hint">Click to explore the series</p>
+        </div>
+      </div>
+
+      <div class="art-right">
+        <h2 class="digital-section-subtitle">Individual Works</h2>
+        <div class="individual-grid" id="individualGrid">
+          </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="series-overlay" id="seriesOverlay">
+    <div class="series-fan" id="seriesFan"></div>
+    <p class="series-overlay-hint">Click anywhere to close</p>
+  </div>
+
+  <div class="piece-viewer" id="pieceViewer">
+    <div class="piece-viewer-inner">
+      <div class="piece-img-wrap">
+        <img class="piece-viewer-img" id="pieceViewerImg" src="" alt="" />
+        <div class="piece-viewer-mag" id="pieceViewerMag"></div>
+      </div>
+      <span class="piece-viewer-title" id="pieceViewerTitle"></span>
+    </div>
+  </div>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <div class="lightbox-inner" onclick="event.stopPropagation()">
+      <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+      <img class="lightbox-img" id="lightboxImg" src="" alt="" />
+      <div class="lightbox-info">
+        <h3 class="lightbox-title" id="lightboxTitle"></h3>
+        <p class="lightbox-desc" id="lightboxDesc"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIGHTING PAGE -->
+  <div class="lighting-page" id="lightingPage">
+    <button class="lighting-close" id="lightingClose">✕</button>
+    <h1 class="lighting-title">Lighting Design</h1>
+
+    <div class="lighting-stage-area">
+      <div class="lighting-stage">
+        <!-- 1. background stage -->
+        <img class="stage-bg" src="images/lighting/stage.jpg" alt="Stage" />
+
+        <!-- 2. video sitting in the green-screen area -->
+        <div class="stage-video-slot">
+          <video class="stage-video" src="images/lighting/narrative.mp4" playsinline preload="metadata"></video>
+        </div>
+
+        <!-- 3. overlay that sits on top of the video -->
+        <img class="stage-top" src="images/lighting/stagetop.PNG" alt="" />
+
+        <!-- 4. play button, above everything (centered on the green area) -->
+        <button class="stage-play-btn" aria-label="Play narrative">
+          <svg viewBox="0 0 100 100" width="100%" height="100%">
+            <circle cx="50" cy="50" r="47"></circle>
+            <polygon points="41,31 41,69 72,50"></polygon>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOWERS PAGE -->
+ <div class="flowers-page" id="flowersPage">
+    <button class="flowers-close" id="flowersClose">✕</button>
+    <div class="flowers-content">
+      <h1 class="flowers-page-title">Floral Design</h1>
+      
+      <div class="floral-gallery-stack">
+        <div class="floral-item">
+          <img src="images/floraldesign/floral1.jpg" alt="Floral Design 1" />
+        </div>
+        <div class="floral-item">
+          <img src="images/floraldesign/floral2.jpg" alt="Floral Design 2" />
+        </div>
+        <div class="floral-item">
+          <img src="images/floraldesign/floral3.jpg" alt="Floral Design 3" />
+        </div>
+        <div class="floral-item">
+          <img src="images/floraldesign/floral4.jpg" alt="Floral Design 4" />
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- DIGITAL ART PAGE -->
+ <div class="window-page" id="windowPage">
+    <button class="window-close" id="windowClose">✕</button>
+    <div class="window-content">
+      <h1 class="window-title">Digital Art</h1>
+      
+      <div class="window-split-container">
+        
+        <div class="digital-column-left">
+          <h2 class="digital-section-subtitle">Illustrations for <i>The Daily Texan</i></h2>
+          
+          <div class="digital-art-card">
+            <img src="images/TheDailyTexanIllustrations/everythingstillsucks.jpg" alt="Daily Texan Illustration 1" />
+            <div class="digital-card-title">Everything Still Sucks!</div>
+          </div>
+
+          <div class="digital-art-card">
+            <img src="images/TheDailyTexanIllustrations/doseofperfection.jpg" alt="Daily Texan Illustration 2" />
+            <div class="digital-card-title">Dose of Perfection</div>
+          </div>
+
+          <div class="digital-art-card">
+            <img src="images/TheDailyTexanIllustrations/thepillofsuccess.png" alt="Daily Texan Illustration 2" />
+            <div class="digital-card-title">The Pill of Success</div>
+          </div>
+
+            <div class="digital-art-card">
+            <img src="images/TheDailyTexanIllustrations/lowkeydramatic.jpg" alt="Daily Texan Illustration 2" />
+            <div class="digital-card-title">Lowkey Dramatic</div>
+          </div>
+
+            <div class="digital-art-card">
+            <img src="images/TheDailyTexanIllustrations/distancemaxxing.jpg" alt="Daily Texan Illustration 2" />
+            <div class="digital-card-title">Distancemaxxing</div>
+          </div>
+
+            <div class="digital-art-card">
+            <img src="images/TheDailyTexanIllustrations/exhale.jpg" alt="Daily Texan Illustration 2" />
+            <div class="digital-card-title">Real Air</div>
+          </div>
+
+          <div class="digital-art-card">
+            <img src="images/TheDailyTexanIllustrations/stateofmind.jpg" alt="Daily Texan Illustration 2" />
+            <div class="digital-card-title">State of Mind</div>
+          </div>
+        </div>
+
+        <div class="digital-column-right">
+          <h2 class="digital-section-subtitle">Individual Pieces</h2>
+
+          <div class="individual-digital-subgrid">
+
+            <div class="sub-column">
+              <div class="digital-art-card">
+                <img src="images/DigitalIndividuals/seeyousooncowboy.jpg" alt="See You Soon Cowboy!" />
+                <div class="digital-card-title">See You Soon Cowboy!</div>
+              </div>
+              <div class="digital-art-card">
+                <img src="images/DigitalIndividuals/uiforchef.jpg" alt="UI for Shit Sandwich" />
+                <div class="digital-card-title">UI for Shit Sandwich</div>
+              </div>
+              <div class="digital-art-card">
+                <img src="images/DigitalIndividuals/shanzi.jpg" alt="New Shades" />
+                <div class="digital-card-title">New Shades</div>
+              </div>
+               <div class="digital-art-card">
+                <img src="images/DigitalIndividuals/spread.jpg" alt="New Shades" />
+                <div class="digital-card-title">Spread</div>
+              </div>
+              <div class="digital-art-card">
+                <img src="images/DigitalIndividuals/newshades.jpg" alt="Shanzi" />
+                <div class="digital-card-title">Shanzi</div>
+              </div>
+              <div class="digital-art-card">
+                <img src="images/DigitalIndividuals/afterparty.jpg" alt="After Party" />
+                <div class="digital-card-title">After Party</div>
+              </div>
+          
+            </div>
+
+            <div class="sub-column">
+              <div class="digital-art-card">
+                <img src="images/DigitalIndividuals/chinesenewyear.jpg" alt="Chinese New Year" />
+                <div class="digital-card-title">Chinese New Year</div>
+              </div>
+              <div class="digital-art-card">
+                <img src="images/DigitalIndividuals/uiforpiano.png" alt="Chinese New Year" />
+                <div class="digital-card-title">UI for 2D platformer</div>
+              </div>
+              <div class="digital-art-card">
+                <img src="images/DigitalIndividuals/digin.jpg" alt="Dig in" />
+                <div class="digital-card-title">Dig in</div>
+              </div>
+              <div class="digital-art-card">
+                <img src="images/DigitalIndividuals/christmasballet.jpg" alt="Christmas Ballet" />
+                <div class="digital-card-title">Christmas Ballet</div>
+              </div>
+              <div class="digital-art-card">
+                <img src="images/DigitalIndividuals/pond.jpg" alt="Her Pond" />
+                <div class="digital-card-title">Her Pond</div>
+              </div>
+                <div class="digital-art-card">
+                <img src="images/DigitalIndividuals/posterdesign.jpg" alt="Poster Design for YouStrong" />
+                <div class="digital-card-title">Poster Design for YouStrong</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- WALL -->
+  <div class="wall" id="wall">
+
+    <div class="portrait-item" id="portraitItem">
+      <div class="portrait-frame">
+        <div class="frame-inner" id="frameInner">
+          <img src="images/avatar-body.png" class="avatar-layer avatar-body" alt="Portrait of Rihanna Lyu" />
+          <img src="images/avatar-blink.png" class="avatar-layer avatar-blink" id="avatarBlink" alt="" />
+          <img src="images/eyeball_left.png" class="avatar-layer eyeball" id="eyeLeft" alt="" />
+          <img src="images/eyeball_right.png" class="avatar-layer eyeball" id="eyeRight" alt="" />
+        </div>
+      </div>
+      <div class="nameplate-item" id="nameplateItem">
+        <img src="images/nameplate.PNG" class="nameplate-img" alt="Rihanna Lyu nameplate" />
+        <div class="hover-label">About Me</div>
+      </div>
+    </div>
+
+    <div class="switch-item" id="switchItem">
+      <img src="images/light-on.PNG" class="switch-img" id="switchImg" alt="Light switch" />
+    </div>
+    <div class="shelf-item" id="shelfItem">
+      <img src="images/3dmodel-shelf.png" class="shelf-img" alt="3D model shelf" />
+      <div class="hover-label">3D Models</div>
+    </div>
+    <div class="gametable-item" id="gametableItem">
+      <img src="images/gametable.png" class="gametable-img" alt="Game table" />
+      <div class="hover-label">Games</div>
+    </div>
+    <div class="art-item" id="artItem">
+      <img src="images/art.png" class="art-img" alt="Art easel" />
+      <div class="hover-label">Traditional Art</div>
+    </div>
+    <div class="lighting-item" id="lightingItem">
+      <img src="images/lighting.png" class="lighting-img" id="lightingImg" alt="Lighting design track" />
+      <div class="hover-label">Lighting Design</div>
+    </div>
+    <div class="flowers-item" id="flowersItem">
+      <img src="images/flowers.png" class="flowers-img" alt="Floral design" />
+      <div class="hover-label">Floral Design</div>
+    </div>
+    <div class="window-item" id="windowItem">
+      <img src="images/window.png" class="window-img" alt="Digital art window" />
+      <div class="hover-label">Digital Art</div>
+    </div>
+
+  </div>
+
+  <!-- SECOND CHANCE — REN'PY GAME LAUNCHER -->
+  <div class="game-launch" id="gameLaunch">
+    <button class="game-launch-close" id="gameLaunchClose" aria-label="Close game">✕</button>
+    <iframe class="game-launch-frame" id="gameLaunchFrame"
+            title="Second Chance"
+            allow="autoplay; fullscreen; gamepad"></iframe>
+  </div>
+
+  <!-- INTERACTIVE BUILDS VIEWER (PDFs + embedded links) -->
+  <div class="viewer-overlay" id="viewerOverlay">
+    <div class="viewer-bar">
+      <a class="viewer-newtab" id="viewerNewtab" href="#" target="_blank" rel="noopener">Open in new tab &#8599;</a>
+      <button class="viewer-close" id="viewerClose" aria-label="Close">&#10005;</button>
+    </div>
+    <iframe class="viewer-frame" id="viewerFrame" title="Interactive build"></iframe>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
