@@ -2,8 +2,24 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 /* ── WALL ── */
-body {
-  min-height: 100vh;
+/* ── FIXED-ASPECT STAGE — design canvas 1707×1067 CSS px (= 2560×1600 physical at 150% scaling), 16:10 ── */
+html, body {
+  height: 100%; width: 100%; margin: 0; padding: 0;
+  background: #000;
+  overflow: hidden;
+}
+#viewport {
+  position: fixed; inset: 0;
+  background: #000;
+  overflow: hidden;
+}
+#stage {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 1707px; height: 1067px;
+  transform-origin: center center;
+  transform: translate(-50%, -50%) scale(var(--stage-scale, 1));
+  overflow: hidden;
   background-color: #F0EBE1;
   background-image:
     linear-gradient(rgba(240,235,225,0.82), rgba(240,235,225,0.82)),
@@ -17,15 +33,11 @@ body {
   font-family: 'Playfair Display', Georgia, serif;
   transition: background-color 1.2s ease;
 }
-
-body.lights-off {
+body.lights-off #stage {
   background-color: #1A1208;
   background-image:
     linear-gradient(rgba(26,18,8,0.88), rgba(26,18,8,0.88)),
     url('images/wall-texture.png');
-  background-size: cover, auto;
-  background-repeat: no-repeat, repeat;
-  background-blend-mode: normal, multiply;
 }
 
 /* ── DARK OVERLAY ── */
@@ -40,14 +52,16 @@ body.lights-off {
 .dark-overlay.on { background: rgba(10, 6, 2, 0.45); }
 
 /* ── WALL LAYOUT ── */
+/* Update these sections in your style.css */
+
 .wall {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  width: 100%;
-  padding-top: 55px;
+  min-height: 1067px;
+  width: 150%;
+  padding-top: 0; /* Removed padding to let items move higher */
 }
 
 /* ── PORTRAIT ITEM ── */
@@ -56,8 +70,8 @@ body.lights-off {
   flex-direction: column;
   align-items: center;
   gap: 0;
-  margin-bottom: 24px;
-  margin-left: 60px;
+  margin-bottom: -130px;
+  margin-left: 20px;
   filter: drop-shadow(0 0 0px rgba(255,180,60,0));
   transition: filter 1.2s ease;
 }
@@ -94,14 +108,14 @@ body.lights-off {
 /* ── NAMEPLATE PNG ── */
 .nameplate-item {
   position: relative;
-  margin-top: -120px;
+  margin-top: -70px;
   cursor: pointer;
   transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), filter 1.2s ease;
 }
 .nameplate-item:hover { transform: scale(1.06); }
 .nameplate-item:active { transform: scale(0.98); }
 .nameplate-img {
-  width: 480px;
+  width: 500px;
   height: auto;
   display: block;
   filter: drop-shadow(2px 3px 8px rgba(0,0,0,0.2));
@@ -113,17 +127,17 @@ body.lights-off .nameplate-item { filter: brightness(1.1); }
 /* ── LIGHT SWITCH ── */
 .switch-item {
   position: absolute;
-  left: 30%;
-  bottom: 450px;
+  left: 28%;
+  bottom: 430px;
   cursor: pointer;
-  width: 60px;
+  width: 70px;
   transition: transform 0.25s cubic-bezier(.34,1.56,.64,1);
   z-index: 50;
 }
 .switch-item:hover { transform: scale(1.12); }
 .switch-item:active { transform: scale(0.96); }
 .switch-img {
-  width: 60px;
+  width: 65px;
   height: auto;
   display: block;
   filter: drop-shadow(2px 3px 6px rgba(0,0,0,0.3));
@@ -135,7 +149,7 @@ body.lights-off .switch-img { filter: drop-shadow(0 0 8px rgba(255,200,80,0.6));
 /* ── 3D MODEL SHELF ── */
 .shelf-item {
   position: absolute;
-  bottom: 72%;
+  bottom: 68%;
   left: 68%;
   cursor: pointer;
   width: 500px;
@@ -145,7 +159,7 @@ body.lights-off .switch-img { filter: drop-shadow(0 0 8px rgba(255,200,80,0.6));
 .shelf-item:hover { transform: scale(1.06); }
 .shelf-item:active { transform: scale(0.98); }
 .shelf-img {
-  width: 500px;
+  width: 520px;
   height: auto;
   display: block;
   filter: drop-shadow(2px 4px 10px rgba(0,0,0,0.25));
@@ -157,17 +171,17 @@ body.lights-off .shelf-item { filter: brightness(1.1); }
 /* ── GAME TABLE ── */
 .gametable-item {
   position: absolute;
-  bottom: 8%;
+  bottom: 0%;
   left: 0%;
   cursor: pointer;
-  width: 490px;
+  width: 10px;
   transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), filter 1.2s ease;
   z-index: 50;
 }
 .gametable-item:hover { transform: scale(1.08); }
 .gametable-item:active { transform: scale(0.98); }
 .gametable-img {
-  width: 490px;
+  width: 510px;
   height: auto;
   display: block;
   filter: drop-shadow(2px 4px 10px rgba(0,0,0,0.25));
@@ -179,17 +193,17 @@ body.lights-off .gametable-item { filter: brightness(1.1); }
 /* ── ART EASEL ── */
 .art-item {
   position: absolute;
-  bottom: 10%;
-  right: -5.5%;
+  bottom: 0%;
+  right: -3%;
   cursor: pointer;
-  width: 650px;
+  width: 700px;
   transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), filter 1.2s ease;
   z-index: 50;
 }
 .art-item:hover { transform: scale(1.08); }
 .art-item:active { transform: scale(0.98); }
 .art-img {
-  width: 650px;
+  width: 730px;
   height: auto;
   display: block;
   filter: drop-shadow(2px 4px 10px rgba(0,0,0,0.25));
@@ -201,7 +215,7 @@ body.lights-off .art-item { filter: brightness(1.1); }
 /* ── LIGHTING DESIGN ── */
 .lighting-item {
   position: absolute;
-  top: 0%;
+  top: 5%;
   left: -3%;
   cursor: pointer;
   width: 650px;
@@ -211,7 +225,7 @@ body.lights-off .art-item { filter: brightness(1.1); }
 .lighting-item:hover { transform: scale(1.06); }
 .lighting-item:active { transform: scale(0.98); }
 .lighting-img {
-  width: 650px;
+  width: 680px;
   height: auto;
   display: block;
   filter: drop-shadow(2px 4px 10px rgba(0,0,0,0.25));
@@ -245,8 +259,8 @@ body.lights-off .lighting-item { filter: brightness(1.1); }
 /* ── FLOWERS ── */
 .flowers-item {
   position: absolute;
-  right: calc(50% - 950px);
-  bottom: 40%;
+  right: calc(50% - 900px);
+  bottom: 32%;
   cursor: pointer;
   width: 750px;
   transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), filter 1.2s ease;
@@ -255,7 +269,7 @@ body.lights-off .lighting-item { filter: brightness(1.1); }
 .flowers-item:hover { transform: scale(1.08); }
 .flowers-item:active { transform: scale(0.98); }
 .flowers-img {
-  width: 750px;
+  width: 800px;
   height: auto;
   display: block;
   filter: drop-shadow(2px 4px 10px rgba(0,0,0,0.25));
@@ -267,17 +281,17 @@ body.lights-off .flowers-item { filter: brightness(1.1); }
 /* ── WINDOW (Digital Art) ── */
 .window-item {
   position: absolute;
-  left: calc(50% - 750px);
-  top: 13%;
+  left: calc(50% - 780px);
+  top: 20%;
   cursor: pointer;
-  width: 410px;
+  width: 430px;
   transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), filter 1.2s ease;
   z-index: 50;
 }
 .window-item:hover { transform: scale(1.06); }
 .window-item:active { transform: scale(0.98); }
 .window-img {
-  width: 410px;
+  width: 430px;
   height: auto;
   display: block;
   filter: drop-shadow(2px 4px 10px rgba(0,0,0,0.25));
@@ -335,8 +349,8 @@ body.lights-off .window-item { filter: brightness(1.1); }
   left: 50%;
   top: 50%;
   transform: translateX(-50%) translateY(-160%);
-  margin-top: calc(-82vh / 2);
-  height: 110vh;
+  margin-top: calc(-874.94px / 2);
+  height: 1173.70px;
   width: auto;
   z-index: 201;
   pointer-events: none;
@@ -358,7 +372,7 @@ body.lights-off .window-item { filter: brightness(1.1); }
 /* ── NOTEBOOK CLOSE BUTTON ── */
 .notebook-close {
   position: absolute;
-  top: calc(50vh - 60vh + 650px);
+  top: calc(533.50px - 640.20px + 650px);
   right: -1%;
   width: 44px;
   height: 44px;
@@ -709,8 +723,8 @@ body.lights-off .window-item { filter: brightness(1.1); }
 
 .lightbox-inner {
   position: relative;
-  max-width: 80vw;
-  max-height: 90vh;
+  max-width: 1365.60px;
+  max-height: 960.30px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -735,7 +749,7 @@ body.lights-off .window-item { filter: brightness(1.1); }
 
 .lightbox-img {
   max-width: 100%;
-  max-height: 70vh;
+  max-height: 746.90px;
   object-fit: contain;
   border: 1px solid rgba(184,160,112,0.2);
 }
@@ -896,8 +910,8 @@ body.lights-off .window-item { filter: brightness(1.1); }
 }
 
 .piece-viewer-img {
-  max-height: 80vh;
-  max-width: 85vw;
+  max-height: 853.60px;
+  max-width: 1450.95px;
   object-fit: contain;
   display: block;
   border: 1px solid rgba(184,160,112,0.2);
@@ -1189,7 +1203,7 @@ body.lights-off .window-item { filter: brightness(1.1); }
   flex-direction: column;
   align-items: center;
   gap: 20px;
-  max-width: 85vw;
+  max-width: 1450.95px;
 }
 .piece-img-wrap {
   position: relative;
@@ -1197,8 +1211,8 @@ body.lights-off .window-item { filter: brightness(1.1); }
   cursor: crosshair;
 }
 .piece-viewer-img {
-  max-width: 75vw;
-  max-height: 72vh;
+  max-width: 1280.25px;
+  max-height: 768.24px;
   box-shadow: 0 16px 45px rgba(0, 0, 0, 0.85);
   border: 1px solid rgba(184, 160, 112, 0.2);
   display: block;
@@ -1314,7 +1328,7 @@ body.lights-off .window-item { filter: brightness(1.1); }
   flex-direction: column;
   align-items: center;
   gap: 20px;
-  max-width: 85vw;
+  max-width: 1450.95px;
 }
 .piece-img-wrap {
   position: relative;
@@ -1322,8 +1336,8 @@ body.lights-off .window-item { filter: brightness(1.1); }
   cursor: crosshair;
 }
 .piece-viewer-img {
-  max-width: 75vw;
-  max-height: 72vh;
+  max-width: 1280.25px;
+  max-height: 768.24px;
   box-shadow: 0 16px 45px rgba(0, 0, 0, 0.9);
   border: 1px solid rgba(184, 160, 112, 0.2);
   display: block;
@@ -1496,7 +1510,7 @@ body.lights-off .window-item { filter: brightness(1.1); }
   flex-direction: column;
   align-items: center;
   gap: 20px;
-  max-width: 85vw;
+  max-width: 1450.95px;
 }
 .piece-img-wrap {
   position: relative;
@@ -1504,8 +1518,8 @@ body.lights-off .window-item { filter: brightness(1.1); }
   cursor: crosshair;
 }
 .piece-viewer-img {
-  max-width: 75vw;
-  max-height: 72vh;
+  max-width: 1280.25px;
+  max-height: 768.24px;
   box-shadow: 0 16px 45px rgba(0, 0, 0, 0.9);
   border: 1px solid rgba(184, 160, 112, 0.2);
   display: block;
@@ -1676,7 +1690,7 @@ body.lights-off .window-item { filter: brightness(1.1); }
   flex-direction: column;
   align-items: center;
   gap: 20px;
-  max-width: 85vw;
+  max-width: 1450.95px;
 }
 .piece-img-wrap {
   position: relative;
@@ -1684,8 +1698,8 @@ body.lights-off .window-item { filter: brightness(1.1); }
   cursor: crosshair;
 }
 .piece-viewer-img {
-  max-width: 75vw;
-  max-height: 72vh;
+  max-width: 1280.25px;
+  max-height: 768.24px;
   box-shadow: 0 16px 45px rgba(0, 0, 0, 0.9);
   border: 1px solid rgba(184, 160, 112, 0.2);
   display: block;
@@ -1762,7 +1776,7 @@ body.lights-off .window-item { filter: brightness(1.1); }
 .floral-item {
   width: 100%;
   max-width: 1000px; /* Restricts overly wide stretching on wide monitors */
-  height: 82vh;       /* Spans 82% of the total screen display height */
+  height: 874.94px;       /* Spans 82% of the total screen display height */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2215,7 +2229,7 @@ body.lights-off .window-item { filter: brightness(1.1); }
 /* carousel viewport.  --tv-w controls how wide each TV is (and thus how
    much of the neighbours peek in).  Smaller = more peek. */
 .tv-carousel {
-  --tv-w: min(74vw, 94vh * (740 / 420));   /* ◄ raise for bigger TV, lower to show more of the side TVs */
+  --tv-w: min(1263.18px, 1002.98px * (740 / 420));   /* ◄ raise for bigger TV, lower to show more of the side TVs */
   position: relative;
   width: 100%;
   overflow: hidden;
@@ -2226,7 +2240,7 @@ body.lights-off .window-item { filter: brightness(1.1); }
 .tv-track {
   display: flex;
   align-items: center;
-  gap: 1.5vw;
+  gap: 25.61px;
   padding: 18px 0;                 /* room for the drop-shadow */
   transition: transform 0.55s cubic-bezier(.4,0,.2,1);
   will-change: transform;
@@ -2377,7 +2391,7 @@ body.lights-off .window-item { filter: brightness(1.1); }
   flex: 1 1 0;                         /* each title owns half the width */
   text-align: center;                  /* and is centered within it */
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(26px, 3.4vw, 42px);
+  font-size: clamp(26px, 58.04px, 42px);
   font-style: italic;
   font-weight: 400;
   color: #E8D5A0;
@@ -2501,7 +2515,7 @@ body.lights-off .window-item { filter: brightness(1.1); }
 .city-island:active .city-island-inner { transform: scale(1.02); }
 
 .city-island-img {
-  width: var(--w, clamp(180px, 18vw, 300px));  /* per-island --w override; bigger default */
+  width: var(--w, clamp(180px, 307.26px, 300px));  /* per-island --w override; bigger default */
   height: auto;
   display: block;
   filter: drop-shadow(0 18px 32px rgba(0, 0, 0, 0.35));
@@ -2530,48 +2544,65 @@ body.lights-off .window-item { filter: brightness(1.1); }
   background: rgba(20, 14, 6, 0.72);
 }
 
-/* Fullscreen launcher that holds the Ren'Py web build in an iframe. */
+/* ── GAME LAUNCH POPUP MODAL ── */
 .game-launch {
   position: fixed;
   inset: 0;
-  z-index: 400;
-  background: #000;
-  display: flex;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.35s ease;
-}
-.game-launch.open { opacity: 1; pointer-events: all; }
-.game-launch-frame {
-  flex: 1 1 auto;
-  width: 100%;
-  height: 100%;
-  border: 0;
-  display: block;
-}
-.game-launch-close {
-  position: fixed;
-  top: 18px;
-  right: 22px;
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  border: 2px solid rgba(184, 160, 112, 0.6);
-  background: rgba(10, 8, 6, 0.75);
-  color: #E8D5A0;
-  font-size: 18px;
-  font-family: 'Playfair Display', Georgia, serif;
-  cursor: pointer;
-  z-index: 401;
+  background: rgba(10, 6, 2, 0.95); /* Deep dark background when playing */
+  z-index: 400;                     /* Sits over your islands */
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s ease, background 0.2s ease;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.4s ease, visibility 0s linear 0.4s;
 }
-.game-launch-close:hover { transform: scale(1.12); background: rgba(184, 160, 112, 0.2); }
-/* ═══════════════════════════════════════════════════════════
-   INTERACTIVE BUILDS VIEWER (PDFs + embedded links)
-   ═══════════════════════════════════════════════════════════ */
+
+.game-launch.open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
+  transition: opacity 0.4s ease, visibility 0s;
+}
+
+/* ── GAME IFRAME BUNDLE ── */
+.game-launch-frame {
+  width: 90vw;                      /* Fills screen beautifully with breathing room */
+  max-width: 1280px;                /* Locks standard max desktop game resolution */
+  height: calc(90vw * 0.5625);      /* Enforces a perfect 16:9 ratio grid */
+  max-height: 720px;
+  background: #000;
+  border: 3px solid #B8A070;         /* Elegantly matches your canvas borders */
+  border-radius: 8px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+}
+
+/* ── LAUNCHER CLOSE BUTTON ── */
+.game-launch-close {
+  position: fixed;
+  top: 30px;
+  right: 35px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid #B8A070;
+  background: transparent;
+  color: #B8A070;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, background 0.2s;
+  z-index: 401;
+}
+.game-launch-close:hover {
+  transform: scale(1.1) rotate(90deg);
+  background: rgba(184,160,112,0.15);
+}
+
+
 .viewer-overlay {
   position: fixed;
   inset: 0;
