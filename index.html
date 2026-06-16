@@ -8,6 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
 </head>
 <body>
+  <div id="viewport"><div id="stage">
 
   <div class="dark-overlay" id="darkOverlay"></div>
   <div class="light-burst" id="lightBurst"></div>
@@ -64,7 +65,7 @@
       <div class="island-zone island-zone-left">
           <button class="city-island" id="lbjIsland" type="button"
                 aria-label="Games and Guides for LBJ"
-                style="--top:34%; --left:55%; --w:18vw" data-view="images/gamedesign/lbj.pdf">
+                style="--top:34%; --left:55%; --w:307.26px" data-view="images/gamedesign/lbj.pdf">
           <span class="city-island-inner">
             <img class="city-island-img" src="images/gamedesign/lbjisland.png" alt="" />
             <span class="city-island-tag">Games and Guides for LBJ</span>
@@ -73,7 +74,7 @@
         
         <button class="city-island" id="debateIsland" type="button"
                 aria-label="The Glorious Debate"
-                style="--top:6%; --left:8%; --w:18vw" data-view="images/gamedesign/debate.pdf">
+                style="--top:6%; --left:8%; --w:307.26px" data-view="images/gamedesign/debate.pdf">
           <span class="city-island-inner">
             <img class="city-island-img" src="images/gamedesign/facelessisland.PNG" alt="" />
             <span class="city-island-tag">The Glorious Debate</span>
@@ -84,7 +85,7 @@
 
         <button class="city-island" id="nianIsland" type="button"
                 aria-label="The Monster Nian"
-                style="--top:54%; --left:8%; --w:18vw" data-view="images/gamedesign/nian.pdf">
+                style="--top:54%; --left:8%; --w:307.26px" data-view="images/gamedesign/nian.pdf">
           <span class="city-island-inner">
             <img class="city-island-img" src="images/gamedesign/nianisland.png" alt="" />
             <span class="city-island-tag">The Monster Nian</span>
@@ -97,7 +98,7 @@
         <button class="city-island" id="cityIsland" type="button"
                 aria-label="Play Second Chance"
                 data-game="images/gamedesign/secondchance/index.html"
-                style="--top:8%; --left:8%; --w:20vw">
+                style="--top:8%; --left:8%; --w:341.40px">
           <span class="city-island-inner">
             <img class="city-island-img" src="images/gamedesign/cityisland.png" alt="" />
             <span class="city-island-tag">Second Chance</span>
@@ -106,8 +107,8 @@
 
         <button class="city-island" id="kungfuIsland" type="button"
                 aria-label="Play OTW To Be A KungFu Master"
-                data-game="images/gamedesign/kungfugame/index.html"
-                style="--top:50%; --left:50%; --w:18vw">
+                data-game= "*"
+                style="--top:50%; --left:50%; --w:307.26px">
           <span class="city-island-inner">
             <img class="city-island-img" src="images/gamedesign/kungfuisland.png" alt="" />
             <span class="city-island-tag">OTW To Be A KungFu Master</span>
@@ -116,6 +117,8 @@
       </div>
     </div>
   </div>
+
+  
 <div class="art-page" id="artPage">
     <button class="art-close" id="artClose">✕</button>
     <div class="art-content">
@@ -440,6 +443,20 @@
     <iframe class="viewer-frame" id="viewerFrame" title="Interactive build"></iframe>
   </div>
 
+  </div></div><!-- /#stage /#viewport -->
   <script src="script.js"></script>
+  <script>
+    /* Lock the 1707x1067 room to 16:10 and scale to fit any screen */
+    (function () {
+      var stage = document.getElementById("stage");
+      function fitStage() {
+        var s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+        stage.style.setProperty("--stage-scale", s);
+      }
+      window.addEventListener("resize", fitStage);
+      window.addEventListener("orientationchange", fitStage);
+      fitStage();
+    })();
+  </script>
 </body>
 </html>
