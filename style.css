@@ -127,7 +127,7 @@ body.lights-off .nameplate-item { filter: brightness(1.1); }
 /* ── LIGHT SWITCH ── */
 .switch-item {
   position: absolute;
-  left: 28%;
+  left: 30%;
   bottom: 430px;
   cursor: pointer;
   width: 70px;
@@ -137,7 +137,7 @@ body.lights-off .nameplate-item { filter: brightness(1.1); }
 .switch-item:hover { transform: scale(1.12); }
 .switch-item:active { transform: scale(0.96); }
 .switch-img {
-  width: 65px;
+  width: 55px;
   height: auto;
   display: block;
   filter: drop-shadow(2px 3px 6px rgba(0,0,0,0.3));
@@ -168,12 +168,12 @@ body.lights-off .switch-img { filter: drop-shadow(0 0 8px rgba(255,200,80,0.6));
 .shelf-item:hover .shelf-img { filter: drop-shadow(2px 6px 16px rgba(0,0,0,0.35)); }
 body.lights-off .shelf-item { filter: brightness(1.1); }
 
-/* ── GAME TABLE ── */
 .gametable-item {
   position: absolute;
   bottom: 0%;
   left: 0%;
   cursor: pointer;
+  width: 510px;        /* was 10px — now matches the image so the label centers over the table */
   transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), filter 1.2s ease;
   z-index: 50;
 }
@@ -188,7 +188,6 @@ body.lights-off .shelf-item { filter: brightness(1.1); }
 }
 .gametable-item:hover .gametable-img { filter: drop-shadow(2px 6px 16px rgba(0,0,0,0.35)); }
 body.lights-off .gametable-item { filter: brightness(1.1); }
-
 /* ── ART EASEL ── */
 .art-item {
   position: absolute;
