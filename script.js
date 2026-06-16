@@ -434,11 +434,11 @@ const lightingImg   = document.getElementById('lightingImg');
 const lightBurst    = document.getElementById('lightBurst');
 
 lightingItem.addEventListener('mouseenter', () => {
-  lightingImg.src = 'images/lighting-color.png';
+  lightingImg.src = 'images/lighting-color.PNG';
   lightBurst.classList.add('active');
 });
 lightingItem.addEventListener('mouseleave', () => {
-  lightingImg.src = 'images/lighting.png';
+  lightingImg.src = 'images/lighting.PNG';
   lightBurst.classList.remove('active');
 });
 
@@ -602,7 +602,7 @@ function buildTVSlides() {
                  preload="auto">
           </video>
         </div>
-        <img class="tv-frame" src="${MODELS_BASE}tv.png" alt="${m.title}" />
+        <img class="tv-frame" src="${MODELS_BASE}tv.PNG" alt="${m.title}" />
         <button class="tv-play-btn" aria-label="Play ${m.title}">
           <svg viewBox="0 0 100 100" width="100%" height="100%">
             <circle cx="50" cy="50" r="47"></circle>
