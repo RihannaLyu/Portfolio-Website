@@ -174,7 +174,6 @@ body.lights-off .shelf-item { filter: brightness(1.1); }
   bottom: 0%;
   left: 0%;
   cursor: pointer;
-  width: 10px;
   transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), filter 1.2s ease;
   z-index: 50;
 }
