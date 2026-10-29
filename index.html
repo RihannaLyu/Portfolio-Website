@@ -185,6 +185,7 @@
   </div>
 
   <div class="series-overlay" id="seriesOverlay">
+    <button class="series-close" id="seriesClose" aria-label="Close series">✕</button>
     <div class="series-fan" id="seriesFan"></div>
     <p class="series-overlay-hint">Click anywhere to close</p>
   </div>
@@ -377,6 +378,43 @@
       </div>
     </div>
   </div>
+
+  <!-- MOBILE HOME — only shown at 768px and narrower (see MOBILE in style.css).
+       Each card forwards its tap to the wall object named in data-opens. -->
+  <main class="mobile-home" id="mobileHome">
+    <header class="mobile-hero">
+      <div class="mobile-portrait">
+        <img src="images/avatar-body.PNG" class="avatar-layer" alt="Portrait of Rihanna Lyu" />
+        <img src="images/eyeball_left.PNG" class="avatar-layer" alt="" />
+        <img src="images/eyeball_right.PNG" class="avatar-layer" alt="" />
+      </div>
+      <img src="images/nameplate.PNG" class="mobile-nameplate" alt="Rihanna Lyu" />
+    </header>
+
+    <nav class="mobile-grid" aria-label="Portfolio sections">
+      <button class="mobile-card mobile-card-wide" type="button" data-opens="nameplateItem">
+        <img src="images/about-notebook.PNG" alt="" /><span>About Me</span>
+      </button>
+      <button class="mobile-card" type="button" data-opens="shelfItem">
+        <img src="images/3dmodel-shelf.PNG" alt="" /><span>3D Models</span>
+      </button>
+      <button class="mobile-card" type="button" data-opens="gametableItem">
+        <img src="images/gametable.PNG" alt="" /><span>Games</span>
+      </button>
+      <button class="mobile-card" type="button" data-opens="artItem">
+        <img src="images/art.PNG" alt="" /><span>Traditional Art</span>
+      </button>
+      <button class="mobile-card" type="button" data-opens="lightingItem">
+        <img src="images/lighting.PNG" alt="" /><span>Lighting Design</span>
+      </button>
+      <button class="mobile-card" type="button" data-opens="flowersItem">
+        <img src="images/flowers.PNG" alt="" /><span>Floral Design</span>
+      </button>
+      <button class="mobile-card" type="button" data-opens="windowItem">
+        <img src="images/window.PNG" alt="" /><span>Digital Art</span>
+      </button>
+    </nav>
+  </main>
 
   <!-- WALL -->
   <div class="wall" id="wall">

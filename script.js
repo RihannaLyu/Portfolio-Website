@@ -369,6 +369,10 @@ seriesOverlay.addEventListener('click', (e) => {
   }
 });
 
+// close button is only visible on mobile (see MOBILE in style.css)
+const seriesClose = document.getElementById('seriesClose');
+if (seriesClose) seriesClose.addEventListener('click', closeSeriesOverlay);
+
 // ── PIECE VIEWER & PRECISION DETAILED MAGNIFIER ───────────
 const pieceViewer      = document.getElementById('pieceViewer');
 const pieceViewerImg   = document.getElementById('pieceViewerImg');
@@ -510,6 +514,16 @@ function closeWindow() {
   windowPage.classList.remove('open');
   document.body.style.overflow = '';
 }
+
+// ── MOBILE HOME ───────────────────────────────────────────
+// Each mobile card clicks the matching (hidden) wall object, so phones reuse
+// exactly the same open/close code — including the TV carousel recentring.
+document.querySelectorAll('.mobile-card[data-opens]').forEach(card => {
+  card.addEventListener('click', () => {
+    const target = document.getElementById(card.dataset.opens);
+    if (target) target.click();
+  });
+});
 
 // ── LIGHTBOX ─────────────────────────────────────────────
 const lightbox      = document.getElementById('lightbox');
