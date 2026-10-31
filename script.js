@@ -55,19 +55,35 @@ const SOCKET = {
   right: { x: 0.44, y: 0.42 },
 };
 
+let lastTouch = 0;
+
 document.addEventListener('mousemove', (e) => {
+  if (Date.now() - lastTouch < 800) return;   // ignore the fake mouse event phones send after a tap
   moveEyeball(eyeLeft,  SOCKET.left,  e.clientX, e.clientY);
   moveEyeball(eyeRight, SOCKET.right, e.clientX, e.clientY);
 });
 
-function moveEyeball(eyeEl, socket, mouseX, mouseY) {
+// On phones there's no cursor — the eyes look toward wherever you touch.
+// The glance is scaled down with the portrait so the eyes stay in their sockets.
+function lookAtTouch(e) {
+  const t = e.touches[0];
+  if (!t || !frame) return;
+  lastTouch = Date.now();
+  const shift = MAX_SHIFT * frame.getBoundingClientRect().width / 600;
+  moveEyeball(eyeLeft,  SOCKET.left,  t.clientX, t.clientY, shift);
+  moveEyeball(eyeRight, SOCKET.right, t.clientX, t.clientY, shift);
+}
+document.addEventListener('touchstart', lookAtTouch, { passive: true });
+document.addEventListener('touchmove',  lookAtTouch, { passive: true });
+
+function moveEyeball(eyeEl, socket, mouseX, mouseY, maxShift = MAX_SHIFT) {
   if (!eyeEl || !frame) return;
   const rect    = frame.getBoundingClientRect();
   const socketX = rect.left + socket.x * rect.width;
   const socketY = rect.top  + socket.y * rect.height;
   const angle   = Math.atan2(mouseY - socketY, mouseX - socketX);
   const rawDist = Math.hypot(mouseX - socketX, mouseY - socketY);
-  const dist    = MAX_SHIFT * Math.min(1, rawDist / 300);
+  const dist    = maxShift * Math.min(1, rawDist / 300);
   const moveX   = Math.cos(angle) * dist;
   const moveY   = Math.sin(angle) * dist * 0.4;
   eyeEl.style.transform = `translate(${moveX.toFixed(2)}px, ${moveY.toFixed(2)}px)`;
@@ -117,27 +133,85 @@ if (document.readyState === 'loading') {
 }
 
 // ── LIGHT SWITCH ──────────────────────────────────────────
-let lightsOn = true;
-const switchImg    = document.getElementById('switchImg');
-const darkOverlay  = document.getElementById('darkOverlay');
-const portraitItem = document.getElementById('portraitItem');
-const switchItem   = document.getElementById('switchItem');
+// Dark mode = body.lights-off (all the night lighting is in ROOM LIGHTING in style.css).
+// The visitor's choice is remembered; the inline script at the top of <body> applies it
+// before the first paint, so a returning visitor never sees the wrong mode flash.
+const LIGHTS_KEY = 'lightsOff';
+const HINT_KEY   = 'switchHintSeen';
+const switchImg  = document.getElementById('switchImg');
+const switchItem = document.getElementById('switchItem');
+const switchTip  = document.getElementById('switchTip');
+let lightsOn = !document.body.classList.contains('lights-off');
+let switchTimer = null;
 
-switchItem.addEventListener('click', toggleLight);
+function storeGet(key)        { try { return localStorage.getItem(key); } catch (e) { return null; } }
+function storeSet(key, value) { try { localStorage.setItem(key, value); } catch (e) {} }
+
+function showSwitchState() {
+  switchImg.src = lightsOn ? 'images/light-on.PNG' : 'images/light-off.PNG';
+  switchItem.setAttribute('aria-pressed', String(!lightsOn));
+  switchTip.textContent = lightsOn ? 'Turn off the lights' : 'Turn on the lights';
+}
+showSwitchState();
+// the saved mode went in without transitions; let them run from the next change on
+requestAnimationFrame(() => requestAnimationFrame(() => document.body.classList.remove('lights-init')));
+
+// first visit on a touch screen: "Tap the switch" until the first tap
+if (storeGet(HINT_KEY) !== '1') document.body.classList.add('show-switch-hint');
+
+switchItem.addEventListener('click', toggleLight);   // a <button>: Enter / Space work too
 
 function toggleLight() {
   lightsOn = !lightsOn;
-  if (lightsOn) {
-    switchImg.src = 'images/light-on.PNG';
-    document.body.classList.remove('lights-off');
-    darkOverlay.classList.remove('on');
-    portraitItem.classList.remove('lights-off');
-  } else {
-    switchImg.src = 'images/light-off.PNG';
-    document.body.classList.add('lights-off');
-    darkOverlay.classList.add('on');
-    portraitItem.classList.add('lights-off');
+  storeSet(LIGHTS_KEY, lightsOn ? '0' : '1');
+  document.body.classList.remove('show-switch-hint');
+  storeSet(HINT_KEY, '1');
+  playSwitchClick();
+
+  // mode + flicker start straight away; the classes are cleared once it has settled
+  const body = document.body;
+  body.classList.remove('lights-flicker-on', 'lights-flicker-off');
+  void body.offsetWidth;                                   // restart the flicker on quick double toggles
+  body.classList.toggle('lights-off', !lightsOn);
+  body.classList.add('lights-switching', lightsOn ? 'lights-flicker-on' : 'lights-flicker-off');
+  if (!lightsOn) {                                         // drop the coloured hover look (it can stick on phones)
+    document.getElementById('lightingImg').src = 'images/lighting.PNG';
+    document.getElementById('lightBurst').classList.remove('active');
   }
+  clearTimeout(switchTimer);
+  switchTimer = setTimeout(() => body.classList.remove('lights-switching', 'lights-flicker-on', 'lights-flicker-off'), 900);
+
+  // the toggle tips over; the up/down image swaps half-way through
+  switchImg.classList.remove('is-flipping');
+  void switchImg.offsetWidth;
+  switchImg.classList.add('is-flipping');
+  setTimeout(showSwitchState, 130);
+}
+switchImg.addEventListener('animationend', () => switchImg.classList.remove('is-flipping'));
+
+// A soft "click", made on the fly (no sound file). It only ever plays in response to a
+// tap or key press; if the browser still won't allow audio it just stays silent.
+let switchAudio = null;
+function playSwitchClick() {
+  try {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    switchAudio = switchAudio || new AC();
+    if (switchAudio.state === 'suspended') switchAudio.resume();
+    const rate = switchAudio.sampleRate;
+    const len  = Math.floor(rate * 0.03);
+    const buf  = switchAudio.createBuffer(1, len, rate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 6);
+    const src  = switchAudio.createBufferSource();
+    const tone = switchAudio.createBiquadFilter();
+    const vol  = switchAudio.createGain();
+    src.buffer = buf;
+    tone.type = 'bandpass'; tone.frequency.value = 2200; tone.Q.value = 1.2;
+    vol.gain.value = 0.25;
+    src.connect(tone).connect(vol).connect(switchAudio.destination);
+    src.start();
+  } catch (e) {}
 }
 
 // ── ABOUT NOTEBOOK ────────────────────────────────────────
@@ -270,6 +344,7 @@ artClose.addEventListener('click', closeArt);
 function openArt() {
   artPage.classList.add('open');
   document.body.style.overflow = 'hidden';
+  layoutPhoneGalleries();
 }
 
 function closeArt() {
@@ -430,6 +505,40 @@ pieceViewerImg.addEventListener('mouseleave', () => {
   pieceViewerMag.style.opacity = '0';
 });
 
+// ── TOUCH MAGNIFIER (phones) ──────────────────────────────
+// Press and drag on the piece: the loupe floats above your fingertip so the
+// finger never hides what's being magnified. Lifting the finger hides it.
+const TOUCH_ZOOM = 2.5;
+const TOUCH_LIFT = 90;   // px the loupe sits above the fingertip
+
+function showTouchMag(e) {
+  const t = e.touches[0];
+  if (!t) return;
+  e.preventDefault();                       // hold the page still while magnifying
+  const rect = pieceViewerImg.getBoundingClientRect();
+  const x = Math.max(0, Math.min(rect.width,  t.clientX - rect.left));
+  const y = Math.max(0, Math.min(rect.height, t.clientY - rect.top));
+  const r = pieceViewerMag.offsetWidth / 2;
+
+  pieceViewerMag.style.visibility = 'visible';
+  pieceViewerMag.style.opacity = '1';
+  pieceViewerMag.style.left = (x - r) + 'px';
+  pieceViewerMag.style.top  = (y - r - TOUCH_LIFT) + 'px';
+  pieceViewerMag.style.backgroundPosition = `${(x / rect.width) * 100}% ${(y / rect.height) * 100}%`;
+  pieceViewerMag.style.backgroundSize = `${rect.width * TOUCH_ZOOM}px ${rect.height * TOUCH_ZOOM}px`;
+}
+
+function hideTouchMag(e) {
+  if (e.cancelable) e.preventDefault();     // stops the fake mouse events that would re-show the desktop loupe
+  pieceViewerMag.style.visibility = 'hidden';
+  pieceViewerMag.style.opacity = '0';
+}
+
+pieceViewerImg.addEventListener('touchstart',  showTouchMag, { passive: false });
+pieceViewerImg.addEventListener('touchmove',   showTouchMag, { passive: false });
+pieceViewerImg.addEventListener('touchend',    hideTouchMag);
+pieceViewerImg.addEventListener('touchcancel', hideTouchMag);
+
 // ── LIGHTING PAGE ─────────────────────────────────────────
 const lightingItem  = document.getElementById('lightingItem');
 const lightingPage  = document.getElementById('lightingPage');
@@ -438,6 +547,7 @@ const lightingImg   = document.getElementById('lightingImg');
 const lightBurst    = document.getElementById('lightBurst');
 
 lightingItem.addEventListener('mouseenter', () => {
+  if (document.body.classList.contains('lights-off')) return;   // at night the track keeps its one warm white
   lightingImg.src = 'images/lighting-color.PNG';
   lightBurst.classList.add('active');
 });
@@ -508,22 +618,13 @@ windowClose.addEventListener('click', closeWindow);
 function openWindow() {
   windowPage.classList.add('open');
   document.body.style.overflow = 'hidden';
+  layoutPhoneGalleries();
 }
 
 function closeWindow() {
   windowPage.classList.remove('open');
   document.body.style.overflow = '';
 }
-
-// ── MOBILE HOME ───────────────────────────────────────────
-// Each mobile card clicks the matching (hidden) wall object, so phones reuse
-// exactly the same open/close code — including the TV carousel recentring.
-document.querySelectorAll('.mobile-card[data-opens]').forEach(card => {
-  card.addEventListener('click', () => {
-    const target = document.getElementById(card.dataset.opens);
-    if (target) target.click();
-  });
-});
 
 // ── LIGHTBOX ─────────────────────────────────────────────
 const lightbox      = document.getElementById('lightbox');
@@ -567,6 +668,46 @@ document.querySelectorAll('.digital-art-card').forEach(card => {
     openPieceViewer(img.src, title);
   });
 });
+
+// ── PHONE GALLERY WRAP ────────────────────────────────────
+// On phones (≤768px) Traditional Art and Digital Art are each one 2-column grid (see
+// style.css): the series / illustrations block sits in the left half, the pieces run one
+// per row beside it, then two per row once it ends. CSS can't know how many rows the left
+// block covers, so measure it and set --wrap-rows; .wrap-fill then stretches the block to
+// the bottom of those rows so nothing is left empty under it.
+const phoneGallery = window.matchMedia('(max-width: 768px)');
+const GALLERY_WRAPS = [
+  { left: document.querySelector('.art-left'),           pieces: '.art-right .digital-section-subtitle, .individual-art-card' },
+  { left: document.querySelector('.digital-column-left'), pieces: '.digital-column-right .digital-section-subtitle, .digital-column-right .digital-art-card' }
+];
+
+function layoutPhoneGalleries() {
+  GALLERY_WRAPS.forEach(({ left, pieces }) => {
+    if (!left) return;
+    left.classList.remove('wrap-fill');
+    if (!phoneGallery.matches) { left.style.removeProperty('--wrap-rows'); return; }
+    const items = [...left.parentElement.querySelectorAll(pieces)];
+    if (!items.length) return;
+    // 1) left block beside every piece: each piece gets its own row, so its bottom is where that row ends
+    left.style.setProperty('--wrap-rows', items.length);
+    const leftBottom = left.getBoundingClientRect().bottom - 1;
+    // 2) it spans rows until a piece reaches its bottom; the pieces after that go two per row
+    let rows = items.findIndex(el => el.getBoundingClientRect().bottom >= leftBottom) + 1;
+    if (rows === 0) rows = items.length;
+    left.style.setProperty('--wrap-rows', rows);
+    left.classList.add('wrap-fill');
+  });
+}
+
+let galleryFrame = 0;
+function queuePhoneGalleries() {
+  cancelAnimationFrame(galleryFrame);
+  galleryFrame = requestAnimationFrame(layoutPhoneGalleries);
+}
+window.addEventListener('resize', queuePhoneGalleries);
+phoneGallery.addEventListener('change', queuePhoneGalleries);
+GALLERY_WRAPS.forEach(({ left }) => left && left.querySelectorAll('img').forEach(img => img.addEventListener('load', queuePhoneGalleries)));
+if (document.fonts) document.fonts.ready.then(queuePhoneGalleries);
 
 
 /* ═══════════════════════════════════════════════════════════

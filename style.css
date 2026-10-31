@@ -20,36 +20,39 @@ html, body {
   transform-origin: center center;
   transform: translate(-50%, -50%) scale(var(--stage-scale, 1));
   overflow: hidden;
-  background-color: #F0EBE1;
+  isolation: isolate;                   /* keeps the ROOM LIGHTING layers between the wall and its objects */
+  /* clean, evenly lit off-white wall (colour, texture, falloff + dark mode: ROOM LIGHTING further down) */
+  background-color: var(--wall-color);
   background-image:
-    linear-gradient(rgba(240,235,225,0.82), rgba(240,235,225,0.82)),
-    url('images/wall-texture.png');
-  background-size: cover, auto;
-  background-repeat: no-repeat, repeat;
-  background-blend-mode: normal, multiply;
+    radial-gradient(ellipse 125% 100% at 50% 0%,
+                    rgba(70,50,25,0) 45%, rgba(70,50,25, var(--wall-light-falloff)) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: 'Playfair Display', Georgia, serif;
-  transition: background-color 1.2s ease;
-}
-body.lights-off #stage {
-  background-color: #1A1208;
-  background-image:
-    linear-gradient(rgba(26,18,8,0.88), rgba(26,18,8,0.88)),
-    url('images/wall-texture.png');
 }
 
-/* ── DARK OVERLAY ── */
+/* ── DARK OVERLAY — the night vignette: one smooth radial falloff from the portrait out to the
+   corners. It lies on the wall, under the objects, so it never dims their labels (see ROOM LIGHTING) ── */
 .dark-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(10, 6, 2, 0);
+  background: radial-gradient(ellipse 75% 72% at 50% 42%,
+              rgba(0,0,0,0) 0%,
+              rgba(0,0,0,0) 36%,
+              rgba(0,0,0, calc(var(--night-vignette) * .06)) 46%,
+              rgba(0,0,0, calc(var(--night-vignette) * .16)) 56%,
+              rgba(0,0,0, calc(var(--night-vignette) * .31)) 66%,
+              rgba(0,0,0, calc(var(--night-vignette) * .49)) 76%,
+              rgba(0,0,0, calc(var(--night-vignette) * .68)) 85%,
+              rgba(0,0,0, calc(var(--night-vignette) * .85)) 93%,
+              rgba(0,0,0, var(--night-vignette)) 100%);
+  opacity: 0;
   pointer-events: none;
-  transition: background 1.2s ease;
-  z-index: 100;
+  transition: opacity 0.8s ease;
+  z-index: -1;
 }
-.dark-overlay.on { background: rgba(10, 6, 2, 0.45); }
+body.lights-off .dark-overlay { opacity: 1; }
 
 /* ── WALL LAYOUT ── */
 /* Update these sections in your style.css */
@@ -75,22 +78,23 @@ body.lights-off #stage {
   filter: drop-shadow(0 0 0px rgba(255,180,60,0));
   transition: filter 1.2s ease;
 }
-.portrait-item.lights-off .portrait-frame {
-  filter: brightness(0.95)
-          drop-shadow(0 0 35px rgba(255,180,80,0.5))
-          drop-shadow(0 0 70px rgba(255,140,40,0.25));
-}
 
-/* ── FRAME ── */
-.portrait-frame { width: 600px; background: transparent; }
+/* ── FRAME ── (a light, natural shadow on the wall) */
+.portrait-frame { width: 600px; background: transparent; filter: drop-shadow(3px 7px 16px rgba(70,50,25,0.2)); }
 
 /* ── FRAME INNER ── */
 .frame-inner {
+  --fw: 600px;
   position: relative;
   width: 100%;
   padding-top: 114.7%;
   overflow: hidden;
   background: transparent;
+  /* PORTRAIT + NAMEPLATE SHADOWS: the artwork has a hard dark shadow painted along its right and
+     bottom edges. Masking the frame with its own outline, nudged up-left by that shadow's offset,
+     trims the band away; the soft drop-shadow on .portrait-frame takes its place. */
+  -webkit-mask: url('images/avatar-body.PNG') calc(var(--fw) * -0.0103) calc(var(--fw) * -0.0117) / 100% 100% no-repeat;
+          mask: url('images/avatar-body.PNG') calc(var(--fw) * -0.0103) calc(var(--fw) * -0.0117) / 100% 100% no-repeat;
 }
 
 /* ── ALL AVATAR LAYERS ── */
@@ -115,16 +119,35 @@ body.lights-off #stage {
 .nameplate-item:hover { transform: scale(1.06); }
 .nameplate-item:active { transform: scale(0.98); }
 .nameplate-img {
+  --np-w: 500px;
   width: 500px;
   height: auto;
   display: block;
   filter: drop-shadow(2px 3px 8px rgba(0,0,0,0.2));
   transition: filter 0.3s ease;
+  /* trims the hard shadow painted under the plate (see PORTRAIT + NAMEPLATE SHADOWS above) */
+  -webkit-mask: url('images/nameplate.PNG') 0 calc(var(--np-w) * -0.0366) / 100% 100% no-repeat;
+          mask: url('images/nameplate.PNG') 0 calc(var(--np-w) * -0.0366) / 100% 100% no-repeat;
 }
+/* …and a soft, light shadow just under the plate instead */
+.nameplate-item::before {
+  content: '';
+  position: absolute;
+  left: 8%;
+  width: 84%;
+  top: 53%;
+  height: 11%;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(70,50,25,0.24), rgba(70,50,25,0.12) 55%, rgba(70,50,25,0));
+  pointer-events: none;
+  opacity: 0.85;
+  transition: opacity 0.3s ease;
+}
+.nameplate-item:hover::before { opacity: 1; }
 .nameplate-item:hover .nameplate-img { filter: drop-shadow(2px 5px 14px rgba(0,0,0,0.3)); }
-body.lights-off .nameplate-item { filter: brightness(1.1); }
 
-/* ── LIGHT SWITCH ── */
+/* ── LIGHT SWITCH (a real <button>; toggles dark mode) ── */
 .switch-item {
   position: absolute;
   left: 30%;
@@ -133,9 +156,21 @@ body.lights-off .nameplate-item { filter: brightness(1.1); }
   width: 70px;
   transition: transform 0.25s cubic-bezier(.34,1.56,.64,1);
   z-index: 50;
+  /* button reset, so it looks exactly like the old <div> */
+  -webkit-appearance: none;
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  -webkit-tap-highlight-color: transparent;
 }
-.switch-item:hover { transform: scale(1.12); }
+.switch-item:hover { transform: scale(1.12) translateY(-3px); }
 .switch-item:active { transform: scale(0.96); }
+.switch-item:focus { outline: none; }
 .switch-img {
   width: 55px;
   height: auto;
@@ -143,8 +178,89 @@ body.lights-off .nameplate-item { filter: brightness(1.1); }
   filter: drop-shadow(2px 3px 6px rgba(0,0,0,0.3));
   transition: filter 0.3s ease;
 }
-.switch-item:hover .switch-img { filter: drop-shadow(2px 4px 10px rgba(0,0,0,0.4)); }
-body.lights-off .switch-img { filter: drop-shadow(0 0 8px rgba(255,200,80,0.6)); }
+.switch-item:hover .switch-img { filter: drop-shadow(2px 4px 10px rgba(0,0,0,0.4)) brightness(1.06); }
+
+/* pulsing ring around the plate (::after) + keyboard focus ring (::before); both hug the 55px plate */
+.switch-item::before,
+.switch-item::after {
+  content: '';
+  position: absolute;
+  left: -5px;
+  top: -5px;
+  width: calc(55px + 10px);
+  height: calc(100% + 10px);
+  border-radius: 9px;
+  pointer-events: none;
+}
+.switch-item::after {
+  box-shadow: 0 0 0 2px var(--switch-ring), 0 0 14px 4px var(--switch-ring-glow);
+  animation: switchPulse 2.6s ease-in-out infinite;
+}
+.switch-item::before { opacity: 0; transition: opacity 0.15s ease; }
+.switch-item:focus-visible::before {
+  opacity: 1;
+  box-shadow: 0 0 0 3px #3D2810, 0 0 0 6px #F3D27A;   /* dark + gold: visible on the cream wall and at night */
+}
+@keyframes switchPulse {
+  0%, 100% { opacity: 0.35; transform: scale(1); }
+  50%      { opacity: 1;    transform: scale(1.07); }
+}
+
+/* flip: the toggle tips over as it changes (script.js swaps the image half-way) */
+.switch-img.is-flipping { animation: switchFlip 0.26s ease-in-out; }
+@keyframes switchFlip {
+  0%, 100% { transform: perspective(240px) rotateX(0deg); }
+  50%      { transform: perspective(240px) rotateX(58deg) scaleY(0.9); }
+}
+
+/* tooltip (desktop hover / keyboard focus) */
+.switch-tip,
+.switch-hint {
+  position: absolute;
+  left: 27.5px;                         /* centre of the 55px plate */
+  bottom: calc(100% + 14px);
+  transform: translateX(-50%);
+  background: rgba(26, 18, 8, 0.88);
+  color: #E8D5A0;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 14px;
+  font-style: italic;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+  padding: 7px 14px;
+  border: 1px solid rgba(184,160,112,0.45);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.switch-item:focus-visible .switch-tip { opacity: 1; }
+@media (hover: hover) {
+  .switch-item:hover .switch-tip { opacity: 1; }
+}
+
+/* first-visit hint on touch screens: "Tap the switch", with a little arrow; hidden after the first tap */
+.switch-hint { display: none; }
+.switch-hint::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  margin-left: -6px;
+  border: 6px solid transparent;
+  border-top-color: rgba(26, 18, 8, 0.88);
+}
+@media (hover: none) {
+  body.show-switch-hint .switch-hint {
+    display: block;
+    opacity: 1;
+    animation: hintBob 1.6s ease-in-out infinite;
+  }
+}
+@keyframes hintBob {
+  0%, 100% { margin-bottom: 0; }
+  50%      { margin-bottom: 5px; }
+}
 
 /* ── 3D MODEL SHELF ── */
 .shelf-item {
@@ -166,9 +282,9 @@ body.lights-off .switch-img { filter: drop-shadow(0 0 8px rgba(255,200,80,0.6));
   transition: filter 0.3s ease;
 }
 .shelf-item:hover .shelf-img { filter: drop-shadow(2px 6px 16px rgba(0,0,0,0.35)); }
-body.lights-off .shelf-item { filter: brightness(1.1); }
 
 .gametable-item {
+  --iw: 510px; --ar: 0.952; --x0: 0; --y0: 0;   /* image size, used to place the NIGHT GLOWS */
   position: absolute;
   bottom: 0%;
   left: 0%;
@@ -187,7 +303,6 @@ body.lights-off .shelf-item { filter: brightness(1.1); }
   transition: filter 0.3s ease;
 }
 .gametable-item:hover .gametable-img { filter: drop-shadow(2px 6px 16px rgba(0,0,0,0.35)); }
-body.lights-off .gametable-item { filter: brightness(1.1); }
 /* ── ART EASEL ── */
 .art-item {
   position: absolute;
@@ -208,10 +323,10 @@ body.lights-off .gametable-item { filter: brightness(1.1); }
   transition: filter 0.3s ease;
 }
 .art-item:hover .art-img { filter: drop-shadow(2px 6px 16px rgba(0,0,0,0.35)); }
-body.lights-off .art-item { filter: brightness(1.1); }
 
 /* ── LIGHTING DESIGN ── */
 .lighting-item {
+  --iw: 680px; --ar: 0.204; --x0: 0; --y0: 0;   /* image size, used to place the NIGHT GLOWS */
   position: absolute;
   top: 5%;
   left: -3%;
@@ -236,7 +351,6 @@ body.lights-off .art-item { filter: brightness(1.1); }
     drop-shadow(0 0 80px rgba(0,200,80,0.5))
     drop-shadow(0 0 100px rgba(220,0,80,0.5));
 }
-body.lights-off .lighting-item { filter: brightness(1.1); }
 
 /* Full page color burst overlay */
 .light-burst {
@@ -274,7 +388,6 @@ body.lights-off .lighting-item { filter: brightness(1.1); }
   transition: filter 0.3s ease;
 }
 .flowers-item:hover .flowers-img { filter: drop-shadow(2px 6px 16px rgba(0,0,0,0.35)); }
-body.lights-off .flowers-item { filter: brightness(1.1); }
 
 /* ── WINDOW (Digital Art) ── */
 .window-item {
@@ -296,7 +409,6 @@ body.lights-off .flowers-item { filter: brightness(1.1); }
   transition: filter 0.3s ease;
 }
 .window-item:hover .window-img { filter: drop-shadow(2px 6px 16px rgba(0,0,0,0.35)); }
-body.lights-off .window-item { filter: brightness(1.1); }
 
 /* ── HOVER LABELS ── */
 .hover-label {
@@ -1700,101 +1812,387 @@ body.lights-off .window-item { filter: brightness(1.1); }
 
 
 /* ═══════════════════════════════════════════════════════════
-   ===== MOBILE =====
-   Phones / small tablets (768px and narrower). The scaled #stage wall is
-   replaced by a scrolling menu (.mobile-home), and every page overlay is
-   re-flowed into a single column. Nothing above this banner was changed,
-   and nothing in here applies on screens wider than 768px.
+   ROOM LIGHTING — wall texture + dark mode ("lights off")
+   Dark mode has exactly two lights: the track spotlights (lit lenses + beams) and the warm
+   spotlight on the wall behind the portrait. Everything else sits in soft, even ambient light.
+   Layers inside #stage, back to front, all behind the wall objects:
+     #stage background   the clean off-white wall
+     .wall-texture       fine grain + very soft plaster variation (soft-light)
+     .night-tint         the warm lamp colour, multiplied onto the wall
+     .night-shade        the dark room: an even charcoal overlay with one smooth hole for the
+                         portrait spotlight, so the lit, textured wall shows only there
+     .night-beams        the four spotlight cones (screen)
+     .dark-overlay       optional vignette (off by default)
+   Objects are dimmed with brightness() / saturate() only.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── ADJUST HERE ── */
+:root {
+  /* LIGHT MODE WALL */
+  --wall-color:            #F2EDE4;   /* the wall's base colour */
+  --wall-texture-strength: 1;         /* 0 = flat colour, 1 = fine grain + soft plaster (2 = coarser look) */
+  --wall-light-falloff:    0;         /* darker edges/corners (0 = evenly lit, 0.1 = slight) */
+
+  /* DARK MODE — ambient light */
+  --night-wall-color:        #1A1612; /* the unlit wall: a smooth, even charcoal */
+  --night-object-brightness: 0.65;    /* every object in the room (1 = as in light mode) */
+  --night-object-saturation: 0.85;
+  --night-vignette:          0;       /* darker corners (0 = none, 0.4 = noticeable) */
+
+  /* DARK MODE — the two lights */
+  --light-rgb:           255, 217, 160;   /* #FFD9A0 (about 2900K): lamp lenses, beams, portrait spotlight */
+  --night-beam-strength: 1;               /* spotlight cones (0 = none) */
+  --key-size:            1;               /* size of the portrait spotlight */
+
+  /* DARK MODE — glowing labels */
+  --label-glow: 1;                        /* 0 = no glow, 1 = soft, 1.5 = brighter */
+
+  /* LIGHT SWITCH RING (light mode only) */
+  --switch-ring:      rgba(176, 128, 48, 0.75);
+  --switch-ring-glow: rgba(255, 196, 100, 0.45);
+
+  /* the portrait spotlight's falloff (alpha = darkness; many stops = no banding) */
+  --pool-stops-key: rgba(0,0,0,0) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,.06) 50%, rgba(0,0,0,.16) 58%, rgba(0,0,0,.30) 66%,
+                    rgba(0,0,0,.46) 74%, rgba(0,0,0,.63) 82%, rgba(0,0,0,.79) 89%, rgba(0,0,0,.91) 95%, #000 100%;
+}
+
+/* ── shared layer box ── */
+.wall-texture, .night-tint, .night-shade, .night-beams {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+/* their own compositor layers: fading them in/out never repaints the wall */
+.night-tint, .night-shade, .night-beams, .dark-overlay { will-change: opacity; }
+
+/* ── WALL TEXTURE — fine, even grain with very soft variation ── */
+.wall-texture {
+  background-image:
+    url('images/wall-grain.svg'),
+    url('images/wall-plaster.svg');
+  background-size: 256px 256px, 512px 512px;
+  background-repeat: repeat;
+  background-blend-mode: soft-light, normal;
+  mix-blend-mode: soft-light;
+  opacity: var(--wall-texture-strength);
+}
+
+/* ── LIGHT COLOUR — turns the wall inside the spotlight into warm lamplight ── */
+.night-tint {
+  background: rgb(var(--light-rgb));
+  mix-blend-mode: multiply;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+body.lights-off .night-tint { opacity: 1; }
+
+/* ── THE DARK ROOM — an even charcoal, with one smooth hole for the portrait spotlight ── */
+.night-shade {
+  --pool-key: radial-gradient(ellipse calc(440px * var(--key-size)) calc(500px * var(--key-size)) at 863px 446px, var(--pool-stops-key));
+  background: var(--night-wall-color);
+  -webkit-mask-image: var(--pool-key);
+          mask-image: var(--pool-key);
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+body.lights-off .night-shade { opacity: 1; }
+
+/* ── SPOTLIGHT BEAMS — a soft 28° cone from each lens (--bx/--by), aimed by --ba, running --bl
+   to where it lands: lamps 3 + 4 into the portrait's spotlight, lamps 1 + 2 onto the window ── */
+.night-beams {
+  mix-blend-mode: screen;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+body.lights-off .night-beams { opacity: 1; }
+.beam {
+  position: absolute;
+  left: var(--bx);
+  top: var(--by);
+  width: calc(var(--bl) * 0.6);
+  height: var(--bl);
+  margin-left: calc(var(--bl) * -0.3);
+  transform-origin: 50% 0;
+  transform: rotate(var(--ba));
+  background: conic-gradient(from 166deg at 50% 0%,
+    rgba(var(--light-rgb), 0) 0deg,
+    rgba(var(--light-rgb), calc(.05 * var(--night-beam-strength))) 3deg,
+    rgba(var(--light-rgb), calc(.12 * var(--night-beam-strength))) 6deg,
+    rgba(var(--light-rgb), calc(.19 * var(--night-beam-strength))) 9deg,
+    rgba(var(--light-rgb), calc(.23 * var(--night-beam-strength))) 12deg,
+    rgba(var(--light-rgb), calc(.24 * var(--night-beam-strength))) 14deg,
+    rgba(var(--light-rgb), calc(.23 * var(--night-beam-strength))) 16deg,
+    rgba(var(--light-rgb), calc(.19 * var(--night-beam-strength))) 19deg,
+    rgba(var(--light-rgb), calc(.12 * var(--night-beam-strength))) 22deg,
+    rgba(var(--light-rgb), calc(.05 * var(--night-beam-strength))) 25deg,
+    rgba(var(--light-rgb), 0) 28deg);
+  /* starts at the lens and carries on into its pool, fading only once it is inside the light */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 10%, #000 78%, rgba(0,0,0,.55) 90%, transparent 100%);
+          mask-image: linear-gradient(to bottom, transparent 0%, #000 10%, #000 78%, rgba(0,0,0,.55) 90%, transparent 100%);
+}
+.beam-1 { --bx:  51px; --by: 163px; --bl: 190px; --ba: -13deg; }   /* onto the window */
+.beam-2 { --bx: 175px; --by: 152px; --bl: 200px; --ba: -17deg; }   /* onto the window */
+.beam-3 { --bx: 404px; --by: 159px; --bl: 300px; --ba: -55deg; }   /* into the portrait's spotlight */
+.beam-4 { --bx: 532px; --by: 157px; --bl: 210px; --ba: -50deg; }   /* into the portrait's spotlight */
+
+/* ── LIT LENSES on the track — --gx/--gy = centre, --gw/--gh = size, as fractions of the
+   track image's width (inline in index.html) ── */
+.night-glow {
+  position: absolute;
+  left:   calc(var(--iw) * (var(--gx) - var(--x0) - var(--gw) / 2));
+  top:    calc(var(--iw) * (var(--ar) * (var(--gy) - var(--y0)) - var(--gh) / 2));
+  width:  calc(var(--iw) * var(--gw));
+  height: calc(var(--iw) * var(--gh));
+  border-radius: 50%;
+  background: radial-gradient(closest-side,
+    rgba(var(--gc), var(--ga)) 0%,
+    rgba(var(--gc), calc(var(--ga) * .85)) 22%,
+    rgba(var(--gc), calc(var(--ga) * .5)) 42%,
+    rgba(var(--gc), calc(var(--ga) * .2)) 64%,
+    rgba(var(--gc), calc(var(--ga) * .05)) 84%,
+    rgba(var(--gc), 0) 100%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+body.lights-off .night-glow { opacity: 1; }
+.glow-lamp { --gc: var(--light-rgb); --ga: 1; }
+
+/* ── NIGHT OBJECTS — dimmed by brightness / saturation only.
+   Each night filter starts with the same (now invisible) drop-shadow as its light-mode filter,
+   so the browser can ease smoothly between the two when the lights change. ── */
+.portrait-frame { transition: filter 0.8s ease; }
+body.lights-off .portrait-frame {                                     /* in the spotlight */
+  filter: drop-shadow(3px 7px 16px transparent) brightness(0.9) saturate(0.95);
+}
+body.lights-off .nameplate-item .nameplate-img {                      /* lit only by the spotlight's edge */
+  filter: drop-shadow(2px 3px 8px transparent) brightness(0.74);
+}
+body.lights-off .lighting-item .lighting-img {                        /* the track itself */
+  filter: drop-shadow(2px 4px 10px transparent) brightness(0.6) saturate(0.6);
+}
+body.lights-off .switch-item .switch-img {
+  filter: drop-shadow(2px 3px 6px transparent) brightness(calc(var(--night-object-brightness) + 0.05));
+}
+body.lights-off .switch-item:hover .switch-img {                      /* still easy to find: lifts and brightens */
+  filter: drop-shadow(2px 3px 6px transparent) brightness(calc(var(--night-object-brightness) + 0.25));
+}
+body.lights-off :is(.window-item .window-img, .shelf-item .shelf-img, .flowers-item .flowers-img,
+                    .art-item .art-img, .gametable-item .gametable-img) {
+  filter: drop-shadow(2px 4px 10px transparent) brightness(var(--night-object-brightness)) saturate(var(--night-object-saturation));
+}
+/* hovering an object at night lifts it out of the dark a little */
+body.lights-off :is(.window-item:hover .window-img, .shelf-item:hover .shelf-img, .flowers-item:hover .flowers-img,
+                    .art-item:hover .art-img, .gametable-item:hover .gametable-img) {
+  filter: drop-shadow(2px 6px 16px transparent) brightness(calc(var(--night-object-brightness) + 0.15)) saturate(calc(var(--night-object-saturation) + 0.1));
+}
+/* the switch's ring is a light-mode cue only; at night the tooltip + hover do the job */
+body.lights-off .switch-item::after { display: none; }
+/* the soft shadow under the nameplate belongs to the lit wall */
+body.lights-off .nameplate-item::before { opacity: 0; }
+
+/* ── GLOWING LABELS (dark mode only): backlit-sign glow behind sharp text ── */
+body.lights-off .hover-label {
+  --label-glow-now: var(--label-glow);
+  background: rgba(18, 13, 8, 0.9);
+  color: #FBEBC8;
+  border-color: rgba(var(--light-rgb), 0.45);
+  text-shadow:
+    0 0 1px  rgba(var(--light-rgb), calc(.85 * var(--label-glow-now))),
+    0 0 3px  rgba(var(--light-rgb), calc(.55 * var(--label-glow-now))),
+    0 0 7px  rgba(var(--light-rgb), calc(.32 * var(--label-glow-now))),
+    0 0 12px rgba(var(--light-rgb), calc(.14 * var(--label-glow-now)));
+  transition: opacity 0.2s ease, text-shadow 0.2s ease;
+}
+body.lights-off :is(.lighting-item, .flowers-item, .window-item, .shelf-item, .gametable-item,
+                    .art-item, .nameplate-item):hover .hover-label {
+  --label-glow-now: calc(var(--label-glow) * 1.4);
+}
+/* the track keeps its one warm white at night: no coloured hover burst */
+body.lights-off .light-burst { display: none; }
+
+/* ── SWITCHING ── object filters ease over 0.8s only while the mode changes, so hover speeds stay as they were */
+body.lights-switching :is(.shelf-img, .flowers-img, .art-img, .gametable-img, .lighting-img,
+                          .window-img, .nameplate-img, .switch-img, .portrait-frame) { transition: filter 0.8s ease; will-change: filter; }
+/* lights back on: the room flickers before it settles */
+body.lights-flicker-on :is(.night-tint, .night-shade, .dark-overlay) { animation: roomLightsOn 0.8s linear both; }
+/* lights off: the track lights stutter on */
+body.lights-flicker-off :is(.night-beams, .lighting-item .night-glow) { animation: lampsFlickerOn 0.8s linear both; }
+@keyframes roomLightsOn {
+  0%   { opacity: 1; }    10% { opacity: .35; }   18% { opacity: .9; }   30% { opacity: .15; }
+  42%  { opacity: .7; }   58% { opacity: .05; }   70% { opacity: .25; }  100% { opacity: 0; }
+}
+@keyframes lampsFlickerOn {
+  0%   { opacity: 0; }    12% { opacity: .85; }   20% { opacity: .15; }  32% { opacity: 1; }
+  44%  { opacity: .35; }  58% { opacity: 1; }     100% { opacity: 1; }
+}
+/* a returning visitor's saved mode is applied instantly, without the switch-over animation */
+body.lights-init *, body.lights-init *::before, body.lights-init *::after { transition: none !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .switch-item::after, .switch-img.is-flipping, body.show-switch-hint .switch-hint,
+  body.lights-flicker-on :is(.night-tint, .night-shade, .dark-overlay),
+  body.lights-flicker-off :is(.night-beams, .lighting-item .night-glow) { animation: none !important; }
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   ===== MOBILE WALL =====
+   Phones / small tablets (768px and narrower). The real #wall is shown as a
+   tall portrait slice of the gallery wall: the same objects (same IDs, same
+   JS) re-hung down the screen. Every page overlay is re-flowed into a single
+   column. Nothing above this banner was changed, and nothing in here applies
+   on screens wider than 768px.
    ═══════════════════════════════════════════════════════════ */
 
 /* mobile-only elements stay hidden on desktop */
-.mobile-home,
 .series-close { display: none; }
 
 @media (max-width: 768px) {
 
-  /* ── un-scale the stage: normal page that scrolls ── */
+  /* ── un-scale the stage: one continuous wall that scrolls ── */
   html, body {
     height: auto;
     overflow-x: hidden;
     overflow-y: auto;
-    background: #F0EBE1;
+    background: var(--wall-color);
   }
-  #viewport { position: static; overflow: visible; }
-  #stage {
-    position: static;
-    width: auto;
+  body.lights-off { background: #1A1208; }
+  #viewport { position: static; overflow: visible; background: none; }
+  #stage {                              /* keeps the desktop wall texture + cream gradient */
+    position: relative;                 /* the ROOM LIGHTING layers span the whole wall */
+    top: 0;                             /* cancel the desktop centring offsets (relative would apply them) */
+    left: 0;
+    width: 100%;
     height: auto;
     min-height: 100vh;
     transform: none;
     overflow: visible;
     display: block;
   }
-  .wall,
   .light-burst { display: none; }
 
-  /* ── MOBILE HOME MENU ── */
-  .mobile-home {
+  /* ── THE WALL — everything is placed in vw so it scales with the phone ── */
+  .wall {
     display: block;
-    max-width: 560px;
-    margin: 0 auto;
-    padding: 28px 16px 48px;
-  }
-  .mobile-hero {
-    --portrait-w: min(64vw, 280px);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  .mobile-portrait {
     position: relative;
-    width: var(--portrait-w);
-    aspect-ratio: 1 / 1.147;           /* same box as the desktop .frame-inner */
-    overflow: hidden;
-  }
-  .mobile-nameplate {
-    width: calc(var(--portrait-w) * 0.833);
-    margin-top: calc(var(--portrait-w) * -0.117);
-    margin-bottom: calc(var(--portrait-w) * -0.2);   /* PNG has lots of empty canvas below the plate */
-    height: auto;
-    display: block;
-    filter: drop-shadow(2px 3px 8px rgba(0,0,0,0.2));
-  }
-  .mobile-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-    margin-top: 28px;
-  }
-  .mobile-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
     width: 100%;
-    padding: 14px 10px 16px;
-    border: 1px solid rgba(61, 40, 16, 0.22);
-    border-radius: 12px;
-    background: rgba(255, 252, 245, 0.55);
-    box-shadow: 0 4px 14px rgba(61, 40, 16, 0.10);
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: 17px;
-    font-style: italic;
-    color: #3D2810;
-    cursor: pointer;
+    min-height: 0;
+    height: 218vw;                      /* ◄ total wall length; raise if you hang more below */
+    overflow: hidden;                   /* PNG padding past the edges is clipped → no sideways scroll */
+  }
+
+  /* ── CROPPED PNG MECHANISM ──
+     Most PNGs have big transparent margins. Each item's box is sized to the
+     visible drawing only, and the <img> hangs past it untouchable, so empty
+     canvas never steals a neighbour's tap.
+       --cw        visible drawing width (vw)        ◄ size knob
+       --x0/--x1   drawing's left/right edge, as a fraction of the PNG width
+       --y0/--y1   drawing's top/bottom edge, as a fraction of the PNG height
+       --ar        PNG height / width                                        */
+  .switch-item, .shelf-item, .gametable-item, .art-item,
+  .lighting-item, .flowers-item, .window-item, .nameplate-item {
+    --x0: 0; --x1: 1; --y0: 0; --y1: 1;
+    --iw: calc(var(--cw) / (var(--x1) - var(--x0)));
+    position: absolute;
+    top: auto; right: auto; bottom: auto; left: auto;
+    width: var(--cw);
+    height: calc(var(--iw) * var(--ar) * (var(--y1) - var(--y0)));
+    margin: 0;
     -webkit-tap-highlight-color: transparent;
-    transition: transform 0.15s ease, background 0.15s ease;
   }
-  .mobile-card:active { transform: scale(0.97); background: rgba(255, 248, 232, 0.9); }
-  .mobile-card img {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    object-fit: contain;
-    display: block;
-    filter: drop-shadow(2px 4px 8px rgba(0,0,0,0.2));
+  .switch-img, .shelf-img, .gametable-img, .art-img,
+  .lighting-img, .flowers-img, .window-img, .nameplate-img {
+    position: absolute;
+    width: var(--iw);
+    max-width: none;
+    height: auto;
+    left: calc(var(--iw) * var(--x0) * -1);
+    top:  calc(var(--iw) * var(--ar) * var(--y0) * -1);
+    pointer-events: none;
   }
-  .mobile-card-wide { grid-column: 1 / -1; }
-  .mobile-card-wide img { aspect-ratio: 16 / 9; }
+
+  /* ── PLACEMENT (top/left in vw, measured off the mockup: 1vw = 9.5px of a 950px-wide comp) ── */
+  /* top band: lighting, flower shelf, then window (left) + busts (right) tucked under it */
+  .lighting-item  { --cw: 71vw; --ar: 0.204; --x0: .13; --x1: .88; --y0: .19; --y1: .85;
+                    top: 3vw;   left: 14vw; }
+  .flowers-item   { --cw: 66vw; --ar: 0.485; --x0: .22; --x1: .79; --y0: .08; --y1: .88;
+                    top: 17vw;  left: 0.5vw; z-index: 45; }   /* behind the window + busts */
+  .window-item    { --cw: 43vw; --ar: 0.742; --x1: .97; --y0: .05; --y1: .93;
+                    top: 36vw;  left: 4vw; }
+  .shelf-item     { --cw: 52vw; --ar: 0.491; --x0: .03; --x1: .98; --y0: .06; --y1: .95;
+                    top: 43vw;  left: 48vw; }
+  /* middle: switch sits right of the portrait (portrait + nameplate below) */
+  .switch-item    { --cw: 8vw;  --ar: 1.56;
+                    top: 98.5vw; left: 84.5vw; }
+  /* bottom row: desk + console rack on the left, easel on the right (chair runs off the edge) */
+  .gametable-item { --cw: 60vw; --ar: 0.952; --x1: .96;
+                    top: 154vw; left: 0; }
+  .art-item       { --cw: 45vw; --ar: 0.75; --x0: .19; --x1: .75; --y0: .05;
+                    top: 154vw; left: 63vw; }
+  .art-item .hover-label { right: 8vw; }   /* keep the label on-screen, not centred over the clipped chair */
+
+  /* ── SELF-PORTRAIT: the centerpiece ── */
+  .portrait-item {
+    position: absolute;
+    top: 66vw;
+    left: 18vw;
+    width: 63vw;                        /* ◄ portrait size */
+    margin: 0;
+    z-index: 40;
+  }
+  .portrait-frame { width: 100%; }
+  .nameplate-item {                     /* stays centred in the portrait's column, just under the frame */
+    --cw: 49vw; --ar: 0.75; --x0: .09; --x1: .93; --y0: .35; --y1: .63;
+    position: relative;
+    margin-top: 3vw;
+  }
+
+  /* ── TOUCH: no sticky hover zoom, just a press-in on tap ── */
+  .switch-item:hover, .shelf-item:hover, .gametable-item:hover, .art-item:hover,
+  .lighting-item:hover, .flowers-item:hover, .window-item:hover,
+  .nameplate-item:hover { transform: none; }
+  .switch-item:active, .shelf-item:active, .gametable-item:active, .art-item:active,
+  .lighting-item:active, .flowers-item:active, .window-item:active,
+  .nameplate-item:active { transform: scale(0.96); }
+
+  /* ── LABELS: always shown (no hover on touch), tucked under each object ── */
+  .hover-label {
+    top: auto;
+    bottom: -2.4vw;
+    transform: none;
+    opacity: 0.88;
+    font-size: clamp(10px, 2.9vw, 14px);
+    padding: 3px 10px;
+  }
+
+  /* ── ROOM LIGHTING, re-aimed for the phone wall (positions in vw) ── */
+  .night-shade {
+    --pool-key: radial-gradient(ellipse calc(44vw * var(--key-size)) calc(50vw * var(--key-size)) at 49.5vw 102vw, var(--pool-stops-key));
+  }
+  .beam-1 { --bx: 15.9vw; --by: 14.6vw; --bl: 24vw; --ba: -11deg; }   /* onto the window */
+  .beam-2 { --bx: 33.2vw; --by: 13.1vw; --bl: 25vw; --ba:   8deg; }   /* onto the window */
+  .beam-3 { --bx: 65.2vw; --by: 14.0vw; --bl: 58vw; --ba:   3deg; }   /* down into the portrait's spotlight */
+  .beam-4 { --bx: 83.0vw; --by: 13.9vw; --bl: 58vw; --ba:   9deg; }   /* down into the portrait's spotlight */
+
+  /* soft frame / nameplate shadows, sized for the phone (see PORTRAIT + NAMEPLATE SHADOWS) */
+  .frame-inner { --fw: 63vw; }
+  .nameplate-img { --np-w: var(--iw); }
+  .nameplate-item::before { left: -2%; width: 104%; top: 71%; height: 26%; }
+
+  /* switch: ring/focus ring hug the whole (cropped) plate; tooltip + first-visit hint stay on screen */
+  .switch-item::before, .switch-item::after { left: -4px; top: -4px; width: calc(100% + 8px); height: calc(100% + 8px); border-radius: 7px; }
+  .switch-tip, .switch-hint {
+    left: auto;
+    right: -5vw;                        /* right edge at 97.5vw */
+    transform: none;
+    font-size: 12px;
+    padding: 5px 10px;
+  }
+  .switch-hint::after { left: auto; right: calc(9vw - 6px); margin-left: 0; }   /* arrow over the plate's centre */
 
   /* ── CLOSE BUTTONS: smaller, tucked in the corner, readable over content ── */
   .models-close, .games-close, .lighting-close, .flowers-close,
@@ -1890,22 +2288,81 @@ body.lights-off .window-item { filter: brightness(1.1); }
   .game-launch-frame { width: 100vw; height: calc(100vw * 0.5625); border-left: 0; border-right: 0; border-radius: 0; }
   .viewer-bar { padding: 8px 12px; }
 
-  /* ── TRADITIONAL ART: single column ── */
-  .art-content {
-    grid-template-columns: 1fr;
-    gap: 40px;
-    padding: 70px 16px 60px;
+  /* ── TRADITIONAL ART + DIGITAL ART: magazine wrap.
+     Each section is one 2-column grid (50 / 50, 8px gaps). The series / illustrations block sits in
+     the left half; the pieces run one per row beside it, then two per row once it ends.
+     The wrappers around the pieces use display: contents so every piece is a grid cell, in order.
+     script.js (PHONE GALLERY WRAP) sets how many rows the left block spans (--wrap-rows) and
+     .wrap-fill stretches it to the bottom of them. Every piece is the same size: half the width,
+     in a frame of one shape per section, the whole image shown (contain, no crop).
+     Every piece still opens the full-size piece viewer (see PIECE VIEWER below). ── */
+  .art-content,
+  .window-split-container {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);   /* minmax(0) stops wide images forcing overflow */
+    gap: 8px;
   }
-  .art-page-title { margin-bottom: 0; }
-  .stack-label { font-size: 22px; }
-  .stack-cards { width: 220px; height: 280px; }
-  .stack-card  { width: 200px; height: 260px; }
+  .art-content { padding: 70px 12px 48px; }
+  .art-right, .individual-grid,
+  .digital-column-right, .individual-digital-subgrid, .sub-column { display: contents; }
+  .art-left,
+  .digital-column-left {
+    grid-column: 1;
+    grid-row: auto / span var(--wrap-rows, 1);
+    align-self: start;                                      /* natural height while script.js measures it */
+    min-width: 0;
+  }
+  .art-left { grid-row-start: 2; }                          /* row 1 is the page title */
+  .digital-column-left { grid-row-start: 1; gap: 8px; }
+  .art-left.wrap-fill,
+  .digital-column-left.wrap-fill { align-self: stretch; justify-content: space-between; }
+  .art-page-title { margin-bottom: 12px; }
+  .art-left { gap: 18px; }
+  .digital-section-subtitle,
+  .art-left .digital-section-subtitle {
+    font-size: 17px;
+    line-height: 1.25;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+  }
+
+  /* series piles: sized as a share of the column; tilt + offset scaled so they stay inside it */
+  .series-stack { margin-bottom: 0; width: 100%; }
+  .stack-label { font-size: 15px; line-height: 1.25; margin-bottom: 10px; }
+  .stack-cards { width: 100%; height: auto; aspect-ratio: 100 / 86; }
+  .stack-card {
+    left: 18%;
+    width: 64%;
+    height: auto;
+    aspect-ratio: 320 / 400;
+    transform: rotate(calc(var(--r) * 0.6)) translateX(calc(var(--tx) * 0.45));
+    box-shadow: 3px 6px 16px rgba(0,0,0,0.55);
+  }
   .series-stack:not(.expanded):hover .stack-card {
-    transform: rotate(var(--r)) translateX(var(--tx));
-    box-shadow: 4px 8px 24px rgba(0,0,0,0.55);
+    transform: rotate(calc(var(--r) * 0.6)) translateX(calc(var(--tx) * 0.45));
+    box-shadow: 3px 6px 16px rgba(0,0,0,0.55);
   }
-  .individual-grid { column-count: 1; }
+  .stack-hint { margin-top: 6px; font-size: 13px; line-height: 1.3; }
+
+  /* pieces: equal-size cards; titles fill the card so two cards in a row end level */
+  .individual-art-card,
+  .digital-column-right .digital-art-card { display: flex; flex-direction: column; margin: 0; min-width: 0; }
   .individual-art-card:hover { transform: none; }
+  .individual-img-container { aspect-ratio: 1 / 1; padding: 6px; }       /* traditional pieces: square frame */
+  .individual-img-container img { width: 100%; height: 100%; object-fit: contain; }
+  .digital-column-right .digital-art-card img {                          /* digital pieces: 3:4 frame (most are portrait) */
+    aspect-ratio: 3 / 4;
+    padding: 6px;
+    object-fit: contain;
+  }
+  .individual-card-label,
+  .digital-column-right .digital-card-title {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .individual-card-label { padding: 6px 4px; font-size: 13px; }
 
   /* series overlay: scrolls, one image per row, close button instead of "click anywhere" */
   .series-overlay {
@@ -1926,11 +2383,18 @@ body.lights-off .window-item { filter: brightness(1.1); }
   }
   .fan-card { width: 100%; max-width: 480px; }
 
-  /* ── PIECE VIEWER: fits the screen, no magnifier on touch ── */
+  /* ── PIECE VIEWER: fits the screen; press-and-drag magnifier (see TOUCH MAGNIFIER in script.js) ── */
   .piece-viewer-inner { max-width: 100%; padding: 0 12px; }
   .piece-img-wrap { cursor: default; }
-  .piece-viewer-img { max-width: calc(100vw - 24px); max-height: 78vh; }
-  .piece-viewer-mag { display: none !important; }
+  .piece-viewer-img {
+    max-width: calc(100vw - 24px);
+    max-height: 78vh;
+    touch-action: none;                 /* dragging on the piece magnifies instead of scrolling */
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;        /* no "save image" popup on long-press */
+  }
+  .piece-viewer-mag { width: 140px; height: 140px; }
   .piece-viewer-title { font-size: 18px; text-align: center; }
 
   /* ── LIGHTING DESIGN ── */
@@ -1958,12 +2422,12 @@ body.lights-off .window-item { filter: brightness(1.1); }
   .floral-item:hover { transform: none; }
   .floral-item img { height: auto; padding: 6px; }
 
-  /* ── DIGITAL ART ── */
-  .window-content { padding: 70px 16px 40px; }
-  .window-title { margin-bottom: 30px; }
-  .digital-section-subtitle { font-size: 1.3rem; }
-  .window-split-container { gap: 40px; }
+  /* ── DIGITAL ART: same wrap as TRADITIONAL ART above ── */
+  .window-content { padding: 70px 12px 40px; }
+  .window-title { margin-bottom: 20px; }
+  .digital-art-card { gap: 0; }
   .digital-art-card:hover { transform: none; box-shadow: none; }
+  .digital-card-title { padding: 6px 4px; font-size: 13px; }
 
   /* ── LIGHTBOX (kept consistent, not currently opened by any button) ── */
   .lightbox-inner { max-width: 94vw; }
