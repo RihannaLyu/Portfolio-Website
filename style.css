@@ -1408,6 +1408,98 @@ body.lights-off .dark-overlay { opacity: 1; }
   color: #F5C842;
 }
 
+/* ── 3D MODELS — PHONE VIEWER (shown at 768px and narrower instead of the TVs) ── */
+.mv-viewer {
+  display: none;
+  position: relative; z-index: 3;      /* above the vignette */
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+.mv-stage { position: relative; }
+
+/* 9:16 thumbnail — 80% of the width, or as tall as fits between title and caption */
+.mv-thumb {
+  width: min(80vw, calc((100vh - 190px) * 9 / 16));
+  width: min(80vw, calc((100dvh - 190px) * 9 / 16));
+  aspect-ratio: 9 / 16;
+  position: relative;
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1.5px solid rgba(232,213,160,0.55);
+  background: #000;
+  box-shadow: 0 18px 36px rgba(0,0,0,0.55);
+  cursor: pointer;
+  touch-action: pan-y;                 /* horizontal swipes are ours */
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.mv-thumb.is-leaving-left  { opacity: 0; transform: translateX(-28px); }
+.mv-thumb.is-leaving-right { opacity: 0; transform: translateX(28px); }
+.mv-thumb.is-entering-left  { opacity: 0; transform: translateX(-28px); transition: none; }
+.mv-thumb.is-entering-right { opacity: 0; transform: translateX(28px);  transition: none; }
+
+.mv-video {
+  display: block;
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+.mv-video:fullscreen         { object-fit: contain; }   /* whole video, uncropped */
+.mv-video:-webkit-full-screen { object-fit: contain; }
+
+.mv-play {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 72px; height: 72px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
+}
+.mv-play circle  { fill: rgba(10,8,6,0.55); stroke: #E8D5A0; stroke-width: 3; }
+.mv-play polygon { fill: #E8D5A0; }
+
+/* arrows centred on the thumbnail's left/right edges */
+.mv-arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  width: 44px; height: 44px;
+  margin-top: -22px;
+  border-radius: 50%;
+  border: 2px solid rgba(232,213,160,0.85);
+  background: rgba(10,8,6,0.75);
+  color: #E8D5A0;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 26px; line-height: 1;
+  padding: 0 0 3px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+.mv-arrow-left  { left: -22px; }
+.mv-arrow-right { right: -22px; }
+.mv-arrow:active { transform: scale(0.92); background: rgba(184,160,112,0.25); }
+
+.mv-caption { margin-top: 14px; text-align: center; }
+.mv-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 18px;
+  font-style: italic;
+  letter-spacing: 0.05em;
+  color: #F5C842;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+  transition: opacity 0.15s ease;
+}
+.mv-count {
+  margin-top: 4px;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  color: rgba(232,213,160,0.6);
+  transition: opacity 0.15s ease;
+}
+.mv-viewer.is-switching .mv-title,
+.mv-viewer.is-switching .mv-count { opacity: 0; }
+
 /* ═══════════════════════════════════════════════════════════
    GAMES — SCROLLING PARALLAX SKY
    ═══════════════════════════════════════════════════════════ */
@@ -2050,6 +2142,9 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
 
 /* mobile-only elements stay hidden on desktop */
 .series-close { display: none; }
+.label-phone { display: none; }
+.art-tabs, .art-tabs-backdrop { display: none; }
+.games-tabs { display: none; }
 
 @media (max-width: 768px) {
 
@@ -2075,15 +2170,25 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
   }
   .light-burst { display: none; }
 
-  /* ── THE WALL — everything is placed in vw so it scales with the phone ── */
+  /* ── THE WALL — everything is placed in vw so it scales with the phone ──
+     --safe is the iPhone camera / Dynamic Island / notch area (0 elsewhere). Every top below
+     adds it, so the track lights hang just under the camera and the rest of the wall follows. */
+  :root { --safe: env(safe-area-inset-top, 0px); }
+  :root { --drop: 9vw; }                /* ◄ extra room above the track lights: moves everything from the track lights
+                                           down to the nameplate together (the bottom row stays put) */
+  :root { --top: calc(var(--safe) + var(--drop)); }
   .wall {
     display: block;
     position: relative;
     width: 100%;
     min-height: 0;
-    height: 218vw;                      /* ◄ total wall length; raise if you hang more below */
+    /* ◄ total wall length (raise if you hang more below); never shorter than the screen,
+       so the bottom row always stands on the bottom edge, and never so short that the
+       nameplate reaches the Games / Art row (on short screens the wall scrolls instead) */
+    height: max(calc(var(--top) + 207vw), 100vh);
     overflow: hidden;                   /* PNG padding past the edges is clipped → no sideways scroll */
   }
+  .window-item { display: none; }       /* no window on the phone: Digital Art opens from the easel */
 
   /* ── CROPPED PNG MECHANISM ──
      Most PNGs have big transparent margins. Each item's box is sized to the
@@ -2115,40 +2220,40 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
     pointer-events: none;
   }
 
-  /* ── PLACEMENT (top/left in vw, measured off the mockup: 1vw = 9.5px of a 950px-wide comp) ── */
-  /* top band: lighting, flower shelf, then window (left) + busts (right) tucked under it */
-  .lighting-item  { --cw: 71vw; --ar: 0.204; --x0: .13; --x1: .88; --y0: .19; --y1: .85;
-                    top: 3vw;   left: 14vw; }
-  .flowers-item   { --cw: 66vw; --ar: 0.485; --x0: .22; --x1: .79; --y0: .08; --y1: .88;
-                    top: 17vw;  left: 0.5vw; z-index: 45; }   /* behind the window + busts */
-  .window-item    { --cw: 43vw; --ar: 0.742; --x1: .97; --y0: .05; --y1: .93;
-                    top: 36vw;  left: 4vw; }
-  .shelf-item     { --cw: 52vw; --ar: 0.491; --x0: .03; --x1: .98; --y0: .06; --y1: .95;
-                    top: 43vw;  left: 48vw; }
+  /* ── PLACEMENT (top/left in vw; every top adds --safe) ──
+     top to bottom: track lights (centred, under the camera) → busts (left) → flower shelf (right,
+     its trail hanging over the portrait's top-right corner) → portrait + switch → nameplate →
+     desk + game shelf (left/centre) and easel + chair (right edge). The window isn't hung here. */
+  .lighting-item  { --cw: 71vw; --ar: 0.204; --x0: .127; --x1: .876; --y0: .207; --y1: .844;
+                    top: calc(var(--top) + 1.5vw); left: 15vw; }
+  .shelf-item     { --cw: 50vw; --ar: 0.491; --x0: .025; --x1: .983; --y0: .058; --y1: .947;
+                    top: calc(var(--top) + 16vw); left: 4.3vw; }
+  .flowers-item   { --cw: 68vw; --ar: 0.485; --x0: .221; --x1: .791; --y0: .088; --y1: .876;
+                    top: calc(var(--top) + 39.5vw); left: 26vw; }   /* above the portrait (z 50 > 40) */
   /* middle: switch sits right of the portrait (portrait + nameplate below) */
   .switch-item    { --cw: 8vw;  --ar: 1.56;
-                    top: 98.5vw; left: 84.5vw; }
-  /* bottom row: desk + console rack on the left, easel on the right (chair runs off the edge) */
-  .gametable-item { --cw: 60vw; --ar: 0.952; --x1: .96;
-                    top: 154vw; left: 0; }
-  .art-item       { --cw: 45vw; --ar: 0.75; --x0: .19; --x1: .75; --y0: .05;
-                    top: 154vw; left: 63vw; }
-  .art-item .hover-label { right: 8vw; }   /* keep the label on-screen, not centred over the clipped chair */
+                    top: calc(var(--top) + 100vw); left: 81.5vw; }
+  /* bottom row, standing on the bottom edge: desk + game shelf (one image), then the easel + chair
+     (the chair runs off the right edge, as in the mock-up) */
+  .gametable-item { --cw: 53vw; --ar: 0.952; --x1: .959;
+                    bottom: 0; left: 0; }
+  .art-item       { --cw: 50vw; --ar: 0.75; --x0: .188; --x1: .751; --y0: .053;
+                    bottom: 0; left: 59.5vw; }
 
   /* ── SELF-PORTRAIT: the centerpiece ── */
   .portrait-item {
     position: absolute;
-    top: 66vw;
-    left: 18vw;
-    width: 63vw;                        /* ◄ portrait size */
+    top: calc(var(--top) + 52.6vw);
+    left: 3.2vw;
+    width: 77vw;                        /* ◄ portrait size */
     margin: 0;
     z-index: 40;
   }
   .portrait-frame { width: 100%; }
   .nameplate-item {                     /* stays centred in the portrait's column, just under the frame */
-    --cw: 49vw; --ar: 0.75; --x0: .09; --x1: .93; --y0: .35; --y1: .63;
+    --cw: 41vw; --ar: 0.75; --x0: .09; --x1: .93; --y0: .35; --y1: .63;
     position: relative;
-    margin-top: 3vw;
+    margin-top: 0;
   }
 
   /* ── TOUCH: no sticky hover zoom, just a press-in on tap ── */
@@ -2159,27 +2264,41 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
   .lighting-item:active, .flowers-item:active, .window-item:active,
   .nameplate-item:active { transform: scale(0.96); }
 
-  /* ── LABELS: always shown (no hover on touch), tucked under each object ── */
+  /* ── LABELS: always shown (no hover on touch), straight, and kept on screen ── */
   .hover-label {
     top: auto;
     bottom: -2.4vw;
-    transform: none;
+    transform: none;                    /* never tilted */
     opacity: 0.88;
     font-size: clamp(10px, 2.9vw, 14px);
+    line-height: 1.3;
     padding: 3px 10px;
+    max-width: calc(100vw - 8px);
   }
+  .label-wide { display: none; }        /* the easel reads "Art" on the phone (it opens both art pages) */
+  .label-phone { display: inline; }
+  /* flower shelf: label under the left-hand shelf, clear of the trail and the portrait */
+  .flowers-item .hover-label { bottom: auto; top: 31%; right: 30%; }
+  /* Games + Art: both objects stand on the bottom edge, so the same bottom offset puts the two
+     labels on one shared line. They mirror each other: Games is centred on the game image
+     (0–53vw → 26.5vw from the left edge), Art the same 26.5vw from the right edge (73.5vw). */
+  .gametable-item .hover-label,
+  .art-item .hover-label { top: auto; bottom: 23vw; }   /* ◄ height of the Games + Art label line */
+  .gametable-item .hover-label { left: 0; right: 0; }
+  .art-item .hover-label { left: 0; right: calc(100% - 28vw); }   /* centre = item left (59.5vw) + 14vw */
 
-  /* ── ROOM LIGHTING, re-aimed for the phone wall (positions in vw) ── */
+  /* ── ROOM LIGHTING, re-aimed for the phone wall (positions in vw, + --safe) ──
+     lens centres: track at left 15vw / top --safe + 1.5vw, image 94.8vw wide (see .night-glow) */
   .night-shade {
-    --pool-key: radial-gradient(ellipse calc(44vw * var(--key-size)) calc(50vw * var(--key-size)) at 49.5vw 102vw, var(--pool-stops-key));
+    --pool-key: radial-gradient(ellipse calc(54vw * var(--key-size)) calc(60vw * var(--key-size)) at 41vw calc(var(--top) + 94vw), var(--pool-stops-key));
   }
-  .beam-1 { --bx: 15.9vw; --by: 14.6vw; --bl: 24vw; --ba: -11deg; }   /* onto the window */
-  .beam-2 { --bx: 33.2vw; --by: 13.1vw; --bl: 25vw; --ba:   8deg; }   /* onto the window */
-  .beam-3 { --bx: 65.2vw; --by: 14.0vw; --bl: 58vw; --ba:   3deg; }   /* down into the portrait's spotlight */
-  .beam-4 { --bx: 83.0vw; --by: 13.9vw; --bl: 58vw; --ba:   9deg; }   /* down into the portrait's spotlight */
+  .beam-1 { --bx: 17.2vw; --by: calc(var(--top) + 12.7vw); --bl: 24vw; --ba: -8deg; }   /* onto the busts */
+  .beam-2 { --bx: 34.6vw; --by: calc(var(--top) + 11.2vw); --bl: 25vw; --ba:  8deg; }   /* onto the busts */
+  .beam-3 { --bx: 66.4vw; --by: calc(var(--top) + 12.2vw); --bl: 72vw; --ba: 16deg; }   /* down into the portrait's spotlight */
+  .beam-4 { --bx: 84.3vw; --by: calc(var(--top) + 12vw);   --bl: 76vw; --ba: 26deg; }   /* down into the portrait's spotlight */
 
   /* soft frame / nameplate shadows, sized for the phone (see PORTRAIT + NAMEPLATE SHADOWS) */
-  .frame-inner { --fw: 63vw; }
+  .frame-inner { --fw: 77vw; }
   .nameplate-img { --np-w: var(--iw); }
   .nameplate-item::before { left: -2%; width: 104%; top: 71%; height: 26%; }
 
@@ -2198,7 +2317,7 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
   .models-close, .games-close, .lighting-close, .flowers-close,
   .window-close, .art-close, .series-close, .game-launch-close {
     position: fixed;
-    top: 12px;
+    top: calc(12px + var(--safe));     /* --safe: never under the camera (viewport-fit=cover) */
     right: 12px;
     width: 44px;
     height: 44px;
@@ -2214,6 +2333,126 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
     cursor: pointer;
     z-index: 650;
   }
+  /* with viewport-fit=cover the pages run up under the camera: start their content below it */
+  .games-page, .lighting-page, .flowers-page, .series-overlay, .viewer-overlay {
+    border-top: var(--safe) solid #1A1208;
+  }
+  .models-page { padding-top: calc(18px + var(--safe)); }
+
+  /* ── ART TABS: the easel opens one "Art" page — a fixed tab bar over the Digital Art (left tab)
+     and Traditional Art (right tab) pages, which cross-fade + slide (0.25s) when switched.
+     Each page keeps its own phone layout; only their own titles + close buttons are swapped for
+     the bar. (script.js: ART TABS) ── */
+  :root { --tabs-h: calc(var(--safe) + 112px); }   /* ◄ bar height: 56px title row + 56px tab row */
+  .art-tabs-backdrop {                  /* solid behind the two pages, so the room never shows mid-fade */
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: #1A1208;
+    z-index: 299;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.4s ease, visibility 0s linear 0.4s;
+  }
+  .art-tabs {
+    display: block;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: var(--tabs-h);
+    padding-top: var(--safe);
+    z-index: 350;                       /* over both pages, under the series overlay + piece viewer */
+    background: rgba(26, 18, 8, 0.97);
+    border-bottom: 1px solid rgba(184, 160, 112, 0.25);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0s linear 0.4s;
+  }
+  body.art-tabs-open .art-tabs,
+  body.art-tabs-open .art-tabs-backdrop { opacity: 1; visibility: visible; transition: opacity 0.4s ease, visibility 0s; }
+  .art-tabs-head {
+    position: relative;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .art-tabs-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 26px;
+    font-style: italic;
+    font-weight: 400;
+    color: #E8D5A0;
+  }
+  .art-tabs-close {
+    position: absolute;
+    top: 6px;
+    right: 12px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px solid rgba(184,160,112,0.6);
+    background: rgba(26,18,8,0.85);
+    color: #E8D5A0;
+    font-size: 18px;
+    font-family: 'Playfair Display', Georgia, serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .art-tabs-row {
+    display: flex;
+    gap: 8px;
+    padding: 0 12px 10px;
+  }
+  .art-tab {
+    flex: 1 1 0;                        /* two equal halves */
+    min-width: 0;
+    height: 46px;
+    border: 1px solid rgba(184, 160, 112, 0.45);
+    border-radius: 4px;
+    background: transparent;
+    color: rgba(232, 213, 160, 0.55);
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 16px;
+    font-style: italic;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+  }
+  .art-tab.active {                     /* filled gold */
+    background: linear-gradient(#EBD9A6, #C9AD6E);
+    border-color: #E8D5A0;
+    color: #1A1208;
+    font-weight: 600;
+  }
+  .art-tab:focus { outline: none; }
+  .art-tab:focus-visible { box-shadow: 0 0 0 2px #1A1208, 0 0 0 4px #F3D27A; }
+
+  /* inside the Art page: the bar is the header, the pages scroll beneath it */
+  body.art-tabs-open .art-close,
+  body.art-tabs-open .window-close,
+  body.art-tabs-open .art-page-title,
+  body.art-tabs-open .window-title { display: none; }
+  body.art-tabs-open .art-left { grid-row-start: 1; }   /* no title row */
+  body.art-tabs-open .art-content,
+  body.art-tabs-open .window-content { padding-top: calc(var(--tabs-h) + 14px); }
+  body.art-tabs-open .window-page { z-index: 300; background: #1A1208; }
+  body.art-tabs-open .art-page,
+  body.art-tabs-open .window-page {
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0s linear 0.25s;
+  }
+  body.art-tabs-open .art-page.open,
+  body.art-tabs-open .window-page.open {
+    transform: none;
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0s;
+  }
+  body.art-tabs-open .window-page:not(.open) { transform: translateX(-24px); }   /* Digital Art is the left tab */
+  body.art-tabs-open .art-page:not(.open)    { transform: translateX(24px); }    /* Traditional Art the right */
 
   /* ── ABOUT NOTEBOOK ── */
   .notebook-wrap {
@@ -2239,49 +2478,67 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
     padding-right: 56px;
   }
 
-  /* ── 3D MODELS (carousel keeps working, TVs sized to the phone) ── */
-  .models-page { padding-top: 18px; }
-  .models-page .models-title { margin-bottom: 0; }
-  .tv-carousel { --tv-w: 88vw; margin: auto 0; }
-  .tv-track { gap: 12px; padding: 12px 0 56px; }   /* room for the title under each TV */
-  .tv-play-btn { width: 56px; height: 56px; }
-  .tv-arrows { width: 100%; padding: 0 4px; }
-  .tv-arrow { width: 40px; height: 40px; font-size: 24px; }
-  .tv-title-label { bottom: -40px; font-size: 16px; }
+  /* ── 3D MODELS: no TVs — one vertical thumbnail (see 3D MODELS — PHONE VIEWER) ── */
+  .models-page {
+    height: 100vh;
+    height: 100dvh;
+    justify-content: center;            /* title + thumbnail + caption centred as one group */
+    padding: 18px 0;
+  }
+  .models-page .models-title { margin-bottom: 16px; }
+  .tv-carousel { display: none; }
+  .mv-viewer { display: flex; }
 
-  /* ── GAMES: titles + islands stacked, sky stays behind as a fixed backdrop ── */
-  .games-page { overflow-y: auto; }
-  .games-header,
-  .games-sky-stage { display: contents; }
-  .games-sky-stage::after { display: none; }
-  .games-sky-layer { position: fixed; }
-  .games-col-title {
+  /* ── GAMES: a "Games" bar with two tabs, like the Art page — Interactive Builds (left) and
+     Video Games (right). The sky fills the rest of the screen and the active tab's islands are
+     scattered over it, small enough that they all fit without scrolling. (script.js: GAMES TABS) ── */
+  .games-page { height: 100vh; height: 100dvh; overflow: hidden; }
+  .games-header { display: none; }      /* the tab bar replaces the two desktop titles */
+  .games-tabs {
+    display: block;
+    flex: 0 0 auto;
     position: relative;
     z-index: 6;
-    flex: 0 0 auto;
-    font-size: 26px;
-    padding: 18px 56px 14px;
-    background: rgba(26, 18, 8, 0.82);
+    background: rgba(26, 18, 8, 0.97);
     border-bottom: 1px solid rgba(184, 160, 112, 0.25);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
   }
-  .games-header .games-col-title:nth-child(1) { order: 1; }
-  .island-zone-left                           { order: 2; }
-  .games-header .games-col-title:nth-child(2) { order: 3; }
-  .island-zone-right                          { order: 4; }
+  .games-sky-stage::after { display: none; }   /* no centre divider: one category at a time */
   .island-zone {
-    position: relative;
-    top: auto; bottom: auto; left: auto; right: auto;
+    left: 0; right: 0;
     width: 100%;
-    flex: 0 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 28px;
-    padding: 28px 16px 40px;
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0s;
   }
-  .city-island { position: relative; top: auto; left: auto; }
-  .city-island-img { width: min(70vw, 300px); }
-  .city-island-tag { white-space: normal; text-align: center; }
+  /* only one category at a time: anything but "videos" shows Interactive Builds */
+  .games-page:not([data-tab="videos"]) .island-zone-right,
+  .games-page[data-tab="videos"] .island-zone-left {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0s linear 0.25s;
+  }
+  .games-page:not([data-tab="videos"]) .island-zone-right { transform: translateX(24px); }
+  .games-page[data-tab="videos"] .island-zone-left        { transform: translateX(-24px); }
+  .games-page:not([data-tab="videos"]) .island-zone-right .city-island,
+  .games-page[data-tab="videos"] .island-zone-left .city-island { pointer-events: none; }
+
+  /* scatter: --m-top is a % of the sky's height, --m-left a % of the screen width,
+     --m-w the island's width ◄ move / resize islands here */
+  .city-island { top: var(--m-top); left: var(--m-left); }
+  .city-island-img { width: var(--m-w); filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.3)); }
+  .city-island-inner { gap: 4px; }
+  #debateIsland { --m-top: 3%;  --m-left: 4%;  --m-w: 44vw; }   /* Interactive Builds */
+  #lbjIsland    { --m-top: 33%; --m-left: 50%; --m-w: 44vw; }
+  #nianIsland   { --m-top: 63%; --m-left: 6%;  --m-w: 44vw; }
+  #cityIsland   { --m-top: 6%;  --m-left: 4%;  --m-w: 50vw; }   /* Video Games */
+  #kungfuIsland { --m-top: 46%; --m-left: 42%; --m-w: 50vw; }
+  .city-island-tag {
+    max-width: 46vw;
+    white-space: normal;
+    text-align: center;
+    font-size: 13px;
+    line-height: 1.3;
+    padding: 4px 12px;
+  }
   .city-island:hover .city-island-inner { transform: none; }
 
   /* games + PDF viewers */

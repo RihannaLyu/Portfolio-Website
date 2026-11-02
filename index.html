@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Rihanna Lyu — Portfolio</title>
-  <link rel="stylesheet" href="style.css" />
+  <!-- ?v= : bump the date after each update so phones fetch the new style.css + script.js together -->
+  <link rel="stylesheet" href="style.css?v=2026-11-01" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
 </head>
 <body>
@@ -47,11 +48,42 @@
         <button class="tv-arrow tv-arrow-right" id="tvArrowRight" aria-label="Next model">&#8250;</button>
       </div>
     </div>
+
+    <!-- phone viewer (768px and narrower): one vertical thumbnail instead of the TVs -->
+    <div class="mv-viewer" id="mvViewer">
+      <div class="mv-stage">
+        <button class="mv-arrow mv-arrow-left"  id="mvPrev" aria-label="Previous model">&#8249;</button>
+        <div class="mv-thumb" id="mvThumb" role="button" tabindex="0">
+          <video class="mv-video" id="mvVideo" playsinline></video>
+          <svg class="mv-play" viewBox="0 0 100 100" aria-hidden="true">
+            <circle cx="50" cy="50" r="47"></circle>
+            <polygon points="41,31 41,69 72,50"></polygon>
+          </svg>
+        </div>
+        <button class="mv-arrow mv-arrow-right" id="mvNext" aria-label="Next model">&#8250;</button>
+      </div>
+      <div class="mv-caption">
+        <div class="mv-title" id="mvTitle"></div>
+        <div class="mv-count" id="mvCount"></div>
+      </div>
+    </div>
   </div>
 
   <!-- GAMES PAGE -->
-  <div class="games-page" id="gamesPage">
+  <div class="games-page" id="gamesPage" data-tab="builds">
     <button class="games-close" id="gamesClose">✕</button>
+
+    <!-- GAMES TABS (phones only, 768px and narrower): same bar as the Art page; each tab shows
+         one category's islands (see GAMES TABS in style.css / script.js) -->
+    <div class="games-tabs" id="gamesTabs">
+      <div class="art-tabs-head">
+        <h1 class="art-tabs-title">Games</h1>
+      </div>
+      <div class="art-tabs-row" role="tablist" aria-label="Games">
+        <button type="button" class="art-tab games-tab active" role="tab" data-tab="builds" aria-selected="true">Interactive Builds</button>
+        <button type="button" class="art-tab games-tab" role="tab" data-tab="videos" aria-selected="false" tabindex="-1">Video Games</button>
+      </div>
+    </div>
 
     <!-- two category titles across the top -->
     <div class="games-header">
@@ -262,16 +294,16 @@
       
       <div class="floral-gallery-stack">
         <div class="floral-item">
-          <img src="images/floraldesign/floral1.jpg" alt="Floral Design 1" />
+          <img loading="lazy" decoding="async" width="1440" height="1080" src="images/floraldesign/floral1.jpg" alt="Floral Design 1" />
         </div>
         <div class="floral-item">
-          <img src="images/floraldesign/floral2.jpg" alt="Floral Design 2" />
+          <img loading="lazy" decoding="async" width="1440" height="1080" src="images/floraldesign/floral2.jpg" alt="Floral Design 2" />
         </div>
         <div class="floral-item">
-          <img src="images/floraldesign/floral3.jpg" alt="Floral Design 3" />
+          <img loading="lazy" decoding="async" width="1440" height="1080" src="images/floraldesign/floral3.jpg" alt="Floral Design 3" />
         </div>
         <div class="floral-item">
-          <img src="images/floraldesign/floral4.jpg" alt="Floral Design 4" />
+          <img loading="lazy" decoding="async" width="2049" height="1537" src="images/floraldesign/floral4.jpg" alt="Floral Design 4" />
         </div>
       </div>
 
@@ -290,37 +322,47 @@
           <h2 class="digital-section-subtitle">Illustrations for <i>The Daily Texan</i></h2>
           
           <div class="digital-art-card">
-            <img src="images/TheDailyTexanIllustrations/everythingstillsucks.jpg" alt="Daily Texan Illustration 1" />
+            <img loading="lazy" decoding="async" width="728" height="408" src="images/TheDailyTexanIllustrations/everythingstillsucks.jpg" alt="Daily Texan Illustration 1" />
             <div class="digital-card-title">Everything Still Sucks!</div>
           </div>
 
           <div class="digital-art-card">
-            <img src="images/TheDailyTexanIllustrations/doseofperfection.jpg" alt="Daily Texan Illustration 2" />
+            <img loading="lazy" decoding="async" width="1600" height="1200" src="images/TheDailyTexanIllustrations/doseofperfection.jpg" alt="Daily Texan Illustration 2" />
             <div class="digital-card-title">Dose of Perfection</div>
           </div>
 
           <div class="digital-art-card">
-            <img src="images/TheDailyTexanIllustrations/thepillofsuccess.png" alt="Daily Texan Illustration 2" />
+            <img loading="lazy" decoding="async" width="1300" height="866" src="images/TheDailyTexanIllustrations/thepillofsuccess.png" alt="Daily Texan Illustration 2" />
             <div class="digital-card-title">The Pill of Success</div>
           </div>
 
             <div class="digital-art-card">
-            <img src="images/TheDailyTexanIllustrations/lowkeydramatic.jpg" alt="Daily Texan Illustration 2" />
+            <img loading="lazy" decoding="async" width="2722" height="2048" src="images/TheDailyTexanIllustrations/lowkeydramatic.jpg" alt="Daily Texan Illustration 2" />
             <div class="digital-card-title">Lowkey Dramatic</div>
           </div>
 
             <div class="digital-art-card">
-            <img src="images/TheDailyTexanIllustrations/distancemaxxing.jpg" alt="Daily Texan Illustration 2" />
+            <img loading="lazy" decoding="async" width="1440" height="1080" src="images/TheDailyTexanIllustrations/distancemaxxing.jpg" alt="Daily Texan Illustration 2" />
             <div class="digital-card-title">Distancemaxxing</div>
           </div>
 
+          <div class="digital-art-card">
+            <img loading="lazy" decoding="async" width="1667" height="1214" src="images/TheDailyTexanIllustrations/sealed.jpg" alt="Sealed — illustration for The Daily Texan" />
+            <div class="digital-card-title">Sealed</div>
+          </div>
+
+          <div class="digital-art-card">
+            <img loading="lazy" decoding="async" width="1214" height="858" src="images/TheDailyTexanIllustrations/AI.jpg" alt="AI — illustration for The Daily Texan" />
+            <div class="digital-card-title">AI</div>
+          </div>
+
             <div class="digital-art-card">
-            <img src="images/TheDailyTexanIllustrations/exhale.jpg" alt="Daily Texan Illustration 2" />
+            <img loading="lazy" decoding="async" width="1054" height="813" src="images/TheDailyTexanIllustrations/exhale.jpg" alt="Daily Texan Illustration 2" />
             <div class="digital-card-title">Real Air</div>
           </div>
 
           <div class="digital-art-card">
-            <img src="images/TheDailyTexanIllustrations/stateofmind.jpg" alt="Daily Texan Illustration 2" />
+            <img loading="lazy" decoding="async" width="2732" height="2048" src="images/TheDailyTexanIllustrations/stateofmind.jpg" alt="Daily Texan Illustration 2" />
             <div class="digital-card-title">State of Mind</div>
           </div>
         </div>
@@ -332,27 +374,31 @@
 
             <div class="sub-column">
               <div class="digital-art-card">
-                <img src="images/DigitalIndividuals/seeyousooncowboy.jpg" alt="See You Soon Cowboy!" />
+                <img loading="lazy" decoding="async" width="1994" height="2415" src="images/DigitalIndividuals/seeyousooncowboy.jpg" alt="See You Soon Cowboy!" />
                 <div class="digital-card-title">See You Soon Cowboy!</div>
               </div>
               <div class="digital-art-card">
-                <img src="images/DigitalIndividuals/uiforchef.jpg" alt="UI for Shit Sandwich" />
+                <img loading="lazy" decoding="async" width="3257" height="4343" src="images/DigitalIndividuals/uiforchef.jpg" alt="UI for Shit Sandwich" />
                 <div class="digital-card-title">UI for Shit Sandwich</div>
               </div>
               <div class="digital-art-card">
-                <img src="images/DigitalIndividuals/shanzi.jpg" alt="New Shades" />
+                <img loading="lazy" decoding="async" width="2000" height="1005" src="images/DigitalIndividuals/Welcome_LV_Collective.jpg" alt="Welcome LV Collective" />
+                <div class="digital-card-title">Welcome LV Collective</div>
+              </div>
+              <div class="digital-art-card">
+                <img loading="lazy" decoding="async" width="1080" height="1419" src="images/DigitalIndividuals/shanzi.jpg" alt="New Shades" />
                 <div class="digital-card-title">New Shades</div>
               </div>
                <div class="digital-art-card">
-                <img src="images/DigitalIndividuals/spread.jpg" alt="New Shades" />
+                <img loading="lazy" decoding="async" width="1401" height="1790" src="images/DigitalIndividuals/spread.jpg" alt="New Shades" />
                 <div class="digital-card-title">Spread</div>
               </div>
               <div class="digital-art-card">
-                <img src="images/DigitalIndividuals/newshades.jpg" alt="Shanzi" />
+                <img loading="lazy" decoding="async" width="1230" height="1628" src="images/DigitalIndividuals/newshades.jpg" alt="Shanzi" />
                 <div class="digital-card-title">Shanzi</div>
               </div>
               <div class="digital-art-card">
-                <img src="images/DigitalIndividuals/afterparty.jpg" alt="After Party" />
+                <img loading="lazy" decoding="async" width="1080" height="1481" src="images/DigitalIndividuals/afterparty.jpg" alt="After Party" />
                 <div class="digital-card-title">After Party</div>
               </div>
           
@@ -360,27 +406,27 @@
 
             <div class="sub-column">
               <div class="digital-art-card">
-                <img src="images/DigitalIndividuals/chinesenewyear.jpg" alt="Chinese New Year" />
+                <img loading="lazy" decoding="async" width="1080" height="1324" src="images/DigitalIndividuals/chinesenewyear.jpg" alt="Chinese New Year" />
                 <div class="digital-card-title">Chinese New Year</div>
               </div>
               <div class="digital-art-card">
-                <img src="images/DigitalIndividuals/uiforpiano.png" alt="Chinese New Year" />
+                <img loading="lazy" decoding="async" width="3528" height="1843" src="images/DigitalIndividuals/uiforpiano.png" alt="Chinese New Year" />
                 <div class="digital-card-title">UI for 2D platformer</div>
               </div>
               <div class="digital-art-card">
-                <img src="images/DigitalIndividuals/digin.jpg" alt="Dig in" />
+                <img loading="lazy" decoding="async" width="1080" height="1080" src="images/DigitalIndividuals/digin.jpg" alt="Dig in" />
                 <div class="digital-card-title">Dig in</div>
               </div>
               <div class="digital-art-card">
-                <img src="images/DigitalIndividuals/christmasballet.jpg" alt="Christmas Ballet" />
+                <img loading="lazy" decoding="async" width="1080" height="1437" src="images/DigitalIndividuals/christmasballet.jpg" alt="Christmas Ballet" />
                 <div class="digital-card-title">Christmas Ballet</div>
               </div>
               <div class="digital-art-card">
-                <img src="images/DigitalIndividuals/pond.jpg" alt="Her Pond" />
+                <img loading="lazy" decoding="async" width="1080" height="1080" src="images/DigitalIndividuals/pond.jpg" alt="Her Pond" />
                 <div class="digital-card-title">Her Pond</div>
               </div>
                 <div class="digital-art-card">
-                <img src="images/DigitalIndividuals/posterdesign.jpg" alt="Poster Design for YouStrong" />
+                <img loading="lazy" decoding="async" width="1080" height="1440" src="images/DigitalIndividuals/posterdesign.jpg" alt="Poster Design for YouStrong" />
                 <div class="digital-card-title">Poster Design for YouStrong</div>
               </div>
             </div>
@@ -389,6 +435,20 @@
         </div>
 
       </div>
+    </div>
+  </div>
+
+  <!-- ART TABS (phones only, 768px and narrower): the easel opens one "Art" page whose two tabs
+       switch between the Digital Art and Traditional Art pages above (see ART TABS in style.css / script.js) -->
+  <div class="art-tabs-backdrop" aria-hidden="true"></div>
+  <div class="art-tabs" id="artTabs">
+    <div class="art-tabs-head">
+      <h1 class="art-tabs-title">Art</h1>
+      <button type="button" class="art-tabs-close" id="artTabsClose" aria-label="Close">✕</button>
+    </div>
+    <div class="art-tabs-row" role="tablist" aria-label="Art">
+      <button type="button" class="art-tab" role="tab" data-tab="digital" aria-controls="windowPage">Digital Art</button>
+      <button type="button" class="art-tab" role="tab" data-tab="traditional" aria-controls="artPage">Traditional Art</button>
     </div>
   </div>
 
@@ -425,7 +485,7 @@
     </div>
     <div class="art-item" id="artItem">
       <img src="images/art.PNG" class="art-img" alt="Art easel" />
-      <div class="hover-label">Traditional Art</div>
+      <div class="hover-label"><span class="label-wide">Traditional Art</span><span class="label-phone">Art</span></div>
     </div>
     <div class="lighting-item" id="lightingItem">
       <img src="images/lighting.PNG" class="lighting-img" id="lightingImg" alt="Lighting design track" />
@@ -464,7 +524,7 @@
   </div>
 
   </div></div><!-- /#stage /#viewport -->
-  <script src="script.js"></script>
+  <script src="script.js?v=2026-11-01"></script>
   <script>
     /* Lock the 1707x1067 room to 16:10 and scale to fit any screen */
     (function () {
@@ -479,4 +539,4 @@
     })();
   </script>
 </body>
-</html>
+</html>

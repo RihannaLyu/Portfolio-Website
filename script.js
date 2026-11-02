@@ -249,6 +249,7 @@ function openModels() {
 function closeModels() {
   modelsPage.classList.remove('open');
   document.body.style.overflow = '';
+  mvStop();                                   // phone viewer (see 3D MODELS — PHONE VIEWER)
 }
 
 // ── GAMES PAGE ────────────────────────────────────────────
@@ -260,6 +261,7 @@ gametableItem.addEventListener('click', openGames);
 gamesClose.addEventListener('click', closeGames);
 
 function openGames() {
+  showGamesTab('builds');
   gamesPage.classList.add('open');
   document.body.style.overflow = 'hidden';
 }
@@ -268,6 +270,49 @@ function closeGames() {
   gamesPage.classList.remove('open');
   document.body.style.overflow = '';
 }
+
+// ── GAMES TABS (phones only) ──────────────────────────────
+// On the phone the Games page shows one category at a time: the tab bar switches the page's
+// data-tab, and CSS shows that category's islands. Desktop hides the bar and shows both.
+const gamesTabBtns    = [...document.querySelectorAll('.games-tab')];
+const GAMES_TAB_ORDER = ['builds', 'videos'];
+
+function showGamesTab(name) {
+  gamesPage.dataset.tab = name;
+  gamesTabBtns.forEach(btn => {
+    const on = btn.dataset.tab === name;
+    btn.classList.toggle('active', on);
+    btn.setAttribute('aria-selected', on);
+    btn.tabIndex = on ? 0 : -1;
+  });
+}
+
+gamesTabBtns.forEach(btn => btn.addEventListener('click', () => showGamesTab(btn.dataset.tab)));
+
+// arrow keys move between the two tabs
+document.getElementById('gamesTabs').addEventListener('keydown', (e) => {
+  if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+  const next = e.key === 'ArrowRight' ? 'videos' : 'builds';
+  showGamesTab(next);
+  gamesTabBtns.find(b => b.dataset.tab === next).focus();
+});
+
+// swipe left → Video Games, swipe right → Interactive Builds
+let gamesSwipeX = null, gamesSwipeY = 0;
+gamesPage.addEventListener('touchstart', (e) => {
+  if (e.touches.length !== 1) { gamesSwipeX = null; return; }
+  gamesSwipeX = e.touches[0].clientX;
+  gamesSwipeY = e.touches[0].clientY;
+}, { passive: true });
+gamesPage.addEventListener('touchend', (e) => {
+  if (gamesSwipeX === null) return;
+  const t = e.changedTouches[0];
+  const dx = t.clientX - gamesSwipeX, dy = t.clientY - gamesSwipeY;
+  gamesSwipeX = null;
+  if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+  const i = GAMES_TAB_ORDER.indexOf(gamesPage.dataset.tab) + (dx < 0 ? 1 : -1);
+  if (i >= 0 && i < GAMES_TAB_ORDER.length) showGamesTab(GAMES_TAB_ORDER[i]);
+});
 
 // ── GAME ISLANDS (Ren'Py + Unity web builds) ──────────────
 // Each .city-island carries its own data-game="..." path to a web build's index.html.
@@ -338,7 +383,8 @@ const seriesOverlay = document.getElementById('seriesOverlay');
 const seriesFan     = document.getElementById('seriesFan');
 const individualGrid = document.getElementById('individualGrid');
 
-artItem.addEventListener('click', openArt);
+// phones open the merged Art page (see ART TABS below); desktop keeps the Traditional Art page
+artItem.addEventListener('click', () => phoneArt.matches ? openArtTabs('digital') : openArt());
 artClose.addEventListener('click', closeArt);
 
 function openArt() {
@@ -351,6 +397,7 @@ function closeArt() {
   closePieceViewer();
   closeSeriesOverlay();
   artPage.classList.remove('open');
+  document.body.classList.remove('art-tabs-open');
   document.body.style.overflow = '';
 }
 
@@ -623,8 +670,83 @@ function openWindow() {
 
 function closeWindow() {
   windowPage.classList.remove('open');
+  document.body.classList.remove('art-tabs-open');
   document.body.style.overflow = '';
 }
+
+// ── ART TABS (phones, 768px and narrower) ─────────────────
+// The window (Digital Art) isn't hung on the phone wall, so the easel opens one "Art" page:
+// a fixed tab bar over the Digital Art and Traditional Art pages, which cross-fade when a
+// tab is tapped or the content is swiped sideways. Desktop never uses any of this.
+const phoneArt     = window.matchMedia('(max-width: 768px)');
+const artTabs      = document.getElementById('artTabs');
+const artTabsClose = document.getElementById('artTabsClose');
+const artTabBtns   = [...artTabs.querySelectorAll('.art-tab')];
+const ART_TAB_ORDER = ['digital', 'traditional'];
+
+function showArtTab(name) {
+  artTabBtns.forEach(btn => {
+    const on = btn.dataset.tab === name;
+    btn.classList.toggle('active', on);
+    btn.setAttribute('aria-selected', on);
+    btn.tabIndex = on ? 0 : -1;
+  });
+  windowPage.classList.toggle('open', name === 'digital');
+  artPage.classList.toggle('open', name === 'traditional');
+  layoutPhoneGalleries();
+}
+
+function currentArtTab() {
+  return artPage.classList.contains('open') ? 'traditional' : 'digital';
+}
+
+function openArtTabs(name) {
+  windowPage.scrollTop = 0;
+  artPage.scrollTop = 0;
+  document.body.classList.add('art-tabs-open');
+  document.body.style.overflow = 'hidden';
+  showArtTab(name);
+}
+
+function closeArtTabs() {
+  closeArt();
+  closeWindow();
+}
+
+artTabsClose.addEventListener('click', closeArtTabs);
+artTabBtns.forEach(btn => btn.addEventListener('click', () => showArtTab(btn.dataset.tab)));
+
+// arrow keys move between the two tabs
+artTabs.addEventListener('keydown', (e) => {
+  if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+  const next = e.key === 'ArrowRight' ? 'traditional' : 'digital';
+  showArtTab(next);
+  artTabBtns.find(b => b.dataset.tab === next).focus();
+});
+
+// swipe left → Traditional Art, swipe right → Digital Art
+let swipeX = null, swipeY = 0;
+[windowPage, artPage].forEach(page => {
+  page.addEventListener('touchstart', (e) => {
+    if (!document.body.classList.contains('art-tabs-open') || e.touches.length !== 1) { swipeX = null; return; }
+    swipeX = e.touches[0].clientX;
+    swipeY = e.touches[0].clientY;
+  }, { passive: true });
+  page.addEventListener('touchend', (e) => {
+    if (swipeX === null) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - swipeX, dy = t.clientY - swipeY;
+    swipeX = null;
+    if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+    const i = ART_TAB_ORDER.indexOf(currentArtTab()) + (dx < 0 ? 1 : -1);
+    if (i >= 0 && i < ART_TAB_ORDER.length) showArtTab(ART_TAB_ORDER[i]);
+  });
+});
+
+// rotating / resizing past 768px closes the phone-only Art page
+phoneArt.addEventListener('change', () => {
+  if (!phoneArt.matches && document.body.classList.contains('art-tabs-open')) closeArtTabs();
+});
 
 // ── LIGHTBOX ─────────────────────────────────────────────
 const lightbox      = document.getElementById('lightbox');
@@ -716,6 +838,11 @@ if (document.fonts) document.fonts.ready.then(queuePhoneGalleries);
 const MODELS_BASE = 'images/3Dmodels/';
 const MODEL_VIDEOS = [
   {
+    title: "Dragon Door",
+    video: "dragondoor.mp4",
+    poster: "thumbnaildragon.jpg"
+  },
+  {
     title: "Kung Fu Master",
     video: "kungfumaster.mp4",
     poster: "kungfumaster.jpg"
@@ -738,7 +865,7 @@ const tvArrowL   = document.getElementById('tvArrowLeft');
 const tvArrowR   = document.getElementById('tvArrowRight');
 
 let tvSlides  = [];
-let tvActive  = Math.floor((MODEL_VIDEOS.length - 1) / 2);   // centre item
+let tvActive  = 0;                                            // opens on the first video (Dragon Door)
 
 function buildTVSlides() {
   if (!tvTrack) return;
@@ -754,7 +881,7 @@ function buildTVSlides() {
                  poster="${MODELS_BASE}${m.poster}" 
                  src="${MODELS_BASE}${m.video}" 
                  playsinline 
-                 preload="auto">
+                 preload="none">
           </video>
         </div>
         <img class="tv-frame" src="${MODELS_BASE}tv.PNG" alt="${m.title}" />
@@ -825,3 +952,105 @@ if (typeof modelsClose !== 'undefined' && modelsClose) {
 }
 
 buildTVSlides();
+
+/* ═══════════════════════════════════════════════════════════
+   3D MODELS — PHONE VIEWER (768px and narrower; CSS hides the TVs)
+   ═══════════════════════════════════════════════════════════ */
+const mvViewer = document.getElementById('mvViewer');
+const mvThumb  = document.getElementById('mvThumb');
+const mvVideo  = document.getElementById('mvVideo');
+const mvTitle  = document.getElementById('mvTitle');
+const mvCount  = document.getElementById('mvCount');
+
+let mvIndex = 0;
+let mvBusy  = false;
+
+function mvStop() {
+  if (!mvVideo) return;
+  mvVideo.pause();
+  mvVideo.controls = false;
+}
+
+function mvShow(i) {
+  const m = MODEL_VIDEOS[i];
+  mvIndex = i;
+  mvStop();
+  // poster when there is one, otherwise the browser shows the first frame
+  mvVideo.poster  = m.poster ? MODELS_BASE + m.poster : '';
+  mvVideo.preload = m.poster ? 'none' : 'metadata';
+  mvVideo.src     = MODELS_BASE + m.video + (m.poster ? '' : '#t=0.1');
+  mvTitle.textContent = m.title;
+  mvCount.textContent = (i + 1) + ' / ' + MODEL_VIDEOS.length;
+  mvThumb.setAttribute('aria-label', 'Play ' + m.title);
+}
+
+// slide out (0.15s), swap, slide in from the other side (0.15s); loops at both ends
+function mvStep(dir) {
+  if (mvBusy) return;
+  mvBusy = true;
+  const n     = MODEL_VIDEOS.length;
+  const out   = dir > 0 ? 'is-leaving-left'   : 'is-leaving-right';
+  const enter = dir > 0 ? 'is-entering-right' : 'is-entering-left';
+  mvViewer.classList.add('is-switching');
+  mvThumb.classList.add(out);
+  setTimeout(() => {
+    mvShow((mvIndex + dir + n) % n);
+    mvThumb.classList.remove(out);
+    mvThumb.classList.add(enter);
+    void mvThumb.offsetWidth;
+    mvThumb.classList.remove(enter);
+    mvViewer.classList.remove('is-switching');
+    mvBusy = false;
+  }, 150);
+}
+
+// fullscreen with the phone's own controls (iPhone only has webkitEnterFullscreen)
+function mvPlay() {
+  const v = mvVideo;
+  v.controls = true;
+  if (v.requestFullscreen) {
+    v.requestFullscreen().catch(() => { if (v.webkitEnterFullscreen) v.webkitEnterFullscreen(); });
+    v.play().catch(() => {});
+  } else if (v.webkitEnterFullscreen) {
+    v.play().catch(() => {});
+    v.webkitEnterFullscreen();
+  } else {
+    v.play().catch(() => {});
+  }
+}
+
+if (mvViewer) {
+  document.getElementById('mvPrev').addEventListener('click', () => mvStep(-1));
+  document.getElementById('mvNext').addEventListener('click', () => mvStep(1));
+
+  // swipe left/right on the thumbnail; a plain tap plays
+  let touchX = null, touchY = 0, swiped = false;
+  mvThumb.addEventListener('touchstart', (e) => {
+    touchX = e.touches[0].clientX; touchY = e.touches[0].clientY; swiped = false;
+  }, { passive: true });
+  mvThumb.addEventListener('touchend', (e) => {
+    if (touchX === null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    const dy = e.changedTouches[0].clientY - touchY;
+    touchX = null;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+      swiped = true;                            // swallow the click that may follow the swipe
+      setTimeout(() => { swiped = false; }, 400);
+      mvStep(dx < 0 ? 1 : -1);
+    }
+  });
+  mvThumb.addEventListener('click', () => { if (swiped) { swiped = false; return; } mvPlay(); });
+  mvThumb.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); mvPlay(); }
+  });
+
+  // leaving fullscreen returns to the thumbnail, paused, on the same video
+  const mvFsChange = () => {
+    if ((document.fullscreenElement || document.webkitFullscreenElement) !== mvVideo) mvStop();
+  };
+  document.addEventListener('fullscreenchange', mvFsChange);
+  document.addEventListener('webkitfullscreenchange', mvFsChange);
+  mvVideo.addEventListener('webkitendfullscreen', mvStop);
+
+  mvShow(0);
+}
