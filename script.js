@@ -322,6 +322,13 @@ const gameLaunch      = document.getElementById('gameLaunch');
 const gameLaunchFrame = document.getElementById('gameLaunchFrame');
 const gameLaunchClose = document.getElementById('gameLaunchClose');
 
+// On phones the launcher lives directly in <body>: held sideways, a phone is wider than 768px
+// and gets the scaled-down desktop room, which would shrink the game with it. Moved once at
+// load (moving an iframe later reloads the game), so rotating mid-game keeps playing.
+const isPhone = matchMedia('(max-width: 768px), (max-height: 500px)').matches ||
+                (matchMedia('(pointer: coarse)').matches && Math.min(screen.width, screen.height) <= 500);
+if (isPhone) document.body.appendChild(gameLaunch);
+
 document.querySelectorAll('.city-island').forEach((island) => {
   island.addEventListener('click', () => {
     const url = island.dataset.game;
@@ -334,9 +341,15 @@ document.querySelectorAll('.city-island').forEach((island) => {
 
 function closeGameLaunch() {
   gameLaunch.classList.remove('open');
+  gameLaunch.classList.remove('hint-dismissed');   // the rotate prompt shows again next launch
   gameLaunchFrame.src = 'about:blank';      // unload the game / free memory
   document.body.style.overflow = '';
 }
+
+// phones held upright: "Play upright anyway" hides the turn-sideways prompt for this launch
+document.getElementById('rotateDismiss').addEventListener('click', () => {
+  gameLaunch.classList.add('hint-dismissed');
+});
 
 if (gameLaunchClose) gameLaunchClose.addEventListener('click', closeGameLaunch);
 

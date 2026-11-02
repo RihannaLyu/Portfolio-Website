@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Rihanna Lyu — Portfolio</title>
   <!-- ?v= : bump the date after each update so phones fetch the new style.css + script.js together -->
-  <link rel="stylesheet" href="style.css?v=2026-11-01c" />
+  <link rel="stylesheet" href="style.css?v=2026-11-01d" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
 </head>
 <body>
@@ -512,6 +512,20 @@
     <iframe class="game-launch-frame" id="gameLaunchFrame"
             title="Second Chance"
             allow="autoplay; fullscreen; gamepad"></iframe>
+    <!-- phones held upright: "turn sideways" prompt over the game (see ROTATE HINT in style.css) -->
+    <div class="rotate-hint" id="rotateHint" role="status">
+      <svg class="rotate-phone" viewBox="0 0 120 120" aria-hidden="true">
+        <g class="rotate-phone-body">
+          <rect x="38" y="16" width="44" height="88" rx="8"></rect>
+          <line x1="54" y1="24" x2="66" y2="24"></line>
+          <circle cx="60" cy="95" r="3"></circle>
+        </g>
+        <path class="rotate-arrow" d="M100 40 A44 44 0 0 1 100 80"></path>
+        <polygon class="rotate-arrow-head" points="94,78 106,78 100,88"></polygon>
+      </svg>
+      <p class="rotate-text">Turn your phone sideways to play</p>
+      <button type="button" class="rotate-dismiss" id="rotateDismiss">Play upright anyway</button>
+    </div>
   </div>
 
   <!-- INTERACTIVE BUILDS VIEWER (PDFs + embedded links) -->
@@ -526,7 +540,7 @@
   </div>
 
   </div></div><!-- /#stage /#viewport -->
-  <script src="script.js?v=2026-11-01c"></script>
+  <script src="script.js?v=2026-11-01d"></script>
   <script>
     /* Lock the 1707x1067 room to 16:10 and scale to fit any screen */
     (function () {

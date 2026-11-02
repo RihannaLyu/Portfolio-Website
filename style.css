@@ -1736,6 +1736,99 @@ body.lights-off .dark-overlay { opacity: 1; }
   background: rgba(184,160,112,0.15);
 }
 
+/* ── ROTATE HINT: phones held upright get a "turn sideways" prompt over the game.
+   The phone icon turns sideways in a smooth 0.5s move, rests, and turns back, on a loop.
+   Rotating the phone hides it by itself (it's portrait-only); "Play upright anyway" hides
+   it for this launch. ── */
+.rotate-hint { display: none; }
+@media (max-width: 768px) and (orientation: portrait) {
+  .game-launch:not(.hint-dismissed) .rotate-hint {
+    display: flex;
+    position: absolute;
+    inset: 0;
+    z-index: 2;                         /* over the game, under the close button (401) */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    padding: 24px;
+    background: rgba(10, 6, 2, 0.94);
+    text-align: center;
+  }
+  .rotate-phone { width: 120px; height: 120px; overflow: visible; }
+  .rotate-phone-body {
+    fill: none;
+    stroke: #E8D5A0;
+    stroke-width: 4;
+    stroke-linecap: round;
+    transform-box: view-box;
+    transform-origin: 60px 60px;
+  }
+  .rotate-phone-body circle { fill: #E8D5A0; stroke: none; }
+  .rotate-arrow { fill: none; stroke: #F5C842; stroke-width: 4; stroke-linecap: round; }
+  .rotate-arrow-head { fill: #F5C842; }
+  .rotate-arrow, .rotate-arrow-head { opacity: 0.85; }
+  .game-launch.open .rotate-phone-body { animation: rotatePhone 2.4s infinite; }
+  .rotate-text {
+    margin: 0;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-style: italic;
+    font-size: 20px;
+    color: #E8D5A0;
+  }
+  .rotate-dismiss {
+    margin-top: 6px;
+    padding: 10px 18px;                 /* comfortable tap target */
+    border: 1px solid rgba(184, 160, 112, 0.5);
+    border-radius: 999px;
+    background: transparent;
+    color: rgba(232, 213, 160, 0.75);
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 14px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+/* 2.4s loop: rest upright → turn sideways in 0.5s (21% of 2.4s) → rest → ease back */
+@keyframes rotatePhone {
+  0%, 18%  { transform: rotate(0deg);   animation-timing-function: cubic-bezier(.65, 0, .35, 1); }
+  39%, 80% { transform: rotate(-90deg); animation-timing-function: cubic-bezier(.65, 0, .35, 1); }
+  100%     { transform: rotate(0deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .game-launch.open .rotate-phone-body { animation: none; transform: rotate(-90deg); }
+}
+
+/* ── PHONES HELD SIDEWAYS (landscape phones are wider than 768px, so they need their own rule):
+   the game fills the whole screen edge to edge, clear of the notch, with a small close button ── */
+@media (orientation: landscape) and (max-height: 500px) {
+  .game-launch { background: #000; }
+  .game-launch-frame {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: env(safe-area-inset-left, 0px);
+    /* an iframe won't stretch between left/right, so size it explicitly */
+    width: calc(100vw - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
+    height: 100vh;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .game-launch-close {
+    top: 8px;
+    right: calc(8px + env(safe-area-inset-right, 0px));
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+    background: rgba(10, 6, 2, 0.55);
+    opacity: 0.75;
+  }
+}
+
 
 .viewer-overlay {
   position: fixed;
