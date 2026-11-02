@@ -2687,22 +2687,37 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
   .piece-viewer-mag { width: 140px; height: 140px; }
   .piece-viewer-title { font-size: 18px; text-align: center; }
 
-  /* ── LIGHTING DESIGN ── */
-  .lighting-page .lighting-title { padding: 20px 56px 14px; }
+  /* ── LIGHTING DESIGN: the whole page is red velvet curtain, and the stage is zoomed in so
+     the video (the stage's centre 57.5%) fills almost the full screen width. The stage's outer
+     curtains run off both sides and blend into the velvet. ── */
+  .lighting-page {
+    background:
+      radial-gradient(ellipse 120% 70% at 50% 50%, transparent 40%, rgba(20, 0, 4, 0.55) 100%),
+      repeating-linear-gradient(90deg,
+        #4a0410 0px, #7d0a1d 9px, #b0162f 16px, #d23a52 19px, #a3122a 23px, #6a0718 32px, #4a0410 40px);
+  }
+  .lighting-page .lighting-title {
+    padding: 20px 56px 14px;
+    background: rgba(26, 18, 8, 0.82);   /* readable over the velvet */
+  }
   .lighting-stage-area {
     display: flex;
     align-items: center;
-    justify-content: center;
-    padding: 16px 8px;
+    justify-content: center;            /* the over-wide stage stays centred, clipped equally */
+    padding: 0;
   }
   .lighting-stage {
     position: relative;
     top: auto;
     left: auto;
     transform: none;
-    width: 100%;
+    flex: 0 0 auto;
+    width: 164vw;                       /* ◄ zoom: video width = 57.5% of this ≈ 94vw */
+    /* soften the stage's top + bottom edges into the velvet */
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 5%, #000 93%, transparent 100%);
+            mask-image: linear-gradient(to bottom, transparent 0, #000 5%, #000 93%, transparent 100%);
   }
-  .stage-play-btn { width: 56px; height: 56px; }
+  .stage-play-btn { width: 64px; height: 64px; }
 
   /* ── FLORAL DESIGN ── */
   .flowers-content { padding: 70px 16px 40px; }
