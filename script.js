@@ -357,7 +357,10 @@ document.querySelectorAll('.city-island[data-view]').forEach((island) => {
     const url = island.dataset.view;
     if (!url) return;
     viewerNewtab.href = url;                  // lets the "Open in new tab" button pop out the PDF
-    viewerFrame.src = url;                    // PDF or embeddable page
+    const pages = phoneArt.matches && /\.pdf($|[?#])/i.test(url);
+    viewerOverlay.classList.toggle('is-pages', pages);
+    if (pages) showPdfPages(url);             // phones: pages drawn to the screen width
+    else viewerFrame.src = url;               // PDF or embeddable page
     viewerOverlay.classList.add('open');
     document.body.style.overflow = 'hidden';
   });
@@ -366,7 +369,97 @@ document.querySelectorAll('.city-island[data-view]').forEach((island) => {
 function closeViewer() {
   viewerOverlay.classList.remove('open');
   viewerFrame.src = 'about:blank';            // unload the PDF / page
+  clearPdfPages();
   document.body.style.overflow = '';
+}
+
+// ── PHONE PDF PAGES ───────────────────────────────────────
+// Phone browsers show a PDF in an iframe as one huge, unscrollable first page. On the phone
+// the viewer instead draws every page with PDF.js (loaded only the first time a PDF opens),
+// fitted to the screen width, in a list that scrolls. Pages render as they come into view.
+const viewerPages = document.getElementById('viewerPages');
+const PDFJS_URL   = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
+let pdfjsReady = null;
+let pdfJob = 0, pdfDoc = null, pdfObserver = null;
+
+function loadPdfJs() {
+  if (!pdfjsReady) {
+    pdfjsReady = new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = PDFJS_URL + 'pdf.min.js';
+      s.onload = () => {
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_URL + 'pdf.worker.min.js';
+        resolve(window.pdfjsLib);
+      };
+      s.onerror = () => { pdfjsReady = null; reject(new Error('PDF.js failed to load')); };
+      document.head.appendChild(s);
+    });
+  }
+  return pdfjsReady;
+}
+
+function pdfStatus(html) {
+  viewerPages.innerHTML = `<p class="viewer-status">${html}</p>`;
+}
+
+async function showPdfPages(url) {
+  const job = ++pdfJob;
+  viewerPages.scrollTop = 0;
+  pdfStatus('Loading…');
+  try {
+    const pdfjsLib = await loadPdfJs();
+    const doc = await pdfjsLib.getDocument(url).promise;
+    if (job !== pdfJob) { doc.destroy(); return; }   // closed or switched while loading
+    pdfDoc = doc;
+
+    // one placeholder per page, shaped like page 1, so the list has its full length right away
+    const first = (await doc.getPage(1)).getViewport({ scale: 1 });
+    viewerPages.innerHTML = '';
+    pdfObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        pdfObserver.unobserve(entry.target);
+        renderPdfPage(doc, +entry.target.dataset.page, entry.target, job);
+      });
+    }, { root: viewerPages, rootMargin: '600px 0px' });
+
+    for (let n = 1; n <= doc.numPages; n++) {
+      const holder = document.createElement('div');
+      holder.className = 'viewer-page';
+      holder.dataset.page = n;
+      holder.style.aspectRatio = `${first.width} / ${first.height}`;
+      viewerPages.appendChild(holder);
+      pdfObserver.observe(holder);
+    }
+  } catch (err) {
+    if (job !== pdfJob) return;
+    pdfStatus(`Couldn't show this PDF here. <a href="${url}" target="_blank" rel="noopener">Open it instead &#8599;</a>`);
+  }
+}
+
+async function renderPdfPage(doc, n, holder, job) {
+  try {
+    const page = await doc.getPage(n);
+    if (job !== pdfJob) return;
+    const base  = page.getViewport({ scale: 1 });
+    holder.style.aspectRatio = `${base.width} / ${base.height}`;
+    // extra pixels so a pinch-zoom stays sharp, capped to keep memory sane on long decks
+    const sharp = Math.min((window.devicePixelRatio || 1) * 1.5, 3);
+    const vp    = page.getViewport({ scale: (holder.clientWidth / base.width) * sharp });
+    const canvas = document.createElement('canvas');
+    canvas.width  = Math.floor(vp.width);
+    canvas.height = Math.floor(vp.height);
+    await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
+    if (job !== pdfJob) return;
+    holder.appendChild(canvas);
+  } catch (err) { /* leave the blank placeholder */ }
+}
+
+function clearPdfPages() {
+  pdfJob++;
+  if (pdfObserver) { pdfObserver.disconnect(); pdfObserver = null; }
+  if (pdfDoc) { pdfDoc.destroy(); pdfDoc = null; }
+  viewerPages.innerHTML = '';
 }
 
 if (viewerClose) viewerClose.addEventListener('click', closeViewer);
