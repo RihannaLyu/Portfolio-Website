@@ -329,6 +329,13 @@ const isPhone = matchMedia('(max-width: 768px), (max-height: 500px)').matches ||
                 (matchMedia('(pointer: coarse)').matches && Math.min(screen.width, screen.height) <= 500);
 if (isPhone) document.body.appendChild(gameLaunch);
 
+// Phones held upright: the "turn sideways" prompt plays its turn once, then the game itself is
+// shown turned 90° and full screen (CSS: .hint-dismissed), so turning the phone makes it right
+// way up even when the screen can't rotate (rotation lock, in-app browsers like WeChat).
+// If the screen does rotate, the sideways-phone CSS takes over and shows it normally.
+const ROTATE_HINT_MS = 2000;               // ◄ how long the prompt stays before the game appears
+let rotateHintTimer = null;
+
 document.querySelectorAll('.city-island').forEach((island) => {
   island.addEventListener('click', () => {
     const url = island.dataset.game;
@@ -336,20 +343,26 @@ document.querySelectorAll('.city-island').forEach((island) => {
     gameLaunchFrame.src = url;              // load the game only when launched
     gameLaunch.classList.add('open');
     document.body.style.overflow = 'hidden';
+    clearTimeout(rotateHintTimer);
+    rotateHintTimer = setTimeout(dismissRotateHint, ROTATE_HINT_MS);
   });
 });
 
+function dismissRotateHint() {
+  clearTimeout(rotateHintTimer);
+  gameLaunch.classList.add('hint-dismissed');
+}
+
 function closeGameLaunch() {
+  clearTimeout(rotateHintTimer);
   gameLaunch.classList.remove('open');
   gameLaunch.classList.remove('hint-dismissed');   // the rotate prompt shows again next launch
   gameLaunchFrame.src = 'about:blank';      // unload the game / free memory
   document.body.style.overflow = '';
 }
 
-// phones held upright: "Play upright anyway" hides the turn-sideways prompt for this launch
-document.getElementById('rotateDismiss').addEventListener('click', () => {
-  gameLaunch.classList.add('hint-dismissed');
-});
+// tapping the prompt (or "Got it") skips straight to the game
+document.getElementById('rotateHint').addEventListener('click', dismissRotateHint);
 
 if (gameLaunchClose) gameLaunchClose.addEventListener('click', closeGameLaunch);
 

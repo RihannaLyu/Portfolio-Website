@@ -1737,9 +1737,10 @@ body.lights-off .dark-overlay { opacity: 1; }
 }
 
 /* ── ROTATE HINT: phones held upright get a "turn sideways" prompt over the game.
-   The phone icon turns sideways in a smooth 0.5s move, rests, and turns back, on a loop.
-   Rotating the phone hides it by itself (it's portrait-only); "Play upright anyway" hides
-   it for this launch. ── */
+   The phone icon turns sideways in a smooth 0.5s move and stays there. After 2s (or a tap)
+   the prompt gives way to the game itself, turned 90° to fill the screen, so turning the
+   phone makes it right way up even when the screen can't rotate (rotation lock, WeChat).
+   If the screen does rotate, the sideways-phone rule below shows the game normally. ── */
 .rotate-hint { display: none; }
 @media (max-width: 768px) and (orientation: portrait) {
   .game-launch:not(.hint-dismissed) .rotate-hint {
@@ -1768,7 +1769,37 @@ body.lights-off .dark-overlay { opacity: 1; }
   .rotate-arrow { fill: none; stroke: #F5C842; stroke-width: 4; stroke-linecap: round; }
   .rotate-arrow-head { fill: #F5C842; }
   .rotate-arrow, .rotate-arrow-head { opacity: 0.85; }
-  .game-launch.open .rotate-phone-body { animation: rotatePhone 2.4s infinite; }
+  .game-launch.open .rotate-phone-body { animation: rotatePhone 1.2s both; }
+  .game-launch:not(.hint-dismissed) .rotate-hint { cursor: pointer; }
+
+  /* after the prompt: the game turned 90° clockwise, filling the screen, so it reads the right
+     way up once the phone is turned sideways (top of the phone to the left) */
+  .game-launch.hint-dismissed { background: #000; }
+  .game-launch.hint-dismissed .game-launch-frame {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 100vh;
+    width: 100dvh;
+    height: 100vw;
+    max-width: none;
+    max-height: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    transform: translate(-50%, -50%) rotate(90deg);
+  }
+  .game-launch.hint-dismissed .game-launch-close {
+    top: auto;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    right: 12px;                        /* top-right corner once the phone is turned sideways */
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+    background: rgba(10, 6, 2, 0.55);
+    opacity: 0.75;
+    transform: rotate(90deg);
+  }
   .rotate-text {
     margin: 0;
     font-family: 'Playfair Display', Georgia, serif;
@@ -1789,11 +1820,10 @@ body.lights-off .dark-overlay { opacity: 1; }
     -webkit-tap-highlight-color: transparent;
   }
 }
-/* 2.4s loop: rest upright → turn sideways in 0.5s (21% of 2.4s) → rest → ease back */
+/* 1.2s: rest upright 0.4s → turn sideways in a smooth 0.5s (33% → 75%) → stay sideways */
 @keyframes rotatePhone {
-  0%, 18%  { transform: rotate(0deg);   animation-timing-function: cubic-bezier(.65, 0, .35, 1); }
-  39%, 80% { transform: rotate(-90deg); animation-timing-function: cubic-bezier(.65, 0, .35, 1); }
-  100%     { transform: rotate(0deg); }
+  0%, 33%   { transform: rotate(0deg);   animation-timing-function: cubic-bezier(.65, 0, .35, 1); }
+  75%, 100% { transform: rotate(-90deg); }
 }
 @media (prefers-reduced-motion: reduce) {
   .game-launch.open .rotate-phone-body { animation: none; transform: rotate(-90deg); }
