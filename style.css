@@ -4080,3 +4080,86 @@ body.page-open .index-btn, body.index-open .index-btn, body.is-arriving .index-b
 @media (max-width: 768px) { .index-list button[data-target="lightingItem"]::after { filter: brightness(2.4) contrast(0.9) drop-shadow(0 0 6px rgba(255, 217, 160, 0.35)); } }
 .index-preview { overflow: hidden; }
 .index-preview img { max-height: min(62vh, 560px); max-width: 100%; width: auto; height: auto; }
+
+/* ═══════════════════════════════════════════════════════════
+   GAMES & VR — HAND-PAINTED SKY
+   A still watercolor wash; three seamless cloud tiles (3:1, three copies each) drifting at their
+   own depth — far slow + hazy, near quicker + crisp — each also breathing gently up and down on
+   its own rhythm, so the motion never lines up into a mechanical scroll. A small flock crosses now
+   and then. Paper grain sits still over the moving sky, like the paint is on the page.
+   Everything idles until the page is open and stops under prefers-reduced-motion.
+   ═══════════════════════════════════════════════════════════ */
+.games-sky-stage { background: #c6d3f0; }
+.sky-wash, .sky-clouds, .sky-paper, .sky-flock { position: absolute; inset: 0; pointer-events: none; }
+.sky-wash  { z-index: 0; background: url("images/gamedesign/sky-watercolor.jpg") center / cover no-repeat; }
+.sky-clouds-far  { z-index: 1; opacity: 0.9; }
+.sky-clouds-mid  { z-index: 2; }
+.sky-flock       { z-index: 3; }
+.sky-clouds-near { z-index: 3; opacity: 0.92; }
+.sky-paper {
+  z-index: 4;
+  background: url("images/wall-grain.svg") 0 0 / 256px 256px;
+  mix-blend-mode: soft-light;
+  opacity: 0.32;
+}
+/* the old pixel-art layers' blend + timing no longer apply */
+.sky-clouds .games-sky-layer { mix-blend-mode: normal; }
+
+/* drift: one tile per loop. Bigger number = slower. The bob uses `translate`, the scroll `transform`,
+   so the two motions layer instead of fighting. */
+.sky-clouds-far  .games-sky-layer { animation: gamesScroll 240s linear infinite, skyBob 17s ease-in-out infinite alternate; }
+.sky-clouds-mid  .games-sky-layer { animation: gamesScroll 140s linear infinite, skyBob 12s ease-in-out -4s infinite alternate; }
+.sky-clouds-near .games-sky-layer { animation: gamesScroll 82s  linear infinite, skyBob 9s  ease-in-out -2s infinite alternate; }
+.sky-clouds-far  .games-sky-layer { animation-delay: -60s, 0s; }
+.sky-clouds-mid  .games-sky-layer { animation-delay: -35s, -4s; }
+.sky-clouds-near .games-sky-layer { animation-delay: -20s, -2s; }
+/* idle while the page is closed (the shorthand above would otherwise set it running) */
+.sky-clouds .games-sky-layer { animation-play-state: paused; }
+@keyframes skyBob { from { translate: 0 -5px; } to { translate: 0 6px; } }
+
+/* entrance: the sky settles in as the page opens — far first, near last */
+.sky-clouds { transition: opacity 1.4s var(--ease, ease), transform 1.8s var(--ease, ease); }
+.games-page:not(.open) .sky-clouds { opacity: 0; transform: translateX(3%); }
+.games-page.open .sky-clouds-mid  { transition-delay: 0.15s; }
+.games-page.open .sky-clouds-near { transition-delay: 0.3s; }
+
+/* the flock: three painted strokes, wings beating out of step, crossing every ~38s */
+.sky-flock { overflow: hidden; }
+.sky-flock .bird-wrap {
+  position: absolute;
+  top: 22%; left: 0;
+  translate: var(--bx) var(--by);
+  animation: flockCross 38s linear -6s infinite paused;
+}
+.bird {
+  display: block; width: 26px; height: 11px; overflow: visible;
+  fill: none; stroke: #5d5f93; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round;
+  opacity: 0.7;
+  transform-origin: 50% 70%;
+  animation: wingBeat 0.62s ease-in-out var(--bd) infinite alternate paused;
+}
+.sky-flock .bird-wrap:nth-child(2) .bird { width: 22px; opacity: 0.6; }
+.sky-flock .bird-wrap:nth-child(3) .bird { width: 19px; opacity: 0.5; }
+@keyframes wingBeat { from { transform: scaleY(1); } to { transform: scaleY(-0.35) translateY(-2px); } }
+@keyframes flockCross {
+  0%   { transform: translate(-12vw, 6vh); }
+  45%  { transform: translate(50vw, -2vh); }
+  60%  { transform: translate(72vw, 1vh); }
+  100% { transform: translate(112vw, -6vh); }
+}
+.games-page.open .sky-flock .bird-wrap, .games-page.open .bird { animation-play-state: running; }
+
+@media (max-width: 768px) {
+  /* a tall, narrow stage: paint the clouds smaller and stagger the layers down the screen,
+     so the sky is as full as on desktop (durations shortened to keep the same pace) */
+  .sky-clouds-mid  .games-sky-layer { bottom: auto; height: 58%; animation-duration: 90s, 12s; }
+  .sky-clouds-far  .games-sky-layer { top: auto; height: 62%; animation-duration: 150s, 17s; }
+  .sky-clouds-near .games-sky-layer { top: auto; bottom: -4%; height: 66%; animation-duration: 54s, 9s; }
+  .sky-flock .bird-wrap { top: 14%; }
+  .bird { width: 20px; height: 9px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sky-flock { display: none; }
+  .sky-clouds { transition: none; }
+  .games-page:not(.open) .sky-clouds { transform: none; }
+}
