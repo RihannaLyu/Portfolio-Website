@@ -29,7 +29,7 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--f-serif);
 }
 
 /* ── DARK OVERLAY — the night vignette: one smooth radial falloff from the portrait out to the
@@ -222,7 +222,7 @@ body.lights-off .dark-overlay { opacity: 1; }
   transform: translateX(-50%);
   background: rgba(var(--c-night-rgb), 0.88);
   color: var(--c-accent);
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--f-serif);
   font-size: 14px;
   font-style: italic;
   letter-spacing: 0.06em;
@@ -496,7 +496,7 @@ body.lights-off .dark-overlay { opacity: 1; }
   transform: translateY(-50%);
   background: rgba(var(--c-night-rgb), 0.82);
   color: var(--c-accent);
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--f-serif);
   font-size: 14px;
   font-style: italic;
   letter-spacing: 0.08em;
@@ -567,7 +567,7 @@ body.lights-off .dark-overlay { opacity: 1; }
   background: #FAF0DC;
   color: #3D2810;
   font-size: 16px;
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--f-serif);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -617,7 +617,7 @@ body.lights-off .dark-overlay { opacity: 1; }
   font-size: 18px;
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--f-serif);
   transition: transform 0.2s cubic-bezier(.34,1.56,.64,1), border-color 0.2s, background 0.2s;
   z-index: 301;
 }
@@ -640,7 +640,7 @@ body.lights-off .dark-overlay { opacity: 1; }
   color: var(--c-accent);
 }
 .software-title {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--f-serif);
   font-size: 2.8rem;
   font-weight: 400;
   text-align: center;
@@ -650,7 +650,7 @@ body.lights-off .dark-overlay { opacity: 1; }
 }
 .software-intro {
   text-align: center;
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--f-serif);
   font-style: italic;
   font-size: 17px;
   color: rgba(232,213,160,0.78);
@@ -687,7 +687,7 @@ body.lights-off .dark-overlay { opacity: 1; }
   flex-direction: column;
   justify-content: center;
   padding: 34px 38px;
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--f-serif);
 }
 .software-no {
   font-size: 13px;
@@ -739,7 +739,7 @@ body.lights-off .dark-overlay { opacity: 1; }
   padding: 30px;
   border: 1px dashed rgba(var(--c-accent-rgb),0.35);
   border-radius: 4px;
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--f-serif);
 }
 .software-soon .software-no { margin: 0; }
 .software-soon-text { font-style: italic; color: rgba(232,213,160,0.55); }
@@ -761,7 +761,7 @@ body.lights-off .dark-overlay { opacity: 1; }
   border-radius: 52% 48% 55% 45% / 48% 55% 45% 52%;   /* a hand-drawn circle */
   background: #fff8e6;
   color: var(--ink);
-  font-family: 'Patrick Hand', 'Comic Sans MS', cursive;
+  font-family: var(--f-sans);
   box-shadow: 2px 3px 0 var(--ink);
 }
 .notes-page .notes-close:hover { background: #fde3ea; border-color: var(--ink); }
@@ -780,7 +780,7 @@ body.lights-off .dark-overlay { opacity: 1; }
   width: fit-content;
   margin: 0 auto 10px;
   padding: 5px 22px;
-  font-family: 'Patrick Hand', 'Comic Sans MS', cursive;
+  font-family: var(--f-sans);
   font-size: 18px;
   color: var(--ink);
   background: repeating-linear-gradient(45deg, rgba(243,169,189,0.75) 0 8px, rgba(248,200,214,0.75) 8px 16px);
@@ -855,7 +855,7 @@ body.lights-off .dark-overlay { opacity: 1; }
   display: block;
   margin-top: 6px;
   padding: 6px 2px;
-  font-family: 'Patrick Hand', 'Comic Sans MS', cursive;
+  font-family: var(--f-sans);
   font-size: 17px;
   border-top: 2px dotted color-mix(in srgb, var(--note-ink) 35%, transparent);
 }
@@ -883,7 +883,7 @@ body.lights-off .dark-overlay { opacity: 1; }
 .note-color.active { box-shadow: 0 0 0 3px #fbf4e6, 0 0 0 5.5px var(--ink); }
 .note-count {
   margin-left: auto;
-  font-family: 'Patrick Hand', 'Comic Sans MS', cursive;
+  font-family: var(--f-sans);
   font-size: 15px;
   color: rgba(91, 58, 36, 0.55);
 }
@@ -975,7 +975,7 @@ body.lights-off .dark-overlay { opacity: 1; }
 }
 .board-note-by {
   margin: 10px 0 0;
-  font-family: 'Patrick Hand', 'Comic Sans MS', cursive;
+  font-family: var(--f-sans);
   font-size: 15px;
   opacity: 0.75;
   text-align: right;
@@ -995,7 +995,7 @@ body.lights-off .dark-overlay { opacity: 1; }
 }
 
 .models-title, .lighting-title, .window-title {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--f-serif);
   font-size: 42px;
   font-style: italic;
   font-weight: 400;
@@ -1035,7 +1035,7 @@ body.lights-off .dark-overlay { opacity: 1; }
   font-size: 18px;
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--f-serif);
   transition: transform 0.2s cubic-bezier(.34,1.56,.64,1), border-color 0.2s, background 0.2s;
   z-index: 301;
 }
@@ -1059,7 +1059,7 @@ body.lights-off .dark-overlay { opacity: 1; }
 }
 
 .stack-label {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--f-serif);
   font-size: 28px;
   font-style: italic;
   font-weight: 400;
@@ -1106,7 +1106,7 @@ body.lights-off .dark-overlay { opacity: 1; }
 /* hint text below stack */
 .stack-hint {
   margin-top: 16px;
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--f-serif);
   font-size: 12px;
   font-style: italic;
   color: rgba(var(--c-accent-rgb),0.35);
@@ -1226,7 +1226,7 @@ body.lights-off .dark-overlay { opacity: 1; }
 }
 
 .lightbox-title {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--f-serif);
   font-size: 24px;
   font-style: italic;
   font-weight: 400;
@@ -1234,7 +1234,7 @@ body.lights-off .dark-overlay { opacity: 1; }
   text-align: center;
 }
 .lightbox-desc {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--f-serif);
   font-size: 15px;
   font-style: italic;
   color: rgba(var(--c-accent-rgb),0.7);
@@ -1326,7 +1326,7 @@ body.lights-off .dark-overlay { opacity: 1; }
 }
 .fan-card-label {
   margin-top: 12px;
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--f-serif);
   font-size: 15px;
   font-style: italic;
   color: var(--c-accent);
@@ -1336,7 +1336,7 @@ body.lights-off .dark-overlay { opacity: 1; }
 .series-overlay-hint {
   position: absolute;
   bottom: 35px;
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--f-serif);
   font-size: 13px;
   font-style: italic;
   color: rgba(var(--c-accent-rgb), 0.4);
@@ -1417,7 +1417,7 @@ body.lights-off .dark-overlay { opacity: 1; }
 }
 
 .piece-viewer-title {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--f-serif);
   font-size: 24px;
   font-style: italic;
   font-weight: 400;
@@ -1450,7 +1450,7 @@ body.lights-off .dark-overlay { opacity: 1; }
 }
 
 .flowers-page-title {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--f-serif);
   font-size: 38px;
   font-weight: 400;
   color: var(--c-accent);
@@ -1526,7 +1526,7 @@ body.lights-off .dark-overlay { opacity: 1; }
 }
 
 .window-title {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--f-serif);
   font-size: 2.8rem;
   text-align: center;
   margin-bottom: 50px;
@@ -1579,7 +1579,7 @@ body.lights-off .dark-overlay { opacity: 1; }
 }
 
 .digital-card-title {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--f-serif);
   font-size: 0.9rem;
   font-style: italic;
   letter-spacing: 0.05em;
@@ -1592,7 +1592,7 @@ body.lights-off .dark-overlay { opacity: 1; }
 
 /* ── DIGITAL ART SECTION SUBTITLES ── */
 .digital-section-subtitle {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--f-serif);
   font-size: 1.6rem;
   font-weight: 400;
   margin-bottom: 25px;
@@ -1655,7 +1655,7 @@ body.lights-off .dark-overlay { opacity: 1; }
 
 .art-page-title {
   grid-column: 1 / -1;        /* spans both columns so it sits above them */
-  font-family: 'Playfair Display', serif;
+  font-family: var(--f-serif);
   font-size: 2.8rem;
   font-weight: 400;
   color: var(--c-accent);             /* same gold as your other page titles */
@@ -1666,7 +1666,7 @@ body.lights-off .dark-overlay { opacity: 1; }
 
 /* Series header → match Individual Works (gold + underline) */
 .art-left .digital-section-subtitle {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--f-serif);
   font-size: 1.6rem;
   font-weight: 400;
   font-style: normal;
@@ -1799,7 +1799,7 @@ body.lights-off .dark-overlay { opacity: 1; }
   border: 2px solid rgba(var(--c-accent-rgb),0.6);
   background: rgba(10,8,6,0.6);
   color: var(--c-accent);
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--f-serif);
   font-size: 30px; line-height: 1;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer;
@@ -1812,7 +1812,7 @@ body.lights-off .dark-overlay { opacity: 1; }
   margin-top: 14px;
   text-align: center;
 
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--f-serif);
   font-size: 18px;
   font-style: italic;
   letter-spacing: 0.05em;
@@ -1832,7 +1832,7 @@ body.lights-off .dark-overlay { opacity: 1; }
   left: 0;
   right: 0;
   text-align: center;
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--f-serif);
   font-size: 18px;
   font-style: italic;
   color: var(--c-accent);
@@ -1908,7 +1908,7 @@ body.lights-off .dark-overlay { opacity: 1; }
   border: 2px solid rgba(232,213,160,0.85);
   background: rgba(10,8,6,0.75);
   color: var(--c-accent);
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--f-serif);
   font-size: 26px; line-height: 1;
   padding: 0 0 3px;
   display: flex; align-items: center; justify-content: center;
@@ -1921,7 +1921,7 @@ body.lights-off .dark-overlay { opacity: 1; }
 
 .mv-caption { margin-top: 14px; text-align: center; }
 .mv-title {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--f-serif);
   font-size: 18px;
   font-style: italic;
   letter-spacing: 0.05em;
@@ -1931,7 +1931,7 @@ body.lights-off .dark-overlay { opacity: 1; }
 }
 .mv-count {
   margin-top: 4px;
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--f-serif);
   font-size: 13px;
   letter-spacing: 0.12em;
   color: rgba(232,213,160,0.6);
@@ -1964,7 +1964,7 @@ body.lights-off .dark-overlay { opacity: 1; }
 .games-col-title {
   flex: 1 1 0;                         /* each title owns half the width */
   text-align: center;                  /* and is centered within it */
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--f-serif);
   font-size: clamp(26px, 58.04px, 42px);
   font-style: italic;
   font-weight: 400;
@@ -2097,7 +2097,7 @@ body.lights-off .dark-overlay { opacity: 1; }
 
 /* Readable label that floats under the island. */
 .city-island-tag {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--f-serif);
   font-size: 16px;
   font-style: italic;
   letter-spacing: 0.04em;
@@ -2242,7 +2242,7 @@ body.lights-off .dark-overlay { opacity: 1; }
   }
   .rotate-text {
     margin: 0;
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: var(--f-serif);
     font-style: italic;
     font-size: 20px;
     color: var(--c-accent);
@@ -2254,7 +2254,7 @@ body.lights-off .dark-overlay { opacity: 1; }
     border-radius: 999px;
     background: transparent;
     color: rgba(232, 213, 160, 0.75);
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: var(--f-serif);
     font-size: 14px;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
@@ -2331,7 +2331,7 @@ body.lights-off .dark-overlay { opacity: 1; }
   border-bottom: 1px solid rgba(var(--c-accent-rgb), 0.3);
 }
 .viewer-newtab {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--f-serif);
   font-style: italic;
   font-size: 15px;
   color: var(--c-accent);
@@ -2896,7 +2896,7 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
     background: rgba(var(--c-night-rgb),0.85);
     color: var(--c-accent);
     font-size: 18px;
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: var(--f-serif);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2949,7 +2949,7 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
     justify-content: center;
   }
   .art-tabs-title {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: var(--f-serif);
     font-size: 26px;
     font-style: italic;
     font-weight: 400;
@@ -2966,7 +2966,7 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
     background: rgba(var(--c-night-rgb),0.85);
     color: var(--c-accent);
     font-size: 18px;
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: var(--f-serif);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2986,7 +2986,7 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
     border-radius: 4px;
     background: transparent;
     color: rgba(232, 213, 160, 0.55);
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: var(--f-serif);
     font-size: 16px;
     font-style: italic;
     letter-spacing: 0.04em;
@@ -3140,7 +3140,7 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
   .viewer-status {
     margin: 40px 16px;
     text-align: center;
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: var(--f-serif);
     font-style: italic;
     font-size: 16px;
     color: var(--c-accent);
@@ -3694,4 +3694,166 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
 @media (max-width: 768px) {
   .wall  { height: calc(var(--top) + 213.1vw); }
   #stage { min-height: 0; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TYPE + UI SYSTEM — one voice for the whole site, in the manner of a gallery / high-end artist
+   portfolio: an elegant serif for titles (Cormorant Garamond), one clean sans for everything you
+   click or read small (DM Sans), and handwriting (Caveat) kept only where it is the charm — the
+   sticky notes. Spaced capitals for captions, hairline rules, soft pills, quiet motion.
+   The hand-painted wall objects are untouched; this only refines the interface around them.
+   ═══════════════════════════════════════════════════════════ */
+:root {
+  --f-serif: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  --f-sans:  'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --f-hand:  'Caveat', 'Comic Sans MS', cursive;
+  --track:   0.16em;                       /* caption letter-spacing */
+  --ease:    cubic-bezier(.2, .7, .2, 1);
+}
+
+/* ── WALL LABELS: a frosted ivory caption in spaced capitals (dark + glowing at night) ── */
+.hover-label {
+  font-family: var(--f-sans) !important;
+  font-style: normal !important;
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: var(--track);
+  text-transform: uppercase;
+  color: var(--c-ink);
+  background: rgba(250, 246, 240, 0.86);
+  border: 1px solid rgba(46, 36, 32, 0.14);
+  border-radius: 999px;
+  padding: 7px 16px;
+  box-shadow: 0 6px 18px -10px rgba(46, 36, 32, 0.45);
+  -webkit-backdrop-filter: blur(8px);
+          backdrop-filter: blur(8px);
+  transition: opacity 0.3s var(--ease);
+}
+body.lights-off .hover-label { background: rgba(var(--c-night-rgb), 0.86); color: #FBEBC8; }
+.switch-tip, .switch-hint {
+  font-family: var(--f-sans) !important; font-style: normal !important;
+  font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+}
+
+/* ── PAGE HEADERS: a serif title with a hairline brass rule, the same on every page ── */
+.models-title, .lighting-title, .window-title, .flowers-page-title, .art-page-title,
+.software-title, .art-tabs-title {
+  font-family: var(--f-serif) !important;
+  font-weight: 500 !important;
+  font-style: normal !important;
+  font-size: clamp(2.4rem, 4.4vw, 3.6rem) !important;
+  letter-spacing: 0.01em !important;
+  line-height: 1.05;
+  color: var(--c-text) !important;
+}
+.games-col-title {
+  font-family: var(--f-serif) !important; font-weight: 500 !important; font-style: italic !important;
+  font-size: clamp(1.8rem, 3vw, 2.6rem) !important; color: var(--c-text) !important; letter-spacing: 0.01em;
+}
+.window-title::after, .flowers-page-title::after, .software-title::after, .art-page-title::after,
+.models-title::after, .lighting-title::after {
+  content: '';
+  display: block;
+  width: 36px;
+  height: 1px;
+  margin: 18px auto 0;
+  background: var(--c-accent);
+}
+.digital-section-subtitle, .stack-label {
+  font-family: var(--f-sans) !important;
+  font-style: normal !important;
+  font-weight: 500 !important;
+  font-size: 12px !important;
+  letter-spacing: 0.2em !important;
+  text-transform: uppercase;
+  color: var(--c-text-soft) !important;
+}
+.software-intro, .notes-intro {
+  font-family: var(--f-serif) !important;
+  font-style: italic !important;
+  font-size: 1.25rem !important;
+  color: var(--c-text-soft);
+}
+
+/* ── CAPTIONS + SMALL TEXT ── */
+.digital-card-title, .individual-card-label, .tv-title-label, .city-island-tag, .mv-title, .mv-count,
+.fan-card-label, .piece-viewer-title, .lightbox-title, .stack-hint, .viewer-newtab, .rotate-text,
+.art-tab, .software-no, .software-tags li {
+  font-family: var(--f-sans) !important;
+  font-style: normal !important;
+}
+.digital-card-title, .individual-card-label, .tv-title-label, .city-island-tag, .fan-card-label {
+  font-size: 11px !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase;
+}
+.software-name, .lightbox-title, .piece-viewer-title, .mv-title {
+  font-family: var(--f-serif) !important;
+  font-weight: 500;
+}
+.software-name { font-size: 2.2rem !important; font-style: italic !important; }
+.software-desc { font-family: var(--f-sans) !important; font-size: 15px !important; line-height: 1.75 !important; }
+
+/* ── BUTTONS: one pill, spaced capitals ── */
+.software-open, .note-pin-btn, .viewer-newtab, .rotate-dismiss {
+  font-family: var(--f-sans) !important;
+  font-weight: 500 !important;
+  font-size: 12px !important;
+  letter-spacing: var(--track) !important;
+  text-transform: uppercase;
+  border-radius: 999px !important;
+  transition: transform 0.25s var(--ease), background 0.25s var(--ease), color 0.25s var(--ease), box-shadow 0.25s var(--ease) !important;
+}
+.software-open { padding: 14px 28px !important; }
+
+/* ── CARDS: a slow, soft lift ── */
+.digital-art-card, .individual-art-card, .software-card { transition: transform 0.5s var(--ease), border-color 0.5s var(--ease), box-shadow 0.5s var(--ease) !important; }
+.digital-art-card:hover, .individual-art-card:hover, .software-card:hover { transform: translateY(-4px) !important; }
+
+/* ── LEAVE A NOTE: the same type system; the notes themselves stay handwritten ── */
+.notes-title {
+  font-family: var(--f-serif) !important;
+  font-weight: 500 !important;
+  font-style: italic !important;
+  font-size: clamp(3rem, 6vw, 4.4rem) !important;
+  letter-spacing: 0.005em;
+  color: var(--c-ink) !important;
+}
+.notes-visitor {
+  font-family: var(--f-sans) !important;
+  font-size: 11px !important;
+  letter-spacing: var(--track);
+  text-transform: uppercase;
+  padding: 6px 18px !important;
+}
+.note-field, .note-count, .board-note-by, .notes-page .notes-close { font-family: var(--f-sans) !important; }
+.note-field { font-size: 15px !important; }
+.note-count { font-size: 12px !important; letter-spacing: 0.08em; }
+.board-note-by { font-size: 12px !important; letter-spacing: 0.04em; }
+.note-paper textarea, .board-note-text, .notes-hint, .note-status, .notes-empty { font-family: var(--f-hand) !important; }
+.note-pin-btn {
+  padding: 12px 26px !important;
+  background: var(--c-ink) !important;
+  color: var(--c-wall) !important;
+  border: 1px solid var(--c-ink) !important;
+  box-shadow: none !important;
+}
+.note-pin-btn:hover { background: var(--c-rose) !important; color: var(--c-ink) !important; border-color: var(--c-rose) !important; transform: translateY(-1px) !important; }
+.notes-page .notes-close {
+  border: 1px solid rgba(46, 36, 32, 0.25) !important;
+  border-radius: 50% !important;
+  background: rgba(250, 246, 240, 0.7) !important;
+  box-shadow: none !important;
+  color: var(--c-ink) !important;
+}
+
+@media (max-width: 768px) {
+  .hover-label { font-size: clamp(8.5px, 2.4vw, 11px); letter-spacing: 0.12em; padding: 4px 11px; }
+  .notes-title { font-size: 3rem !important; }
+  .models-title, .lighting-title, .window-title, .flowers-page-title, .art-page-title, .software-title { font-size: 2.1rem !important; }
+  .art-tabs-title { font-size: 1.6rem !important; }
+}
+.models-title, .lighting-title { border-bottom: none !important; }   /* the short brass rule replaces the old long line */
+@media (max-width: 768px) {
+  html:has(body.lights-off), body.lights-off { background: var(--c-night-wall) !important; }   /* below a short wall, at night */
 }
