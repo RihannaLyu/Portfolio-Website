@@ -4837,3 +4837,63 @@ button.dock-app:hover, button.dock-app:focus-visible { transform: translateY(-10
 /* pages opened from a link (#digital-art, …) appear at once */
 body.is-deeplink :is(.models-page, .games-page, .lighting-page, .flowers-page, .notes-page, .software-page, .window-page, .art-page, .index-menu),
 body.is-deeplink :is(.models-page, .games-page, .flowers-page, .notes-page, .software-page, .window-page, .art-page) * { transition: none !important; animation-delay: 0s !important; animation-duration: 0.01s !important; }
+
+/* ── GAMES & VR: build demos (Sketchbook player) ── */
+.gv {
+  position: absolute; inset: 0; z-index: 20;
+  display: grid; grid-template-rows: auto 1fr auto; align-items: center; justify-items: center;
+  padding: 26px 40px 30px;
+  background: rgba(246, 240, 230, 0.94);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  opacity: 0; transition: opacity 0.3s ease;
+}
+.gv.open { opacity: 1; }
+.gv-top { width: 100%; display: flex; align-items: center; justify-content: center; position: relative; }
+.gv-title { margin: 0; font: italic 500 clamp(1.8rem, 2.8vw, 2.4rem)/1 var(--f-serif) !important; color: var(--sb-ink) !important; }
+.gv-close {
+  position: absolute; right: 0; top: 50%; translate: 0 -50%;
+  width: 46px; height: 46px; border-radius: 50%; cursor: pointer; font-size: 16px;
+  background: var(--sb-card); color: var(--sb-ink); border: 2px solid var(--sb-ink); box-shadow: 3px 3px 0 var(--sb-ink);
+}
+.gv-close:hover { background: var(--sb-butter); }
+.gv-screen { width: min(100%, calc((100% - 0px)), 1100px); max-height: 100%; aspect-ratio: 16 / 9; border: 2px solid var(--sb-ink); border-radius: 10px; box-shadow: 7px 7px 0 var(--sb-ink); overflow: hidden; background: #000; position: relative; }
+.gv-screen::before {
+  content: ""; position: absolute; z-index: 2; top: -2px; left: 50%; width: 110px; height: 24px; margin-left: -55px; rotate: -2deg;
+  background: rgba(246, 213, 142, 0.9);
+  clip-path: polygon(0 10%, 4% 0, 8% 10%, 12% 0, 88% 0, 92% 10%, 96% 0, 100% 10%, 100% 90%, 96% 100%, 92% 90%, 88% 100%, 12% 100%, 8% 90%, 4% 100%, 0 90%);
+}
+.gv-video { width: 100%; height: 100%; display: block; object-fit: contain; background: #000; }
+.gv-note { margin: 0; font: 700 22px/1.2 var(--f-hand); color: var(--sb-ink-soft); }
+.gv-note.is-vr {
+  color: var(--sb-ink); padding: 7px 18px 8px; background: rgba(220, 203, 235, 0.95); rotate: -1.5deg;
+  clip-path: polygon(0 8%, 3% 0, 6% 9%, 9% 0, 91% 0, 94% 9%, 97% 0, 100% 8%, 100% 92%, 97% 100%, 94% 91%, 91% 100%, 9% 100%, 6% 91%, 3% 100%, 0 92%);
+}
+
+/* five islands on the phone's Video Games tab */
+@media (max-width: 768px) {
+  #cityIsland    { --m-top: 1%;  --m-left: 3%;  --m-w: 44vw; }
+  #kungfuIsland  { --m-top: 12%; --m-left: 52%; --m-w: 42vw; }
+  #dragonIsland  { --m-top: 33%; --m-left: 4%;  --m-w: 46vw; }
+  #bedroomIsland { --m-top: 50%; --m-left: 51%; --m-w: 43vw; }
+  #endlessIsland { --m-top: 69%; --m-left: 5%;  --m-w: 44vw; }
+  .gv { padding: 16px 14px 22px; grid-template-rows: auto 1fr auto; }
+  .gv-screen { width: 100%; }
+  .gv-title { font-size: 1.7rem !important; }
+  .gv-note { font-size: 19px; text-align: center; }
+}
+
+/* ── 3D Models: blank for now, just its title on the paper ── */
+.models-page { display: grid !important; place-items: center; }
+.models-page .models-title { font: italic 500 clamp(2.4rem, 4vw, 3.4rem)/1 var(--f-serif) !important; color: var(--sb-ink) !important; }
+.models-page .models-title::after {
+  content: "" !important; display: block !important; width: 150px !important; height: 15px !important; margin: 8px auto 0 !important;
+  background: var(--sb-squiggle) center / 100% 100% no-repeat !important; border: 0 !important;
+}
+
+/* ── less writing: the Index keeps just the page names ── */
+.index-list .s, .index-foot span { display: none !important; }
+#dragonIsland  { --fd: 7.0s; --fdl: -2.2s; }
+#bedroomIsland { --fd: 6.3s; --fdl: -4.8s; }
+#endlessIsland { --fd: 7.4s; --fdl: -1.6s; }
+.games-page:has(.gv.open) .games-close { opacity: 0; pointer-events: none; }
+.gv-note:empty { visibility: hidden; }

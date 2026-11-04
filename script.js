@@ -261,12 +261,13 @@ gametableItem.addEventListener('click', openGames);
 gamesClose.addEventListener('click', closeGames);
 
 function openGames() {
-  showGamesTab('builds');
+  showGamesTab('videos');               // the playable builds come first
   gamesPage.classList.add('open');
   document.body.style.overflow = 'hidden';
 }
 
 function closeGames() {
+  if (typeof closeGameVideo === 'function') closeGameVideo();
   gamesPage.classList.remove('open');
   document.body.style.overflow = '';
 }
@@ -369,6 +370,37 @@ if (gameLaunchClose) gameLaunchClose.addEventListener('click', closeGameLaunch);
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && gameLaunch.classList.contains('open')) closeGameLaunch();
 });
+
+// ── BUILD DEMOS (islands with data-video) ──────────────────
+// Builds that can't run in a browser (Unity / VR) play their demo video in the page;
+// data-vr="1" adds the note that the real thing needs a headset.
+const gameVideo = document.getElementById('gameVideo');
+const gvVideo   = document.getElementById('gvVideo');
+function openGameVideo(island) {
+  document.getElementById('gvTitle').textContent = island.querySelector('.city-island-tag').textContent;
+  const note = document.getElementById('gvNote');
+  note.textContent = island.dataset.vr ? 'VR build · play it with a headset · this is the demo' : '';
+  note.classList.toggle('is-vr', !!island.dataset.vr);
+  gvVideo.poster = island.dataset.poster || '';
+  gvVideo.src = island.dataset.video;
+  gameVideo.hidden = false;
+  requestAnimationFrame(() => gameVideo.classList.add('open'));
+  gvVideo.play().catch(() => {});
+  setTimeout(() => document.getElementById('gvClose').focus({ preventScroll: true }), 60);
+}
+function closeGameVideo() {
+  if (gameVideo.hidden) return false;
+  gvVideo.pause();
+  gameVideo.classList.remove('open');
+  setTimeout(() => { gameVideo.hidden = true; gvVideo.removeAttribute('src'); gvVideo.load(); }, 300);
+  return true;
+}
+document.querySelectorAll('.city-island[data-video]').forEach(island => island.addEventListener('click', () => openGameVideo(island)));
+document.getElementById('gvClose').addEventListener('click', closeGameVideo);
+gameVideo.addEventListener('click', (e) => { if (e.target === gameVideo) closeGameVideo(); });
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && !gameVideo.hidden) { e.stopImmediatePropagation(); closeGameVideo(); }
+}, true);
 
 // ── INTERACTIVE BUILD ISLANDS (PDF viewers) ───────────────
 // Each .city-island carries data-view="..." (a PDF path). The viewer opens it
