@@ -117,6 +117,7 @@
       }
     }, true);
     $$('.index-list button', menu).forEach(b => {
+      b.style.setProperty('--thumb', `url("${b.dataset.preview}")`);   // the phone shows each object as a thumbnail
       const show = () => {
         if (!preview || preview.getAttribute('src') === b.dataset.preview) return;
         preview.classList.add('is-swapping');
