@@ -1286,7 +1286,7 @@ function buildModelSheets() {
         <span class="mb-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z"/></svg> Play</span>
       </span>
       <span class="mb-block" aria-hidden="true">
-        <span class="mb-no">N° ${no}</span>
+        <span class="mb-no">${no}</span>
         <span class="mb-name">${m.title}</span>
         <span class="mb-meta">Study ${i + 1} of ${MODEL_VIDEOS.length}<span class="mb-meta-cta"> · view</span></span>
       </span>`;
@@ -1318,7 +1318,7 @@ function mbShow(i, dir = 0) {
   const n = MODEL_VIDEOS.length;
   mbIndex = (i + n) % n;
   const m = MODEL_VIDEOS[mbIndex];
-  document.getElementById('mbCount').textContent = `N° ${String(mbIndex + 1).padStart(2, '0')} / ${String(n).padStart(2, '0')}`;
+  document.getElementById('mbCount').textContent = `${String(mbIndex + 1).padStart(2, '0')} / ${String(n).padStart(2, '0')}`;
   document.getElementById('mbTitle').textContent = m.title;
   document.getElementById('mbPrevName').textContent = MODEL_VIDEOS[(mbIndex - 1 + n) % n].title;
   document.getElementById('mbNextName').textContent = MODEL_VIDEOS[(mbIndex + 1) % n].title;

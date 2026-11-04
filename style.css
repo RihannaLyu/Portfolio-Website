@@ -4054,7 +4054,6 @@ body.page-open .index-btn, body.index-open .index-btn, body.is-arriving .index-b
     padding: calc(30px + env(safe-area-inset-top, 0px)) 26px calc(34px + env(safe-area-inset-bottom, 0px));
   }
   .intro-eyebrow { display: flex; justify-content: space-between; }
-  .intro-eyebrow::after { content: "N° 2026"; letter-spacing: 0.24em; color: var(--c-accent-muted); }
   .intro-name {
     margin: auto 0 0;
     font-size: 27vw; line-height: 0.86; letter-spacing: -0.02em;
