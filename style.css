@@ -3591,8 +3591,8 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
   /* right column: tall noteboard → vertical flowers → light switch */
   .noteboard-item { --cw: 20vw; --ar: 1.889; --x0: .01; --x1: .99; --y0: .006; --y1: .994;
                     top: calc(var(--top) + 28.8vw); left: 74.7vw; }
-  .flowers-item   { --cw: 24vw; --ar: 1.395; --x0: .03; --x1: .95; --y0: .04; --y1: .99;
-                    top: calc(var(--top) + 72vw); left: 70.5vw; }
+  .flowers-item   { --cw: 18vw; --ar: 1.45; --x0: .17; --x1: .86; --y0: .075; --y1: .977;
+                    top: calc(var(--top) + 72.5vw); left: 74.5vw; }          /* the rose trellis */
   .switch-item    { --cw: 9vw; --ar: 1.56;
                     top: calc(var(--top) + 110vw); left: 77.6vw; }
 
