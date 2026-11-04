@@ -779,8 +779,8 @@ function closeFlowers() {
 // publishable (anon) key below. Until then the board runs in preview mode: notes are kept only
 // in this browser, and the visitor number shows 1,000.
 const NOTES_API = {
-  url: '',                                  // ◄ e.g. 'https://abcdefgh.supabase.co'
-  key: '',                                  // ◄ the project's publishable / anon key
+  url: 'https://xyiqbxbzmnqtakqoghol.supabase.co',          // Supabase project "portfolio-noteboard"
+  key: 'sb_publishable_-6j04kbZJwPTnUvi7Ej5GQ_sm189yXS',   // publishable key: safe to be public
 };
 const VISITOR_START = 1000;                 // the first visitor is No. 1,000
 const NOTE_MAX      = 280;
