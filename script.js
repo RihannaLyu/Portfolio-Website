@@ -712,17 +712,21 @@ const lightingClose = document.getElementById('lightingClose');
 const lightingImg   = document.getElementById('lightingImg');
 const lightBurst    = document.getElementById('lightBurst');
 
-lightingItem.addEventListener('mouseenter', () => {
-  if (document.body.classList.contains('lights-off')) return;   // at night the track keeps its one warm white
-  lightingImg.src = 'images/lighting-color.PNG';
-  lightBurst.classList.add('active');
-});
-lightingItem.addEventListener('mouseleave', () => {
-  lightingImg.src = 'images/lighting.PNG';
-  lightBurst.classList.remove('active');
-});
+// Lighting Design is a wall placeholder for now (not enough to show yet). Flip to true to reopen it.
+const LIGHTING_PAGE_READY = false;
+if (LIGHTING_PAGE_READY) {
+  lightingItem.addEventListener('mouseenter', () => {
+    if (document.body.classList.contains('lights-off')) return;   // at night the track keeps its one warm white
+    lightingImg.src = 'images/lighting-color.PNG';
+    lightBurst.classList.add('active');
+  });
+  lightingItem.addEventListener('mouseleave', () => {
+    lightingImg.src = 'images/lighting.PNG';
+    lightBurst.classList.remove('active');
+  });
 
-lightingItem.addEventListener('click', openLighting);
+  lightingItem.addEventListener('click', openLighting);
+}
 lightingClose.addEventListener('click', closeLighting);
 
 function openLighting() {

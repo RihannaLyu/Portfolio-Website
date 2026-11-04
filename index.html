@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Rihanna Lyu — Portfolio</title>
   <!-- ?v= : bump the date after each update so phones fetch the new style.css + script.js together -->
-  <link rel="stylesheet" href="style.css?v=2026-11-16" />
+  <link rel="stylesheet" href="style.css?v=2026-11-16b" />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet" />
   <!-- handwriting fonts for the Leave a Note page -->
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
@@ -42,9 +42,8 @@
         <li><button type="button" data-target="shelfItem" data-preview="images/3dmodel-shelf.PNG"><span class="n">04</span><span class="t">3D Models</span><span class="s">Built worlds</span></button></li>
         <li><button type="button" data-target="gametableItem" data-preview="images/gametable-horizontal.png"><span class="n">05</span><span class="t">Games &amp; VR</span><span class="s">Play it here</span></button></li>
         <li><button type="button" data-target="softwareItem" data-preview="images/software-cart.png"><span class="n">06</span><span class="t">Software &amp; Apps</span><span class="s">Tools I've built</span></button></li>
-        <li><button type="button" data-target="lightingItem" data-preview="images/lighting.PNG"><span class="n">07</span><span class="t">Lighting Design</span><span class="s">Stage &amp; story</span></button></li>
-        <li><button type="button" data-target="flowersItem" data-preview="images/flowers-vertical.png"><span class="n">08</span><span class="t">Floral Design</span><span class="s">Arrangements</span></button></li>
-        <li><button type="button" data-target="noteboardItem" data-preview="images/noteboard-vertical.png"><span class="n">09</span><span class="t">Leave a Note</span><span class="s">Say hello</span></button></li>
+        <li><button type="button" data-target="flowersItem" data-preview="images/flowers-vertical.png"><span class="n">07</span><span class="t">Floral Design</span><span class="s">Arrangements</span></button></li>
+        <li><button type="button" data-target="noteboardItem" data-preview="images/noteboard-vertical.png"><span class="n">08</span><span class="t">Leave a Note</span><span class="s">Say hello</span></button></li>
       </ol>
       <figure class="index-preview" aria-hidden="true"><img id="indexPreview" src="images/nameplate.PNG" alt="" /></figure>
     </div>
@@ -627,13 +626,14 @@
       <img src="images/art.PNG" class="art-img" alt="Art easel" />
       <div class="hover-label"><span class="label-wide">Traditional Art</span><span class="label-phone">Graphic Design</span></div>
     </div>
-    <div class="lighting-item" id="lightingItem">
-      <img src="images/lighting.PNG" class="lighting-img" id="lightingImg" alt="Lighting design track" />
+    <!-- Lighting Design: a placeholder for now (not clickable, no label). To bring it back, remove
+         is-placeholder + aria-hidden, restore the hover-label, and set LIGHTING_PAGE_READY in script.js. -->
+    <div class="lighting-item is-placeholder" id="lightingItem" aria-hidden="true">
+      <img src="images/lighting.PNG" class="lighting-img" id="lightingImg" alt="" />
       <span class="night-glow glow-lamp" aria-hidden="true" style="--gx:.150; --gy:.79; --gw:.07; --gh:.07"></span>
       <span class="night-glow glow-lamp" aria-hidden="true" style="--gx:.333; --gy:.71; --gw:.07; --gh:.07"></span>
       <span class="night-glow glow-lamp" aria-hidden="true" style="--gx:.670; --gy:.76; --gw:.07; --gh:.07"></span>
       <span class="night-glow glow-lamp" aria-hidden="true" style="--gx:.858; --gy:.75; --gw:.07; --gh:.07"></span>
-      <div class="hover-label">Lighting Design</div>
     </div>
     <div class="flowers-item" id="flowersItem">
       <picture><source media="(max-width: 768px)" srcset="images/flowers-vertical.png?v=3" /><img src="images/flowers.PNG" class="flowers-img" alt="Floral design" /></picture>
@@ -688,7 +688,7 @@
   </div>
 
   </div></div><!-- /#stage /#viewport -->
-  <script src="script.js?v=2026-11-14"></script>
+  <script src="script.js?v=2026-11-16"></script>
   <script src="experience.js?v=2026-11-14"></script>
   <script>
     /* Lock the 1707x1067 room to 16:10 and scale to fit any screen */

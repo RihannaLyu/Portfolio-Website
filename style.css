@@ -4220,3 +4220,8 @@ body.page-open .index-btn, body.index-open .index-btn, body.is-arriving .index-b
 @media (prefers-reduced-motion: reduce) {
   .city-island-img, .island-shadow { animation: none; }
 }
+
+/* Lighting Design is a placeholder on the wall for now: still there (and still lit at night),
+   but not clickable, no hover lift, no label. */
+.lighting-item.is-placeholder { pointer-events: none; cursor: default; }
+.lighting-item.is-placeholder:hover, .lighting-item.is-placeholder:active { transform: none; }
