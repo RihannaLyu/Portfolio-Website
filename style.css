@@ -287,12 +287,14 @@ body.lights-off .dark-overlay { opacity: 1; }
   --iw: 510px; --ar: 0.952; --x0: 0; --y0: 0;   /* image size, used to place the NIGHT GLOWS */
   position: absolute;
   bottom: 0%;
-  left: 0%;
+  left: -235px;        /* desk slid off the left edge: only the headphone shelf stands on the wall */
   cursor: pointer;
   width: 510px;        /* was 10px — now matches the image so the label centers over the table */
+  transform-origin: 72% 100%;           /* grow from the shelf's feet, not the hidden desk */
   transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), filter 1.2s ease;
   z-index: 50;
 }
+.gametable-item .hover-label { left: 46%; right: 2%; }   /* centred over the shelf */
 .gametable-item:hover { transform: scale(1.08); }
 .gametable-item:active { transform: scale(0.98); }
 .gametable-img {
@@ -309,14 +311,14 @@ body.lights-off .dark-overlay { opacity: 1; }
   bottom: 0%;
   right: -3%;
   cursor: pointer;
-  width: 700px;
+  width: 640px;                         /* a little smaller: leaves air under the flower shelf */
   transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), filter 1.2s ease;
   z-index: 50;
 }
 .art-item:hover { transform: scale(1.08); }
 .art-item:active { transform: scale(0.98); }
 .art-img {
-  width: 730px;
+  width: 668px;
   height: auto;
   display: block;
   filter: drop-shadow(2px 4px 10px rgba(0,0,0,0.25));
@@ -435,13 +437,18 @@ body.lights-off .dark-overlay { opacity: 1; }
 .noteboard-item:hover .hover-label,
 .noteboard-item:focus-visible .hover-label { opacity: 1; }
 
+/* ── OVERLAY: the VR set on the game shelf, drawn on the shelf image's own canvas size and laid
+   exactly over it. They share the object's image class, so size, crop
+   (MOBILE WALL), hover and night filters all follow the object. ── */
+.gametable-overlay { position: absolute; top: 0; left: 0; pointer-events: none; }
+
 /* ── SOFTWARE CART (rolling computer cart; opens the SOFTWARE PAGE) — on the floor between the
    game shelf and the noteboard, under the light switch ── */
 .software-item {
   position: absolute;
-  left: calc(50% - 337px);
-  bottom: 2px;
-  width: 124px;
+  left: calc(50% - 560px);              /* beside the headphone shelf, same floor line */
+  bottom: -25px;                        /* wheels sit below the floor edge, like the shelf's legs */
+  width: 212px;                         /* real scale: the CRT is about twice the headphones' width */
   cursor: pointer;
   transform-origin: 50% 100%;
   transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), filter 1.2s ease;
@@ -452,7 +459,7 @@ body.lights-off .dark-overlay { opacity: 1; }
 .software-item:active { transform: scale(0.98); }
 .software-item:focus-visible .software-img { outline: 2px solid #F3D27A; outline-offset: 4px; }
 .software-img {
-  width: 124px;
+  width: 212px;
   height: auto;
   display: block;
   filter: drop-shadow(2px 4px 10px rgba(0,0,0,0.25));
@@ -2702,7 +2709,7 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
     /* ◄ total wall length (raise if you hang more below); never shorter than the screen,
        so the bottom row always stands on the bottom edge, and never so short that the
        nameplate reaches the Games / Art row (on short screens the wall scrolls instead) */
-    height: max(calc(var(--top) + 207vw), 100vh);
+    height: max(calc(var(--top) + 215vw), 100vh);
     overflow: hidden;                   /* PNG padding past the edges is clipped → no sideways scroll */
   }
   .window-item { display: none; }       /* no window on the phone: Digital Art opens from the easel */
@@ -2752,18 +2759,18 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
                     top: calc(var(--top) + 21vw); left: 57vw; }
   /* middle: switch sits right of the portrait (portrait + nameplate below) */
   .switch-item    { --cw: 8vw;  --ar: 1.56;
-                    top: calc(var(--top) + 100vw); left: 81.5vw; }
-  /* bottom row, standing on the bottom edge: desk + game shelf (one image), then the easel + chair
-     (the chair runs off the right edge, as in the mock-up) */
-  .gametable-item { --cw: 53vw; --ar: 0.952; --x1: .959;
-                    bottom: 0; left: 0; }
-  .art-item       { --cw: 50vw; --ar: 0.75; --x0: .188; --x1: .751; --y0: .053;
-                    bottom: 0; left: 59.5vw; }
+                    top: calc(var(--top) + 108vw); left: 81.5vw; }
+  /* bottom row, standing on one floor line: the headphone shelf (the desk half of the image is
+     cropped away), the software cart, then the easel + chair (the chair runs off the right edge) */
+  .gametable-item { --cw: 28vw; --ar: 0.952; --x0: .472; --x1: .965; --y0: .12;
+                    bottom: 0; left: 3vw; }                         /* 3–31vw */
+  .art-item       { --cw: 34vw; --ar: 0.75; --x0: .188; --x1: .751; --y0: .053;
+                    bottom: 0; left: 62vw; }                        /* 62–96vw: same gaps as shelf → cart → easel */
 
   /* ── SELF-PORTRAIT: the centerpiece ── */
   .portrait-item {
     position: absolute;
-    top: calc(var(--top) + 52.6vw);
+    top: calc(var(--top) + 60.6vw);   /* 8vw lower than before: air between the flower shelf and the frame */
     left: 3.2vw;
     width: 77vw;                        /* ◄ portrait size */
     margin: 0;
@@ -2805,17 +2812,17 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
   .gametable-item .hover-label,
   .art-item .hover-label { top: auto; bottom: 23vw; }   /* ◄ height of the Games + Art label line */
   .gametable-item .hover-label { left: 0; right: 0; }
-  .art-item .hover-label { left: 0; right: calc(100% - 28vw); }   /* centre = item left (59.5vw) + 14vw */
+  .art-item .hover-label { left: 0; right: calc(100% - 23vw); }   /* centred over the canvas (left 23vw of the item; the chair is the rest) */
 
   /* ── ROOM LIGHTING, re-aimed for the phone wall (positions in vw, + --safe) ──
      lens centres: track at left 15vw / top --safe + 1.5vw, image 94.8vw wide (see .night-glow) */
   .night-shade {
-    --pool-key: radial-gradient(ellipse calc(54vw * var(--key-size)) calc(60vw * var(--key-size)) at 41vw calc(var(--top) + 94vw), var(--pool-stops-key));
+    --pool-key: radial-gradient(ellipse calc(54vw * var(--key-size)) calc(60vw * var(--key-size)) at 41vw calc(var(--top) + 102vw), var(--pool-stops-key));
   }
   .beam-1 { --bx: 17.2vw; --by: calc(var(--top) + 12.7vw); --bl: 24vw; --ba: -8deg; }   /* onto the busts */
   .beam-2 { --bx: 34.6vw; --by: calc(var(--top) + 11.2vw); --bl: 25vw; --ba:  8deg; }   /* onto the busts */
-  .beam-3 { --bx: 66.4vw; --by: calc(var(--top) + 12.2vw); --bl: 72vw; --ba: 16deg; }   /* down into the portrait's spotlight */
-  .beam-4 { --bx: 84.3vw; --by: calc(var(--top) + 12vw);   --bl: 76vw; --ba: 26deg; }   /* down into the portrait's spotlight */
+  .beam-3 { --bx: 66.4vw; --by: calc(var(--top) + 12.2vw); --bl: 80vw; --ba: 16deg; }   /* down into the portrait's spotlight */
+  .beam-4 { --bx: 84.3vw; --by: calc(var(--top) + 12vw);   --bl: 84vw; --ba: 26deg; }   /* down into the portrait's spotlight */
 
   /* soft frame / nameplate shadows, sized for the phone (see PORTRAIT + NAMEPLATE SHADOWS) */
   .frame-inner { --fw: 77vw; }
@@ -3279,14 +3286,14 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
 
 /* ── SOFTWARE CART + SOFTWARE PAGE on phones (768px and narrower) ──
    The cart uses the same CROPPED PNG MECHANISM as the other wall objects (see MOBILE WALL):
-   it stands in the column right of the portrait, under the light switch, above the easel. */
+   it stands on the floor in the bottom row, between the headphone shelf and the easel. */
 @media (max-width: 768px) {
   .software-item {
-    --cw: 13vw; --ar: 2.643; --x0: .036; --x1: .964; --y0: .024; --y1: .995;
+    --cw: 24vw; --ar: 1.786; --x0: .043; --x1: .957; --y0: .016; --y1: .992;
     --iw: calc(var(--cw) / (var(--x1) - var(--x0)));
     position: absolute;
-    top: calc(var(--top) + 114.5vw); left: 83vw;
-    right: auto; bottom: auto;
+    bottom: -2.8vw; left: 34.5vw;      /* 34.5–58.5vw */        /* wheels below the floor edge, like the shelf's legs */
+    top: auto; right: auto;
     width: var(--cw);
     height: calc(var(--iw) * var(--ar) * (var(--y1) - var(--y0)));
     margin: 0;
@@ -3301,9 +3308,10 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
     top:  calc(var(--iw) * var(--ar) * var(--y0) * -1);
     pointer-events: none;
   }
+  .software-item { transform-origin: 50% 100%; }
   .software-item:hover { transform: none; }
   .software-item:active { transform: scale(0.96); }
-  .software-item .hover-label { top: 40%; bottom: auto; left: -4vw; right: -4vw; }   /* across the open middle */
+  .software-item .hover-label { top: auto; bottom: 25.8vw; left: -3vw; right: -3vw; }   /* on the Games + Art label line (+2.8vw: the cart stands 2.8vw low) */
 
   .software-close {
     position: fixed;

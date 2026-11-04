@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Rihanna Lyu — Portfolio</title>
   <!-- ?v= : bump the date after each update so phones fetch the new style.css + script.js together -->
-  <link rel="stylesheet" href="style.css?v=2026-11-04" />
+  <link rel="stylesheet" href="style.css?v=2026-11-05" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
 </head>
 <body>
@@ -556,7 +556,9 @@
     </div>
     <div class="gametable-item" id="gametableItem">
       <img src="images/gametable.PNG" class="gametable-img" alt="Game table" />
-      <div class="hover-label">Games</div>
+      <!-- VR headset + controller drawn on the same canvas, laid exactly over the shelf -->
+      <img src="images/gametable-vr.svg" class="gametable-img gametable-overlay" alt="" />
+      <div class="hover-label">Games &amp; VR</div>
     </div>
     <div class="art-item" id="artItem">
       <img src="images/art.PNG" class="art-img" alt="Art easel" />
@@ -575,7 +577,7 @@
       <div class="hover-label">Floral Design</div>
     </div>
     <div class="window-item" id="windowItem">
-      <img src="images/window.PNG" class="window-img" alt="Digital art window" />
+      <img src="images/digital-window.svg" class="window-img" alt="A pen display mid-painting, hung like a window" />
       <div class="hover-label">Digital Art</div>
     </div>
     <div class="noteboard-item" id="noteboardItem" role="button" tabindex="0" aria-label="Open the noteboard and leave a note">
@@ -623,7 +625,7 @@
   </div>
 
   </div></div><!-- /#stage /#viewport -->
-  <script src="script.js?v=2026-11-04b"></script>
+  <script src="script.js?v=2026-11-05"></script>
   <script>
     /* Lock the 1707x1067 room to 16:10 and scale to fit any screen */
     (function () {
@@ -638,4 +640,4 @@
     })();
   </script>
 </body>
-</html>
+</html>

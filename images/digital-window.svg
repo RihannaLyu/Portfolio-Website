@@ -1,0 +1,151 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 592 439" width="592" height="439">
+  <!-- Digital Art "window": a pen display hung on the wall like a window, mid-painting in a
+       drawing app (toolbar, layers, colour wheel, a brush stroke being drawn), with its stylus
+       resting on a little sill. Same watercolor filter as the other wall objects, softer so the
+       screen still reads as crisp and digital. -->
+  <defs>
+    <filter id="wc" x="-4%" y="-4%" width="108%" height="108%">
+      <!-- wobbly, hand-painted edges -->
+      <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="3" seed="12" result="wob"/>
+      <feDisplacementMap in="SourceGraphic" in2="wob" scale="7" xChannelSelector="R" yChannelSelector="G" result="paint"/>
+      <feGaussianBlur in="paint" stdDeviation="0.7" result="soft"/>
+      <!-- blotchy wash: pigment pooling lighter and darker across each colour -->
+      <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="2" seed="3" result="wash"/>
+      <feColorMatrix in="wash" type="matrix"
+        values="0 0 0 0 1  0 0 0 0 0.95  0 0 0 0 0.9  0.2 0 0 0 -0.06" result="washTone"/>
+      <feComposite in="washTone" in2="soft" operator="in" result="washOnPaint"/>
+      <feBlend in="soft" in2="washOnPaint" mode="screen" result="washed"/>
+      <!-- paper grain pressed into the paint -->
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="6" result="grain"/>
+      <feColorMatrix in="grain" type="matrix"
+        values="0 0 0 0 0.22  0 0 0 0 0.16  0 0 0 0 0.10  0 0 0 -1.4 0.75" result="specks"/>
+      <feComposite in="specks" in2="washed" operator="in" result="speckPaint"/>
+      <feBlend in="washed" in2="speckPaint" mode="multiply" result="grained"/>
+      <!-- richer pigment: lift saturation and a touch of contrast -->
+      <feColorMatrix in="grained" type="saturate" values="1.45" result="sat"/>
+      <feComponentTransfer in="sat"><feFuncR type="linear" slope="1.08" intercept="-0.03"/><feFuncG type="linear" slope="1.08" intercept="-0.03"/><feFuncB type="linear" slope="1.08" intercept="-0.03"/></feComponentTransfer>
+    </filter>
+    <linearGradient id="bezel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a3d48"/><stop offset="1" stop-color="#2c232b"/>
+    </linearGradient>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2b2a6b"/><stop offset="0.35" stop-color="#b3477a"/><stop offset="0.62" stop-color="#f28a4b"/><stop offset="0.8" stop-color="#ffd27a"/>
+    </linearGradient>
+    <linearGradient id="river" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8ee6f2"/><stop offset="1" stop-color="#2a8fd6"/>
+    </linearGradient>
+    <linearGradient id="hills" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e2683a"/><stop offset="1" stop-color="#9c2f3f"/>
+    </linearGradient>
+    <linearGradient id="wood" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9a6436"/><stop offset="1" stop-color="#5e371a"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#fff8dc"/><stop offset="0.6" stop-color="#ffe08a"/><stop offset="1" stop-color="#ffb860" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="canvasClip"><rect x="76" y="58" width="378" height="300"/></clipPath>
+  </defs>
+
+  <g filter="url(#wc)">
+    <!-- wall shadow + display body -->
+    <rect x="16" y="18" width="566" height="378" rx="20" fill="#2a1a10" opacity="0.18"/>
+    <rect x="10" y="10" width="566" height="378" rx="20" fill="url(#bezel)" stroke="#2a1d24" stroke-width="3"/>
+    <rect x="28" y="28" width="530" height="342" rx="6" fill="#241c24"/>
+
+    <!-- app: top bar -->
+    <rect x="28" y="28" width="530" height="26" rx="6" fill="#3a303a"/>
+    <circle cx="44" cy="41" r="4.5" fill="#ff6b6b"/><circle cx="58" cy="41" r="4.5" fill="#ffc861"/><circle cx="72" cy="41" r="4.5" fill="#5ed38a"/>
+    <rect x="96" y="37" width="34" height="8" rx="3" fill="#5b5b68"/><rect x="138" y="37" width="28" height="8" rx="3" fill="#5b5b68"/><rect x="174" y="37" width="40" height="8" rx="3" fill="#5b5b68"/>
+    <rect x="452" y="35" width="94" height="12" rx="6" fill="#43434f"/>
+    <rect x="455" y="38" width="56" height="6" rx="3" fill="#f08ab0"/>
+
+    <!-- app: left toolbar -->
+    <rect x="28" y="54" width="44" height="316" fill="#332a33"/>
+    <g fill="none" stroke="#d6d6e0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="36" y="64" width="28" height="28" rx="7" fill="#f08ab0" stroke="none"/>
+      <path d="M43 86 L55 70 L58 73 L46 89 Z" stroke="#fff"/><path d="M43 86 L41 91 L46 89" stroke="#fff"/>
+      <path d="M40 112 L52 100 L60 108 L48 120 Z"/>
+      <path d="M41 140 C 41 130, 59 130, 59 140 C 59 149, 46 147, 44 152"/>
+      <path d="M44 166 L56 166 L58 182 L42 182 Z"/><path d="M46 166 C46 160 54 160 54 166"/>
+      <circle cx="50" cy="206" r="9"/><path d="M50 197 V215 M41 206 H59"/>
+      <path d="M41 232 H59 M50 228 V236" opacity="0.7"/>
+    </g>
+    <rect x="38" y="260" width="24" height="24" rx="5" fill="#f28a4b" stroke="#fff" stroke-width="2"/>
+    <rect x="46" y="268" width="22" height="22" rx="5" fill="#2a8fd6" stroke="#fff" stroke-width="2"/>
+
+    <!-- app: canvas with the painting in progress -->
+    <rect x="72" y="54" width="386" height="316" fill="#463b46"/>
+    <g clip-path="url(#canvasClip)">
+      <rect x="76" y="58" width="378" height="300" fill="url(#sky)"/>
+      <circle cx="268" cy="176" r="70" fill="url(#sun)"/>
+      <circle cx="268" cy="176" r="30" fill="#7fb8ff" stroke="#fff4c8" stroke-width="5"/>
+      <path d="M76 230 C 130 205, 170 225, 220 214 C 270 204, 320 222, 360 210 C 400 198, 430 212, 454 206 L454 358 L76 358 Z" fill="url(#hills)"/>
+      <path d="M76 262 C 140 248, 200 268, 260 256 C 330 242, 390 262, 454 250 L454 358 L76 358 Z" fill="#c44a3c" opacity="0.85"/>
+      <path d="M262 214 C 252 240, 290 252, 262 276 C 236 298, 300 318, 250 358 L330 358 C 350 322, 290 306, 314 280 C 336 256, 288 240, 280 214 Z" fill="url(#river)"/>
+      <!-- the brush stroke being painted right now -->
+      <path d="M110 100 C 150 84, 190 112, 232 96" stroke="#ffd1e6" stroke-width="9" fill="none" stroke-linecap="round" opacity="0.9"/>
+      <path d="M232 96 C 248 90, 262 92, 274 98" stroke="#ffd1e6" stroke-width="9" fill="none" stroke-linecap="round" opacity="0.45"/>
+      <!-- selection marquee + transform handles -->
+      <rect x="330" y="80" width="96" height="70" fill="none" stroke="#ffffff" stroke-width="1.6" stroke-dasharray="6 5"/>
+      <g fill="#ffffff" stroke="#3a7bd5" stroke-width="1.4">
+        <rect x="326" y="76" width="8" height="8"/><rect x="422" y="76" width="8" height="8"/><rect x="326" y="146" width="8" height="8"/><rect x="422" y="146" width="8" height="8"/>
+      </g>
+      <!-- zoomed pixels peeking out at a corner -->
+      <g opacity="0.95">
+        <rect x="390" y="300" width="14" height="14" fill="#9c2f3f"/><rect x="404" y="300" width="14" height="14" fill="#c44a3c"/><rect x="418" y="300" width="14" height="14" fill="#e2683a"/><rect x="432" y="300" width="14" height="14" fill="#f28a4b"/>
+        <rect x="390" y="314" width="14" height="14" fill="#c44a3c"/><rect x="404" y="314" width="14" height="14" fill="#2a8fd6"/><rect x="418" y="314" width="14" height="14" fill="#8ee6f2"/><rect x="432" y="314" width="14" height="14" fill="#e2683a"/>
+        <rect x="390" y="328" width="14" height="14" fill="#9c2f3f"/><rect x="404" y="328" width="14" height="14" fill="#c44a3c"/><rect x="418" y="328" width="14" height="14" fill="#2a8fd6"/><rect x="432" y="328" width="14" height="14" fill="#c44a3c"/>
+        <path d="M390 300 H446 V342 H390 Z M404 300 V342 M418 300 V342 M432 300 V342 M390 314 H446 M390 328 H446" fill="none" stroke="#ffffff" stroke-width="0.8" opacity="0.6"/>
+      </g>
+    </g>
+    <!-- brush cursor -->
+    <circle cx="276" cy="99" r="11" fill="none" stroke="#ffffff" stroke-width="1.8"/>
+    <circle cx="276" cy="99" r="1.8" fill="#ffffff"/>
+
+    <!-- app: right panel — colour wheel, brush size, layers -->
+    <rect x="458" y="54" width="100" height="316" fill="#332a33"/>
+    <g transform="translate(508 106)">
+      <path d="M0 0 L0 -36 A36 36 0 0 1 31.2 -18 Z" fill="#ff5f6d"/>
+      <path d="M0 0 L31.2 -18 A36 36 0 0 1 31.2 18 Z" fill="#ffc861"/>
+      <path d="M0 0 L31.2 18 A36 36 0 0 1 0 36 Z" fill="#8fdc6a"/>
+      <path d="M0 0 L0 36 A36 36 0 0 1 -31.2 18 Z" fill="#41c7d8"/>
+      <path d="M0 0 L-31.2 18 A36 36 0 0 1 -31.2 -18 Z" fill="#5a6cf0"/>
+      <path d="M0 0 L-31.2 -18 A36 36 0 0 1 0 -36 Z" fill="#c55ce6"/>
+      <circle r="17" fill="#f6f6fa"/>
+      <circle r="11" fill="#ffd1e6"/>
+      <circle cx="22" cy="-26" r="5" fill="none" stroke="#ffffff" stroke-width="2.2"/>
+    </g>
+    <rect x="470" y="156" width="76" height="6" rx="3" fill="#43434f"/>
+    <rect x="470" y="156" width="46" height="6" rx="3" fill="#f08ab0"/>
+    <circle cx="516" cy="159" r="6" fill="#ffffff"/>
+    <g>
+      <rect x="468" y="178" width="80" height="40" rx="5" fill="#3a3a48" stroke="#f08ab0" stroke-width="2"/>
+      <rect x="473" y="183" width="34" height="30" rx="3" fill="#ffd1e6"/>
+      <rect x="512" y="190" width="30" height="5" rx="2.5" fill="#c9c9d6"/><rect x="512" y="200" width="20" height="5" rx="2.5" fill="#7d7d8c"/>
+      <rect x="468" y="224" width="80" height="40" rx="5" fill="#30303c"/>
+      <rect x="473" y="229" width="34" height="30" rx="3" fill="#2a8fd6"/>
+      <path d="M473 252 C 482 244, 492 252, 507 244 L507 259 L473 259 Z" fill="#8ee6f2"/>
+      <rect x="512" y="236" width="30" height="5" rx="2.5" fill="#c9c9d6"/><rect x="512" y="246" width="20" height="5" rx="2.5" fill="#7d7d8c"/>
+      <rect x="468" y="270" width="80" height="40" rx="5" fill="#30303c"/>
+      <rect x="473" y="275" width="34" height="30" rx="3" fill="url(#sky)"/>
+      <rect x="512" y="282" width="30" height="5" rx="2.5" fill="#c9c9d6"/><rect x="512" y="292" width="20" height="5" rx="2.5" fill="#7d7d8c"/>
+      <rect x="490" y="322" width="36" height="22" rx="6" fill="#43434f"/>
+      <path d="M508 327 V339 M502 333 H514" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round"/>
+    </g>
+
+    <!-- screen glare + camera dot + power light -->
+    <path d="M40 360 L180 60 L230 60 L90 360 Z" fill="#ffffff" opacity="0.05"/>
+    <circle cx="293" cy="19" r="3" fill="#0c0c0f" stroke="#4a4a55" stroke-width="1"/>
+    <circle cx="560" cy="379" r="3" fill="#7fd08f"/>
+
+    <!-- the sill: a little wooden ledge holding the stylus -->
+    <rect x="58" y="396" width="476" height="18" rx="4" fill="url(#wood)" stroke="#3f2410" stroke-width="2.5"/>
+    <path d="M64 400 H528" stroke="#c48a55" stroke-width="2" opacity="0.55"/>
+    <path d="M80 414 L92 432 L104 414 Z M488 414 L500 432 L512 414 Z" fill="#5e371a" stroke="#3f2410" stroke-width="2"/>
+    <g transform="translate(330 390) rotate(-4)">
+      <rect x="0" y="-5" width="150" height="10" rx="5" fill="#ece9f2" stroke="#6f6a7c" stroke-width="1.8"/>
+      <path d="M150 -5 L172 0 L150 5 Z" fill="#cfcbd8" stroke="#6f6a7c" stroke-width="1.6" stroke-linejoin="round"/>
+      <rect x="40" y="-5" width="14" height="10" fill="#f08ab0"/>
+    </g>
+  </g>
+</svg>
