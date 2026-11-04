@@ -2741,7 +2741,7 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
      --safe is the iPhone camera / Dynamic Island / notch area (0 elsewhere). Every top below
      adds it, so the track lights hang just under the camera and the rest of the wall follows. */
   :root { --safe: env(safe-area-inset-top, 0px); }
-  :root { --drop: 9vw; }                /* ◄ extra room above the track lights: moves everything from the track lights
+  :root { --drop: 4vw; }                /* ◄ extra room above the track lights: moves everything from the track lights
                                            down to the nameplate together (the bottom row stays put) */
   :root { --top: calc(var(--safe) + var(--drop)); }
   .wall {
@@ -2752,7 +2752,7 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
     /* ◄ total wall length (raise if you hang more below); never shorter than the screen,
        so the bottom row always stands on the bottom edge, and never so short that the
        nameplate reaches the Games / Art row (on short screens the wall scrolls instead) */
-    height: max(calc(var(--top) + 215vw), 100vh);
+    height: max(calc(var(--top) + 219vw), 100vh);
     overflow: hidden;                   /* PNG padding past the edges is clipped → no sideways scroll */
   }
   .window-item { display: none; }       /* no window on the phone: Digital Art opens from the easel */
@@ -2805,10 +2805,10 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
                     top: calc(var(--top) + 108vw); left: 81.5vw; }
   /* bottom row, standing on one floor line: the headphone shelf (the desk half of the image is
      cropped away), the software cart, then the easel + chair (the chair runs off the right edge) */
-  .gametable-item { --cw: 28vw; --ar: 0.952; --x0: .472; --x1: .965; --y0: .12;
-                    bottom: 0; left: 3vw; }                         /* 3–31vw */
-  .art-item       { --cw: 34vw; --ar: 0.75; --x0: .188; --x1: .751; --y0: .053;
-                    bottom: 0; left: 62vw; }                        /* 62–96vw: same gaps as shelf → cart → easel */
+  .gametable-item { --cw: 30vw; --ar: 0.952; --x0: .472; --x1: .965; --y0: .12;
+                    bottom: 0; left: 2.5vw; }                       /* 2.5–32.5vw */
+  .art-item       { --cw: 42vw; --ar: 0.75; --x0: .188; --x1: .751; --y0: .053;
+                    bottom: 0; left: 63.7vw; }                      /* the screen edge cuts the chair in half (its middle is 86% across) */
 
   /* ── SELF-PORTRAIT: the centerpiece ── */
   .portrait-item {
@@ -2855,7 +2855,7 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
   .gametable-item .hover-label,
   .art-item .hover-label { top: auto; bottom: 23vw; }   /* ◄ height of the Games + Art label line */
   .gametable-item .hover-label { left: 0; right: 0; }
-  .art-item .hover-label { left: 0; right: calc(100% - 23vw); }   /* centred over the canvas (left 23vw of the item; the chair is the rest) */
+  .art-item .hover-label { left: 0; right: calc(100% - 30.6vw); } /* centred over the canvas (left 73% of the item; the chair is the rest) */
 
   /* ── ROOM LIGHTING, re-aimed for the phone wall (positions in vw, + --safe) ──
      lens centres: track at left 15vw / top --safe + 1.5vw, image 94.8vw wide (see .night-glow) */
@@ -3336,10 +3336,10 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
    it stands on the floor in the bottom row, between the headphone shelf and the easel. */
 @media (max-width: 768px) {
   .software-item {
-    --cw: 24vw; --ar: 1.786; --x0: .043; --x1: .957; --y0: .016; --y1: .992;
+    --cw: 25vw; --ar: 1.786; --x0: .043; --x1: .957; --y0: .016; --y1: .992;
     --iw: calc(var(--cw) / (var(--x1) - var(--x0)));
     position: absolute;
-    bottom: -2.8vw; left: 34.5vw;      /* 34.5–58.5vw */        /* wheels below the floor edge, like the shelf's legs */
+    bottom: -2.8vw; left: 35.5vw;      /* 35.5–60.5vw */        /* wheels below the floor edge, like the shelf's legs */
     top: auto; right: auto;
     width: var(--cw);
     height: calc(var(--iw) * var(--ar) * (var(--y1) - var(--y0)));
@@ -3554,3 +3554,20 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
   .hover-label { letter-spacing: 0.04em; }
 }
 .digital-card-title, .individual-card-label { align-self: stretch; text-align: center; }
+
+/* ── TONE BALANCE — every wall object brought to one saturation + one warm light ──
+   Measured in the browser (mean saturation of each drawing's pixels): nameplate 0.74,
+   flowers 0.59, portrait 0.56, Digital Art 0.54, noteboard 0.53, cart 0.42, game shelf 0.30,
+   easel 0.29, busts 0.15. The colourful ones are eased toward ~0.45, the flat ones lifted a
+   touch, and a whisper of sepia puts them all under the same warm room light. On the object's
+   box, so it stacks with the hover + night filters on its image. */
+.window-item    { filter: saturate(0.74) contrast(0.96) sepia(0.06); }
+.nameplate-item { filter: saturate(0.85) sepia(0.04); }
+.flowers-item   { filter: saturate(0.84) contrast(0.98) sepia(0.06); }
+.frame-inner    { filter: saturate(0.9) sepia(0.04); }
+.noteboard-item { filter: saturate(0.86) contrast(1.06) sepia(0.06); }
+.software-item  { filter: saturate(0.94) contrast(1.02) sepia(0.06); }
+.gametable-item { filter: saturate(1.08) brightness(1.05) sepia(0.06); }
+.art-item       { filter: saturate(1.08) contrast(1.02) sepia(0.06); }
+.shelf-item     { filter: saturate(1.1) sepia(0.06); }
+.lighting-item  { filter: sepia(0.04); }
