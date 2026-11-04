@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<script>try { const t = localStorage.getItem("ootd-theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rihanna's OOTD Studio</title>
+<meta name="description" content="A hand-drawn outfit for every day, picked for your city's weather, the holidays and festivals around you, campus life and this week's trend.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,0..100,0..1;1,9..144,300..800,0..100,0..1&family=Pinyon+Script&family=Figtree:wght@400;500;600&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<canvas id="silk" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="nav">
+  <a class="brand" href="#top"><span class="script">Rihanna's</span> OOTD Studio</a>
+  <div class="nav-right">
+    <a class="nav-link" href="#week">Plan my week</a>
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span><i aria-hidden="true"></i>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <h1>What to wear <span class="glow" id="heroDay">today<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 16 C 50 4, 120 4, 196 14"/></svg></span></h1>
+    <p class="lede">A fresh, hand-drawn outfit every day, picked for your city's weather, the holidays and festivals around you, campus life and this week's trend.</p>
+
+    <div class="controls">
+      <div class="city-wrap">
+        <button class="pill city-pill" id="cityBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+          <span class="pin" aria-hidden="true">📍</span> <span id="cityName">Austin</span> <span class="caret" aria-hidden="true">▾</span>
+        </button>
+        <div class="city-menu" id="cityMenu" role="listbox" aria-label="Choose a city" hidden></div>
+      </div>
+      <div class="units" role="group" aria-label="Temperature unit">
+        <button type="button" data-unit="F">°F</button><button type="button" data-unit="C">°C</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="look" id="look" aria-live="polite">
+    <div class="flat-card">
+      <span class="tape" aria-hidden="true"></span>
+      <svg id="flat" class="flat" role="img" aria-label="Today's outfit, drawn as a flat-lay"></svg>
+      <span class="flat-date" id="flatDate"></span>
+    </div>
+
+    <div class="look-copy">
+      <div class="look-top">
+        <span class="sticker" id="dayName">Today</span>
+        <span class="wx" id="wx"></span>
+      </div>
+      <p class="ootd-label">Outfit of the day</p>
+      <h2 class="look-title" id="lookTitle">—</h2>
+      <p class="look-cap" id="lookCap"></p>
+      <div class="tags" id="tags"></div>
+
+      <ul class="pieces" id="pieces"></ul>
+
+      <div class="why">
+        <h4>Why it works</h4>
+        <ul id="why"></ul>
+      </div>
+      <p class="tip" id="tip"></p>
+
+      <div class="look-actions">
+        <button class="btn" id="btnShuffle" type="button">Shuffle this look</button>
+        <button class="btn btn-ghost" id="btnCopy" type="button">Copy the list</button>
+      </div>
+      <p class="source" id="source"></p>
+    </div>
+  </section>
+
+  <section class="week" id="week">
+    <div class="week-head">
+      <h3>Your <em>week</em></h3>
+      <p>Tap a day to see its outfit.</p>
+    </div>
+    <div class="days" id="days"></div>
+  </section>
+</main>
+
+<footer class="foot">
+  <p><span class="script">Rihanna's</span> OOTD Studio</p>
+  <small>For fun and inspiration. Festival dates are approximate; check before you go.</small>
+</footer>
+
+<div class="toast" id="toast" role="status" hidden></div>
+<script type="module" src="app.js"></script>
+</body>
+</html>
