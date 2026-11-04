@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1689 1608" width="1689" height="1608">
   <!-- Meta Quest 3 on the game shelf, drawn on the same 1689×1608 canvas as gametable.PNG so it
-       lies exactly on top. It has the middle shelf to itself (the console is masked away by
-       gametable-mask.svg): the white visor with its three pill-shaped sensor clusters, the grey
+       lies exactly on top. It has the third (bottom) shelf to itself (the amplifier is masked away by
+       gametable-mask.svg; the console stays on the second shelf): the white visor with its three pill-shaped sensor clusters, the grey
        fabric straps, and the two ring-less Touch Plus controllers, plus a glowing "VR" tag. -->
   <defs>
     <filter id="wc" x="-3%" y="-3%" width="106%" height="106%">
@@ -28,7 +28,9 @@
   </defs>
 
   <g filter="url(#wc)">
-    <!-- soft shadow on the middle shelf -->
+    <!-- everything below sits on the third (bottom) shelf: drawn for the middle shelf, moved down 390 -->
+    <g transform="translate(0 390)">
+    <!-- soft shadow on the shelf -->
     <ellipse cx="1220" cy="1034" rx="330" ry="14" fill="#1a1410" opacity="0.28"/>
 
     <!-- ── headset ── -->
@@ -74,6 +76,8 @@
       <circle cx="6" cy="-74" r="13" fill="#2a2b33" stroke="#0e0e12" stroke-width="2"/>
       <circle cx="6" cy="-74" r="7" fill="#4a4b56"/>
       <circle cx="-14" cy="-50" r="6" fill="#2a2b33"/><circle cx="4" cy="-44" r="6" fill="#2a2b33"/>
+    </g>
+
     </g>
 
     <!-- glowing "VR" tag on the shelf's left leg -->

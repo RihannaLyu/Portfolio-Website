@@ -5,8 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Rihanna Lyu — Portfolio</title>
   <!-- ?v= : bump the date after each update so phones fetch the new style.css + script.js together -->
-  <link rel="stylesheet" href="style.css?v=2026-11-05b" />
+  <link rel="stylesheet" href="style.css?v=2026-11-06" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <!-- handwriting fonts for the Leave a Note page -->
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&display=swap" rel="stylesheet" />
 </head>
 <body>
   <script>
@@ -314,25 +316,24 @@
   <div class="notes-page" id="notesPage">
     <button class="notes-close" id="notesClose" aria-label="Close">✕</button>
     <div class="notes-content">
-      <p class="notes-visitor" id="notesVisitor">Welcome, visitor</p>
-      <h1 class="notes-title">Leave a Note</h1>
-      <p class="notes-intro">
-        Say hi, share a thought, or ask me anything, and pin it to the board.
-        Want me to write back? Add your email below; only I can see it.
-        You can also reach me at <a href="mailto:rihannalyu@gmail.com">rihannalyu@gmail.com</a>.
-      </p>
+      <p class="notes-visitor" id="notesVisitor">hi, visitor!</p>
+      <h1 class="notes-title">
+        <svg class="doodle doodle-star" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 4 L24 16 L37 16 L26 24 L30 37 L20 29 L10 37 L14 24 L3 16 L16 16 Z"/></svg>
+        leave a note
+        <svg class="doodle doodle-heart" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 33 C 6 23, 2 15, 6 9 C 10 3, 18 4, 20 11 C 22 4, 30 3, 34 9 C 38 15, 34 23, 20 33 Z"/></svg>
+      </h1>
 
       <form class="note-composer" id="noteForm" autocomplete="off">
         <div class="note-paper" id="notePaper" data-color="yellow">
-          <span class="note-paper-pin" aria-hidden="true"></span>
+          <span class="note-tape" aria-hidden="true"></span>
           <label class="sr-only" for="noteText">Your note</label>
-          <textarea id="noteText" maxlength="280" rows="5" required
-                    placeholder="Write your note here…"></textarea>
+          <textarea id="noteText" maxlength="280" rows="4" required
+                    placeholder="say hi ♡"></textarea>
           <label class="sr-only" for="noteName">Your name (optional)</label>
-          <input id="noteName" class="note-field" maxlength="40" placeholder="Your name (optional)" />
+          <input id="noteName" class="note-field" maxlength="40" placeholder="your name" />
           <label class="sr-only" for="noteEmail">Your email (optional, only Rihanna sees it)</label>
           <input id="noteEmail" class="note-field" type="email" maxlength="120" inputmode="email"
-                 placeholder="Your email, so I can reply (only I see it)" />
+                 placeholder="email for a reply (only I see it)" />
         </div>
         <div class="note-controls">
           <div class="note-colors" role="radiogroup" aria-label="Note color">
@@ -343,11 +344,15 @@
             <button type="button" class="note-color" data-color="peach" role="radio" aria-checked="false" aria-label="Peach"></button>
           </div>
           <span class="note-count" id="noteCount">0 / 280</span>
-          <button type="submit" class="note-pin-btn" id="notePinBtn">Pin it to the board</button>
+          <button type="submit" class="note-pin-btn" id="notePinBtn">pin it!</button>
         </div>
         <p class="note-status" id="noteStatus" role="status"></p>
       </form>
 
+      <p class="notes-hint">
+        everyone can see these
+        <svg class="doodle doodle-arrow" viewBox="0 0 60 50" aria-hidden="true"><path d="M8 6 C 30 4, 44 16, 40 40 M30 32 L40 42 L48 30"/></svg>
+      </p>
       <div class="notes-board" id="notesBoard" aria-live="polite"></div>
     </div>
   </div>
@@ -364,7 +369,7 @@
         <article class="software-card">
           <a class="software-thumb" href="software/color-studio/index.html" target="_blank" rel="noopener"
              aria-label="Open Rihanna's Color Studio in a new tab">
-            <img src="images/software/colorstudio-thumb.svg" width="800" height="600" alt="An open makeup compact: a smiling 16-season flower in the mirror and seven color pans" />
+            <img src="images/software/colorstudio-thumb.jpg" width="800" height="600" alt="An open makeup compact: a smiling 16-season flower in the mirror and seven color pans" />
           </a>
           <div class="software-info">
             <p class="software-no">No. 01</p>
@@ -557,7 +562,7 @@
     <div class="gametable-item" id="gametableItem">
       <img src="images/gametable.PNG" class="gametable-img" alt="Game table" />
       <!-- VR headset + controller drawn on the same canvas, laid exactly over the shelf -->
-      <img src="images/gametable-vr.svg" class="gametable-img gametable-overlay" alt="" />
+      <img src="images/gametable-vr.png" class="gametable-img gametable-overlay" alt="" />
       <div class="hover-label">Games &amp; VR</div>
     </div>
     <div class="art-item" id="artItem">
@@ -581,11 +586,11 @@
       <div class="hover-label">Digital Art</div>
     </div>
     <div class="noteboard-item" id="noteboardItem" role="button" tabindex="0" aria-label="Open the noteboard and leave a note">
-      <img src="images/noteboard.svg" class="noteboard-img" alt="" />
+      <img src="images/noteboard.png" class="noteboard-img" alt="" />
       <div class="hover-label">Leave a Note</div>
     </div>
     <div class="software-item" id="softwareItem" role="button" tabindex="0" aria-label="Open Software and Websites">
-      <img src="images/software-cart.svg" class="software-img" alt="" />
+      <img src="images/software-cart.png" class="software-img" alt="" />
       <div class="hover-label"><span class="label-wide">Software &amp; Web</span><span class="label-phone">Software</span></div>
     </div>
 
@@ -625,7 +630,7 @@
   </div>
 
   </div></div><!-- /#stage /#viewport -->
-  <script src="script.js?v=2026-11-05"></script>
+  <script src="script.js?v=2026-11-06"></script>
   <script>
     /* Lock the 1707x1067 room to 16:10 and scale to fit any screen */
     (function () {

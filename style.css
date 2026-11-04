@@ -441,7 +441,7 @@ body.lights-off .dark-overlay { opacity: 1; }
    exactly over it. They share the object's image class, so size, crop
    (MOBILE WALL), hover and night filters all follow the object. ── */
 .gametable-overlay { position: absolute; top: 0; left: 0; pointer-events: none; }
-/* the console is masked off the middle shelf: the Meta Quest 3 has that shelf to itself */
+/* the amplifier is masked off the bottom shelf: the Meta Quest 3 has that shelf to itself */
 .gametable-img:not(.gametable-overlay) {
   -webkit-mask: url('images/gametable-mask.svg') 0 0 / 100% 100% no-repeat;
           mask: url('images/gametable-mask.svg') 0 0 / 100% 100% no-repeat;
@@ -745,74 +745,95 @@ body.lights-off .dark-overlay { opacity: 1; }
 .software-soon-text { font-style: italic; color: rgba(232,213,160,0.55); }
 
 /* ══════════════════════════════════
-   NOTEBOARD PAGE — "you are visitor No. …", a sticky-note composer, and the public board
-   (script.js: NOTEBOARD)
+   NOTEBOARD PAGE — hand-drawn and cute: notebook paper, a sticky note to write on (taped, not
+   pinned), doodles, and the public cork board everyone can read (script.js: NOTEBOARD)
 ══════════════════════════════════ */
+.notes-page {
+  --ink: #5b3a24;
+  background-color: #fbf4e6;
+  background-image:
+    linear-gradient(rgba(170, 196, 222, 0.35) 1px, transparent 1px),
+    radial-gradient(rgba(91, 58, 36, 0.06) 1px, transparent 1.5px);
+  background-size: 100% 34px, 9px 9px;
+}
+.notes-page .notes-close {
+  border: 2.5px solid var(--ink);
+  border-radius: 52% 48% 55% 45% / 48% 55% 45% 52%;   /* a hand-drawn circle */
+  background: #fff8e6;
+  color: var(--ink);
+  font-family: 'Patrick Hand', 'Comic Sans MS', cursive;
+  box-shadow: 2px 3px 0 var(--ink);
+}
+.notes-page .notes-close:hover { background: #fde3ea; border-color: var(--ink); }
 .notes-content {
-  max-width: 1100px;
+  position: relative;
+  max-width: 1060px;
   margin: 0 auto;
-  padding: 56px 40px 80px;
+  padding: 50px 40px 80px;
   text-align: center;
+  color: var(--ink);
 }
+
+/* "visitor no. 1,001" on a strip of pink washi tape */
 .notes-visitor {
-  display: inline-block;
-  margin: 0 0 22px;
-  padding: 8px 22px;
-  border: 1px solid rgba(184,160,112,0.5);
-  border-radius: 999px;
-  font-family: 'Playfair Display', Georgia, serif;
-  font-style: italic;
-  font-size: 17px;
-  letter-spacing: 0.04em;
-  color: #E8D5A0;
-  background: rgba(184,160,112,0.08);
+  display: block;
+  width: fit-content;
+  margin: 0 auto 10px;
+  padding: 5px 22px;
+  font-family: 'Patrick Hand', 'Comic Sans MS', cursive;
+  font-size: 18px;
+  color: var(--ink);
+  background: repeating-linear-gradient(45deg, rgba(243,169,189,0.75) 0 8px, rgba(248,200,214,0.75) 8px 16px);
+  transform: rotate(-2deg);
+  clip-path: polygon(2% 0, 98% 4%, 100% 50%, 97% 100%, 3% 96%, 0 50%);
 }
-.notes-visitor strong { color: #F5C842; font-weight: 600; font-style: normal; }
+.notes-visitor strong { font-weight: 400; }
+
 .notes-title {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: 42px;
-  font-style: italic;
-  font-weight: 400;
-  color: #E8D5A0;
-  margin: 0 0 14px;
+  position: relative;
+  display: inline-block;
+  margin: 0 0 26px;
+  padding: 0 46px;
+  font-family: 'Caveat', 'Comic Sans MS', cursive;
+  font-size: 72px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--ink);
+  background: linear-gradient(transparent 62%, rgba(246, 216, 107, 0.65) 62%, rgba(246, 216, 107, 0.65) 88%, transparent 88%);
 }
-.notes-intro {
-  max-width: 620px;
-  margin: 0 auto 30px;
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: 16px;
-  line-height: 1.6;
-  color: rgba(232,213,160,0.85);
-}
-.notes-intro a { color: #F5C842; }
+.doodle { position: absolute; fill: none; stroke: var(--ink); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.doodle-star  { left: -2px; top: -6px; width: 36px; fill: #f6d86b; transform: rotate(-12deg); }
+.doodle-heart { right: -2px; top: 4px; width: 36px; fill: #f3a9bd; transform: rotate(10deg); }
 
 /* sticky-note colours, shared by the composer and the board */
-[data-color="yellow"] { --note-bg: #F6D86B; --note-ink: #4a3a10; --note-edge: #c9a334; }
-[data-color="pink"]   { --note-bg: #F3A9BD; --note-ink: #4f1f2c; --note-edge: #c96f88; }
-[data-color="mint"]   { --note-bg: #A9DCBF; --note-ink: #1f4632; --note-edge: #5f9d7a; }
-[data-color="blue"]   { --note-bg: #AECBEE; --note-ink: #1f3557; --note-edge: #5f86b8; }
-[data-color="peach"]  { --note-bg: #F8C08F; --note-ink: #4f2d10; --note-edge: #c98a52; }
+[data-color="yellow"] { --note-bg: #F8DE7E; --note-ink: #4a3a10; --note-edge: #d9b84a; }
+[data-color="pink"]   { --note-bg: #F6B5C6; --note-ink: #4f1f2c; --note-edge: #d9869c; }
+[data-color="mint"]   { --note-bg: #B6E2C8; --note-ink: #1f4632; --note-edge: #7cb497; }
+[data-color="blue"]   { --note-bg: #BBD4F1; --note-ink: #1f3557; --note-edge: #7fa1cc; }
+[data-color="peach"]  { --note-bg: #F9CBA0; --note-ink: #4f2d10; --note-edge: #d79e6c; }
 
-/* the composer: one big sticky note to write on */
-.note-composer { max-width: 440px; margin: 0 auto 44px; }
+/* the composer: one big sticky note to write on, taped to the page */
+.note-composer { max-width: 420px; margin: 0 auto 20px; }
 .note-paper {
   position: relative;
-  padding: 30px 22px 18px;
+  padding: 30px 24px 16px;
   background: var(--note-bg);
-  border-bottom: 3px solid var(--note-edge);
-  box-shadow: 0 12px 26px rgba(0,0,0,0.35);
-  transform: rotate(-1deg);
+  border-radius: 2px 4px 30px 3px / 3px 2px 14px 4px;      /* a gently curled corner */
+  box-shadow: 3px 6px 0 rgba(91, 58, 36, 0.18), 0 14px 22px -10px rgba(91, 58, 36, 0.45);
+  transform: rotate(-1.5deg);
   text-align: left;
   transition: background 0.25s ease;
 }
-.note-paper-pin {
+.note-tape {
   position: absolute;
-  top: 9px; left: 50%;
-  width: 16px; height: 16px;
-  margin-left: -8px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 38% 35%, #ff9a8a, #d63a2f 45%, #7e1712);
-  box-shadow: 0 3px 4px rgba(0,0,0,0.35);
+  top: -14px; left: 50%;
+  width: 110px; height: 28px;
+  margin-left: -55px;
+  background: rgba(255, 255, 255, 0.55);
+  border-left: 2px dashed rgba(91, 58, 36, 0.15);
+  border-right: 2px dashed rgba(91, 58, 36, 0.15);
+  transform: rotate(-3deg);
+  box-shadow: 0 1px 2px rgba(91, 58, 36, 0.15);
 }
 .note-paper textarea,
 .note-field {
@@ -820,124 +841,142 @@ body.lights-off .dark-overlay { opacity: 1; }
   border: 0;
   background: transparent;
   color: var(--note-ink);
-  font-family: 'Playfair Display', Georgia, serif;
   outline: none;
 }
 .note-paper textarea {
   display: block;
-  min-height: 130px;
+  min-height: 120px;
   resize: vertical;
-  font-size: 18px;
-  line-height: 1.5;
-  font-style: italic;
+  font-family: 'Caveat', 'Comic Sans MS', cursive;
+  font-size: 28px;
+  line-height: 1.25;
 }
 .note-field {
   display: block;
-  margin-top: 8px;
+  margin-top: 6px;
   padding: 6px 2px;
-  font-size: 14px;
-  border-top: 1px dashed color-mix(in srgb, var(--note-ink) 35%, transparent);
+  font-family: 'Patrick Hand', 'Comic Sans MS', cursive;
+  font-size: 17px;
+  border-top: 2px dotted color-mix(in srgb, var(--note-ink) 35%, transparent);
 }
 .note-paper textarea::placeholder,
-.note-field::placeholder { color: var(--note-ink); opacity: 0.55; }
+.note-field::placeholder { color: var(--note-ink); opacity: 0.5; }
 
 .note-controls {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 12px;
-  margin-top: 18px;
+  margin-top: 20px;
 }
-.note-colors { display: flex; gap: 8px; }
+.note-colors { display: flex; gap: 9px; }
 .note-color {
-  width: 28px; height: 28px;
-  border-radius: 50%;
-  border: 2px solid rgba(232,213,160,0.35);
+  width: 30px; height: 30px;
+  border-radius: 50% 45% 52% 48% / 48% 52% 45% 50%;
+  border: 2.5px solid var(--ink);
   background: var(--note-bg);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+  transition: transform 0.15s ease;
 }
-.note-color.active { border-color: #F5C842; box-shadow: 0 0 0 2px #1A1208, 0 0 0 4px #F5C842; }
+.note-color:hover { transform: rotate(-8deg) scale(1.08); }
+.note-color.active { box-shadow: 0 0 0 3px #fbf4e6, 0 0 0 5.5px var(--ink); }
 .note-count {
   margin-left: auto;
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: 13px;
-  color: rgba(232,213,160,0.6);
+  font-family: 'Patrick Hand', 'Comic Sans MS', cursive;
+  font-size: 15px;
+  color: rgba(91, 58, 36, 0.55);
 }
 .note-pin-btn {
-  padding: 10px 20px;
-  border: 1px solid #E8D5A0;
-  border-radius: 999px;
-  background: linear-gradient(#EBD9A6, #C9AD6E);
-  color: #1A1208;
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: 15px;
-  font-weight: 600;
+  padding: 8px 26px 10px;
+  border: 2.5px solid var(--ink);
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;   /* hand-drawn pill */
+  background: #f3a9bd;
+  color: var(--ink);
+  font-family: 'Caveat', 'Comic Sans MS', cursive;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 3px 4px 0 var(--ink);
   cursor: pointer;
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.2s ease;
 }
-.note-pin-btn:hover { transform: translateY(-1px); }
+.note-pin-btn:hover { transform: translate(-1px, -2px) rotate(-1.5deg); box-shadow: 4px 6px 0 var(--ink); }
+.note-pin-btn:active { transform: translate(2px, 3px); box-shadow: 1px 1px 0 var(--ink); }
 .note-pin-btn:disabled { opacity: 0.5; cursor: default; transform: none; }
 .note-status {
   min-height: 1.4em;
   margin: 12px 0 0;
-  font-family: 'Playfair Display', Georgia, serif;
-  font-style: italic;
-  font-size: 15px;
-  color: #E8D5A0;
+  font-family: 'Caveat', 'Comic Sans MS', cursive;
+  font-size: 24px;
+  color: var(--ink);
 }
 
-/* the public board: cork, with every note pinned at a slight tilt */
+/* "everyone can see these" + a squiggly arrow down to the board */
+.notes-hint {
+  position: relative;
+  display: inline-block;
+  margin: 10px 0 18px;
+  padding-right: 52px;
+  font-family: 'Caveat', 'Comic Sans MS', cursive;
+  font-size: 30px;
+  color: var(--ink);
+  transform: rotate(-2deg);
+}
+.doodle-arrow { right: 0; top: 4px; width: 48px; }
+
+/* the public board: cork in a hand-drawn wooden frame; notes are taped on at a tilt */
 .notes-board {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-  gap: 26px 22px;
+  gap: 30px 24px;
   min-height: 220px;
-  padding: 30px 26px;
-  border: 12px solid #7d4c26;
-  border-radius: 8px;
-  background-color: #cfa272;
+  padding: 36px 28px 30px;
+  border: 14px solid #a36a3a;
+  border-radius: 14px 22px 12px 26px / 24px 12px 26px 14px;
+  outline: 2.5px solid var(--ink);
+  outline-offset: -1px;
+  background-color: #d8ad7c;
   background-image:
     radial-gradient(rgba(96, 58, 26, 0.38) 1px, transparent 1.7px),
-    radial-gradient(rgba(255, 236, 205, 0.28) 1px, transparent 1.7px);
+    radial-gradient(rgba(255, 236, 205, 0.3) 1px, transparent 1.7px);
   background-size: 7px 7px, 11px 11px;
   background-position: 0 0, 3px 5px;
-  box-shadow: inset 0 0 30px rgba(60, 30, 10, 0.45), 0 14px 30px rgba(0,0,0,0.4);
+  box-shadow: inset 0 0 26px rgba(60, 30, 10, 0.4), 4px 6px 0 rgba(91, 58, 36, 0.25);
 }
 .board-note {
   position: relative;
   padding: 26px 16px 14px;
   background: var(--note-bg);
   color: var(--note-ink);
-  border-bottom: 2px solid var(--note-edge);
-  box-shadow: 0 8px 14px rgba(40, 20, 5, 0.35);
+  border-radius: 2px 3px 22px 2px / 2px 2px 10px 3px;
+  box-shadow: 2px 4px 0 rgba(60, 30, 10, 0.18), 0 10px 14px -8px rgba(40, 20, 5, 0.5);
   transform: rotate(var(--tilt, 0deg));
   text-align: left;
-  font-family: 'Playfair Display', Georgia, serif;
 }
-.board-note::before {                   /* push pin */
+.board-note::before {                   /* a strip of washi tape */
   content: '';
   position: absolute;
-  top: 8px; left: 50%;
-  width: 13px; height: 13px;
-  margin-left: -6.5px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 38% 35%, var(--pin-hi, #ff9a8a), var(--pin, #d63a2f) 45%, var(--pin-lo, #7e1712));
-  box-shadow: 0 3px 4px rgba(0,0,0,0.35);
+  top: -11px; left: 50%;
+  width: 74px; height: 22px;
+  margin-left: -37px;
+  background: var(--tape, rgba(243, 169, 189, 0.7));
+  transform: rotate(var(--tape-tilt, -4deg));
 }
-.board-note:nth-child(3n+2)::before { --pin-hi: #fff1b8; --pin: #d9a93a; --pin-lo: #7a5714; }
-.board-note:nth-child(3n)::before   { --pin-hi: #c9e2ff; --pin: #3f7fd6; --pin-lo: #1b3f78; }
+.board-note:nth-child(3n+2)::before { --tape: rgba(182, 226, 200, 0.75); --tape-tilt: 3deg; }
+.board-note:nth-child(3n)::before   { --tape: rgba(187, 212, 241, 0.75); --tape-tilt: -2deg; }
 .board-note-text {
   margin: 0;
-  font-size: 16px;
-  font-style: italic;
-  line-height: 1.45;
+  font-family: 'Caveat', 'Comic Sans MS', cursive;
+  font-size: 24px;
+  line-height: 1.2;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
 .board-note-by {
   margin: 10px 0 0;
-  font-size: 12px;
+  font-family: 'Patrick Hand', 'Comic Sans MS', cursive;
+  font-size: 15px;
   opacity: 0.75;
   text-align: right;
 }
@@ -949,9 +988,8 @@ body.lights-off .dark-overlay { opacity: 1; }
   grid-column: 1 / -1;
   align-self: center;
   margin: 0;
-  font-family: 'Playfair Display', Georgia, serif;
-  font-style: italic;
-  font-size: 17px;
+  font-family: 'Caveat', 'Comic Sans MS', cursive;
+  font-size: 30px;
   color: #4a2a10;
   text-align: center;
 }
@@ -3251,23 +3289,27 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
   .stage-play-btn { width: 64px; height: 64px; }
 
   /* ── NOTEBOARD PAGE ── */
-  .notes-content { padding: 64px 14px 40px; }
-  .notes-visitor { font-size: 14px; padding: 7px 16px; margin-bottom: 16px; }
-  .notes-title { font-size: 30px; }
-  .notes-intro { font-size: 15px; margin-bottom: 22px; }
-  .note-composer { margin-bottom: 30px; }
-  .note-paper textarea { font-size: 17px; min-height: 110px; }
-  .note-field { font-size: 16px; }      /* 16px+ stops iPhones zooming in on focus */
+  .notes-page { border-top-color: #fbf4e6; }
+  .notes-content { padding: 64px 16px 44px; }
+  .notes-visitor { font-size: 16px; padding: 4px 18px; }
+  .notes-title { font-size: 54px; padding: 0 40px; margin-bottom: 22px; }
+  .doodle-star, .doodle-heart { width: 30px; }
+  .note-composer { margin-bottom: 14px; }
+  .note-paper textarea { font-size: 26px; min-height: 100px; }
+  .note-field { font-size: 17px; }      /* 16px+ stops iPhones zooming in on focus */
   .note-count { margin-left: 0; }
-  .note-pin-btn { width: 100%; padding: 12px 20px; }
+  .note-pin-btn { width: 100%; padding: 10px 20px 12px; }
+  .notes-hint { font-size: 26px; }
   .notes-board {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 18px 12px;
-    padding: 20px 12px;
-    border-width: 8px;
+    gap: 24px 12px;
+    padding: 26px 12px 20px;
+    border-width: 9px;
   }
   .board-note { padding: 22px 11px 10px; }
-  .board-note-text { font-size: 14px; }
+  .board-note::before { width: 58px; margin-left: -29px; }
+  .board-note-text { font-size: 21px; }
+  .board-note-by { font-size: 13px; }
 
   /* ── FLORAL DESIGN ── */
   .flowers-content { padding: 70px 16px 40px; }

@@ -1,5 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1689 1608" width="1689" height="1608" preserveAspectRatio="none">
-  <!-- Mask for gametable.PNG (white = shown): hides the game console on the middle shelf so the
-       Meta Quest 3 (gametable-vr.svg) can have that shelf to itself. Everything else stays. -->
-  <path d="M0 0 H1689 V1608 H0 Z M866 826 H1574 V1036 H866 Z" fill="#fff" fill-rule="evenodd"/>
+  <!-- Mask for gametable.PNG (white = shown): hides the amplifier on the third (bottom) shelf so
+       the Meta Quest 3 (gametable-vr.svg) can have that shelf to itself. The console stays on the
+       second shelf; everything else stays. -->
+  <path d="M0 0 H1689 V1608 H0 Z M878 1234 H1562 V1426 H878 Z" fill="#fff" fill-rule="evenodd"/>
 </svg>

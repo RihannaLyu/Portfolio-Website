@@ -819,7 +819,7 @@ function ordinal(n) {
   return n.toLocaleString('en-US') + (s[(v - 20) % 10] || s[v] || s[0]);
 }
 function showVisitorNumber(n) {
-  notesVisitor.innerHTML = `You are the <strong>${ordinal(n)}</strong> visitor to this website`;
+  notesVisitor.innerHTML = `visitor no. <strong>${n.toLocaleString('en-US')}</strong> ✿`;
 }
 function visitorId() {
   let id = safeGet('visitorId');
@@ -843,7 +843,7 @@ function registerVisit() {
       safeSet('visitorNumber', n);
       showVisitorNumber(n);
     })
-    .catch(() => { if (!cached) notesVisitor.textContent = 'Welcome, visitor'; });
+    .catch(() => { if (!cached) notesVisitor.textContent = 'hi, visitor!'; });
 }
 registerVisit();                              // counted on arrival, not only when the board opens
 
@@ -870,7 +870,7 @@ function renderNote(note, isNew) {
 function showNotes(notes) {
   notesBoard.innerHTML = '';
   if (!notes.length) {
-    notesBoard.innerHTML = '<p class="notes-empty">No notes yet. Be the first to pin one!</p>';
+    notesBoard.innerHTML = '<p class="notes-empty">no notes yet. be the first! ♡</p>';
     return;
   }
   notes.forEach(n => notesBoard.appendChild(renderNote(n)));
@@ -880,11 +880,11 @@ function demoNotes() {
 }
 function loadNotes() {
   if (!notesOnline) { showNotes(demoNotes()); return; }
-  notesBoard.innerHTML = '<p class="notes-empty">Loading notes…</p>';
+  notesBoard.innerHTML = '<p class="notes-empty">loading…</p>';
   sbFetch('notes?select=id,created_at,body,name,color&order=created_at.desc&limit=200')
     .then(res => res.json())
     .then(showNotes)
-    .catch(() => { notesBoard.innerHTML = '<p class="notes-empty">The board couldn\'t load right now. Please try again later.</p>'; });
+    .catch(() => { notesBoard.innerHTML = '<p class="notes-empty">the board is napping. try again soon!</p>'; });
 }
 
 // ── writing a note ──
@@ -903,7 +903,7 @@ noteText.addEventListener('input', () => { noteCount.textContent = noteText.valu
 noteForm.addEventListener('submit', (e) => {
   e.preventDefault();
   const body = noteText.value.trim();
-  if (!body) { noteStatus.textContent = 'Write something first!'; noteText.focus(); return; }
+  if (!body) { noteStatus.textContent = 'write something first!'; noteText.focus(); return; }
   const note = {
     body: body.slice(0, NOTE_MAX),
     name: noteName.value.trim().slice(0, 40) || null,
@@ -911,7 +911,7 @@ noteForm.addEventListener('submit', (e) => {
   };
   const email = noteEmail.value.trim().slice(0, 120);
   notePinBtn.disabled = true;
-  noteStatus.textContent = 'Pinning…';
+  noteStatus.textContent = 'pinning…';
 
   const done = () => {
     const shown = { ...note, id: 'new-' + Date.now(), created_at: new Date().toISOString() };
@@ -920,7 +920,7 @@ noteForm.addEventListener('submit', (e) => {
     noteForm.reset();
     setNoteColor(noteColor);
     noteCount.textContent = '0 / ' + NOTE_MAX;
-    noteStatus.textContent = email ? 'Pinned! Thank you. I\'ll write back to you.' : 'Pinned! Thank you for your note.';
+    noteStatus.textContent = email ? 'pinned! I\'ll write back ♡' : 'pinned! thank you ♡';
     setTimeout(() => { notePinBtn.disabled = false; }, 8000);   // a short pause between notes
   };
 
@@ -937,7 +937,7 @@ noteForm.addEventListener('submit', (e) => {
     .then(done)
     .catch(() => {
       notePinBtn.disabled = false;
-      noteStatus.textContent = 'Sorry, that didn\'t pin. Please try again in a moment.';
+      noteStatus.textContent = 'oops, that didn\'t pin. try again?';
     });
 });
 
