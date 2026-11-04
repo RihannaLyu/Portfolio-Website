@@ -974,6 +974,7 @@ function openSoftware() {
   document.body.style.overflow = 'hidden';
 }
 function closeSoftware() {
+  if (typeof osClose === 'function') osClose(false);
   softwarePage.classList.remove('open');
   document.body.style.overflow = '';
 }
@@ -982,6 +983,51 @@ softwareItem.addEventListener('keydown', (e) => {
   if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openSoftware(); }
 });
 softwareClose.addEventListener('click', closeSoftware);
+
+/* the desktop inside Software & Apps: icons + dock open each app's window; the menu-bar clock ticks */
+const osDesk  = document.getElementById('osDesk');
+const osClock = document.getElementById('osClock');
+let osOpenWin = null, osLastIcon = null;
+
+function osOpen(app, fromEl) {
+  const win = osDesk.querySelector(`.app-window[data-app="${app}"]`);
+  if (!win) return;
+  if (osOpenWin && osOpenWin !== win) osClose(false);
+  osLastIcon = fromEl || null;
+  // the window grows out of the icon that opened it
+  if (fromEl) {
+    const d = osDesk.getBoundingClientRect(), r = fromEl.getBoundingClientRect(), k = d.width / (osDesk.offsetWidth || d.width);
+    win.style.setProperty('--fx', ((r.left + r.width / 2 - d.left) / k) + 'px');
+    win.style.setProperty('--fy', ((r.top + r.height / 2 - d.top) / k) + 'px');
+  }
+  win.hidden = false;
+  requestAnimationFrame(() => win.classList.add('is-open'));
+  osOpenWin = win;
+  softwarePage.classList.add('has-window');
+  document.querySelectorAll(`[data-app]`).forEach(b => b.classList.toggle('is-running', b.dataset.app === app && !b.classList.contains('app-window')));
+  setTimeout(() => { const o = win.querySelector('.app-open'); if (o) o.focus({ preventScroll: true }); }, 120);
+}
+function osClose(refocus = true) {
+  if (!osOpenWin) return false;
+  const win = osOpenWin; osOpenWin = null;
+  win.classList.remove('is-open');
+  softwarePage.classList.remove('has-window');
+  document.querySelectorAll('.is-running').forEach(b => b.classList.remove('is-running'));
+  setTimeout(() => { if (!win.classList.contains('is-open')) win.hidden = true; }, 320);
+  if (refocus && osLastIcon) osLastIcon.focus({ preventScroll: true });
+  return true;
+}
+if (osDesk) {
+  document.querySelectorAll('#os button[data-app]').forEach(b => b.addEventListener('click', (e) => { e.stopPropagation(); osOpen(b.dataset.app, b); }));
+  osDesk.querySelectorAll('.app-dot-close').forEach(b => b.addEventListener('click', (e) => { e.stopPropagation(); osClose(); }));
+  osDesk.addEventListener('click', (e) => { if (osOpenWin && !e.target.closest('.app-window')) osClose(false); });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && osOpenWin) { e.stopImmediatePropagation(); osClose(); }
+  }, true);
+  softwareClose.addEventListener('click', () => osClose(false));
+  const tick = () => { osClock.textContent = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }); };
+  tick(); setInterval(tick, 20000);
+}
 
 // ── WINDOW PAGE ───────────────────────────────────────────
 const windowItem  = document.getElementById('windowItem');

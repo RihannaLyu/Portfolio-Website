@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Rihanna Lyu — Portfolio</title>
   <!-- ?v= : bump the date after each update so phones fetch the new style.css + script.js together -->
-  <link rel="stylesheet" href="style.css?v=2026-11-17" />
+  <link rel="stylesheet" href="style.css?v=2026-11-18" />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet" />
   <!-- handwriting fonts for the Leave a Note page -->
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
@@ -409,49 +409,73 @@
   <!-- SOFTWARE PAGE: websites + apps I've built, opened from the computer cart (script.js: SOFTWARE PAGE) -->
   <div class="software-page" id="softwarePage">
     <button class="software-close" id="softwareClose" aria-label="Close">✕</button>
-    <div class="software-content">
-      <h1 class="software-title">Software &amp; Websites</h1>
-      <p class="software-intro">Apps and sites I've designed and built, all free to try in your browser.</p>
-
-      <div class="software-grid">
-        <!-- No. 01 — add new projects as more <article class="software-card"> blocks -->
-        <article class="software-card">
-          <a class="software-thumb" href="software/color-studio/index.html" target="_blank" rel="noopener"
-             aria-label="Open Rihanna's Color Studio in a new tab">
-            <img src="images/software/colorstudio-thumb.jpg" width="800" height="600" alt="An open makeup compact: a smiling 16-season flower in the mirror and seven color pans" />
-          </a>
-          <div class="software-info">
-            <p class="software-no">No. 01</p>
-            <h2 class="software-name">Rihanna's Color Studio</h2>
-            <p class="software-desc">Take a selfie and find your color season. The app reads the undertone, depth and contrast of your skin, hair and eyes, matches you to one of 16 season palettes, and lets you try each shade on. Your photo never leaves your phone.</p>
-            <ul class="software-tags">
-              <li>Web app</li><li>Camera</li><li>Color science</li><li>Phone &amp; desktop</li>
-            </ul>
-            <a class="software-open" href="software/color-studio/index.html" target="_blank" rel="noopener">Open the app <span aria-hidden="true">&#8599;</span></a>
-          </div>
-        </article>
-
-        <article class="software-card">
-          <a class="software-thumb" href="software/ootd-studio/index.html" target="_blank" rel="noopener"
-             aria-label="Open Rihanna's OOTD Studio in a new tab">
-            <img src="images/software/ootd-thumb.jpg" width="800" height="600" alt="A hand-drawn outfit flat-lay taped to a notebook page: pink cardigan, white baby tee, cream pleated skirt, berry bag and Mary Janes" />
-          </a>
-          <div class="software-info">
-            <p class="software-no">No. 02</p>
-            <h2 class="software-name">Rihanna's OOTD Studio</h2>
-            <p class="software-desc">A hand-drawn outfit for every day of your week, picked for your city's live weather, the holidays and festivals around you, campus life like game days and finals, and this week's trend. Switch between 15 cities, shuffle a look, and copy the list.</p>
-            <ul class="software-tags">
-              <li>Web app</li><li>Live weather</li><li>Hand-drawn</li><li>Phone &amp; desktop</li>
-            </ul>
-            <a class="software-open" href="software/ootd-studio/index.html" target="_blank" rel="noopener">Open the app <span aria-hidden="true">&#8599;</span></a>
-          </div>
-        </article>
-
-        <div class="software-soon" aria-hidden="true">
-          <p class="software-no">No. 03</p>
-          <p class="software-soon-text">Next build in the works…</p>
+    <!-- SOFTWARE & APPS: the cart's monitor, up close. A little desktop home screen whose icons are
+         the apps I've built. Click an icon (or its dock twin) to open its window; "Open the app" launches
+         it. To add an app: one more .app-icon, a dock button, and an .app-window with the same data-app. -->
+    <div class="os" id="os">
+      <span class="os-sticky-bezel" aria-hidden="true">&lt;/&gt;</span>
+      <div class="os-screen">
+        <div class="os-bar">
+          <span class="os-logo">&#9825; Rihanna OS</span>
+          <span class="os-menu" aria-hidden="true"><span>File</span><span>View</span><span>Apps</span></span>
+          <span class="os-status"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9.5a13 13 0 0 1 18 0M6 13a8.5 8.5 0 0 1 12 0M9 16.4a4 4 0 0 1 6 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="19.5" r="1.4" fill="currentColor"/></svg><svg viewBox="0 0 30 16" aria-hidden="true"><rect x="1" y="2" width="24" height="12" rx="3.5" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="3.5" y="4.5" width="15" height="7" rx="1.6" fill="currentColor"/><rect x="26.5" y="6" width="2.5" height="4" rx="1" fill="currentColor"/></svg><time id="osClock"></time></span>
         </div>
+
+        <div class="os-desk" id="osDesk">
+          <div class="os-wall" aria-hidden="true"><i></i><i></i><i></i></div>
+          <h1 class="os-title">Software &amp; Apps</h1>
+          <p class="os-sub">Apps and sites I've designed and built, all free to try in your browser.</p>
+
+          <div class="os-icons">
+            <button type="button" class="app-icon" data-app="color" style="--k:0"><span class="app-glyph"><svg viewBox="0 0 100 100" aria-hidden="true"><rect x="5" y="5" width="90" height="90" rx="26" fill="#F6CFD3" stroke="#3A1F2B" stroke-width="3"/><g transform="translate(50 50)" stroke="#3A1F2B" stroke-width="2"><ellipse rx="8" ry="17" cy="-17" fill="#E8545A"/><ellipse rx="8" ry="17" cy="-17" fill="#F29E4C" transform="rotate(45)"/><ellipse rx="8" ry="17" cy="-17" fill="#F6D58E" transform="rotate(90)"/><ellipse rx="8" ry="17" cy="-17" fill="#7CC08A" transform="rotate(135)"/><ellipse rx="8" ry="17" cy="-17" fill="#6FA8DC" transform="rotate(180)"/><ellipse rx="8" ry="17" cy="-17" fill="#9B7FD1" transform="rotate(225)"/><ellipse rx="8" ry="17" cy="-17" fill="#C2416B" transform="rotate(270)"/><ellipse rx="8" ry="17" cy="-17" fill="#F2B8C6" transform="rotate(315)"/><circle r="10" fill="#F6D58E"/></g><path d="M45 51 q5 5 10 0" fill="none" stroke="#3A1F2B" stroke-width="2" stroke-linecap="round"/><circle cx="46" cy="47" r="1.4" fill="#3A1F2B"/><circle cx="54" cy="47" r="1.4" fill="#3A1F2B"/></svg></span><span class="app-label">Color Studio</span></button>
+            <button type="button" class="app-icon" data-app="ootd" style="--k:1"><span class="app-glyph"><svg viewBox="0 0 100 100" aria-hidden="true"><rect x="5" y="5" width="90" height="90" rx="26" fill="#F6D58E" stroke="#3A1F2B" stroke-width="3"/><path d="M50 22 c0 -6 8 -6 8 0 c0 4 -4 5 -8 9" fill="none" stroke="#3A1F2B" stroke-width="2.6" stroke-linecap="round"/><path d="M50 31 L22 45 L78 45 Z" fill="none" stroke="#3A1F2B" stroke-width="2.6" stroke-linejoin="round"/><path d="M40 45 L44 52 L56 52 L60 45 L63 50 L59 58 L70 82 L30 82 L41 58 L37 50 Z" fill="#F2B8C6" stroke="#3A1F2B" stroke-width="2.4" stroke-linejoin="round"/><path d="M44 58 L56 58" stroke="#3A1F2B" stroke-width="2"/><circle cx="40" cy="70" r="2" fill="#fff"/><circle cx="50" cy="75" r="2" fill="#fff"/><circle cx="60" cy="68" r="2" fill="#fff"/><path d="M74 20 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2z" fill="#fff" stroke="#3A1F2B" stroke-width="1.4"/></svg></span><span class="app-label">OOTD Studio</span></button>
+            <div class="app-icon is-soon" aria-hidden="true" style="--k:2"><span class="app-glyph"><svg viewBox="0 0 100 100" aria-hidden="true"><rect x="7" y="7" width="86" height="86" rx="25" fill="rgba(255,251,247,.55)" stroke="#3A1F2B" stroke-width="2.4" stroke-dasharray="7 6"/><path d="M50 34 v32 M34 50 h32" stroke="#3A1F2B" stroke-width="3" stroke-linecap="round"/></svg></span><span class="app-label">Next app…</span></div>
+          </div>
+
+          <p class="os-note" aria-hidden="true">click an app to peek inside &#9825;<br><small>new ones land here</small></p>
+
+          <article class="app-window" data-app="color" role="dialog" aria-label="Rihanna's Color Studio" hidden>
+            <header class="app-titlebar">
+              <button type="button" class="app-dot app-dot-close" aria-label="Close window"></button><span class="app-dot"></span><span class="app-dot"></span>
+              <span class="app-wtitle">Rihanna's Color Studio</span>
+            </header>
+            <div class="app-wbody">
+              <a class="app-cover" href="software/color-studio/index.html" target="_blank" rel="noopener" tabindex="-1"><img src="images/software/colorstudio-thumb.jpg" width="800" height="600" alt="An open makeup compact: a smiling 16-season flower in the mirror and seven color pans" loading="lazy" /></a>
+              <div class="app-info">
+                <p class="app-no">No. 01</p>
+                <h2 class="app-name">Rihanna's Color Studio</h2>
+                <p class="app-desc">Take a selfie and find your color season. The app reads the undertone, depth and contrast of your skin, hair and eyes, matches you to one of 16 season palettes, and lets you try each shade on. Your photo never leaves your phone.</p>
+                <ul class="app-tags"><li>Web app</li><li>Camera</li><li>Color science</li><li>Phone &amp; desktop</li></ul>
+                <a class="app-open" href="software/color-studio/index.html" target="_blank" rel="noopener">Open the app <span aria-hidden="true">&#8599;</span></a>
+              </div>
+            </div>
+          </article>
+          <article class="app-window" data-app="ootd" role="dialog" aria-label="Rihanna's OOTD Studio" hidden>
+            <header class="app-titlebar">
+              <button type="button" class="app-dot app-dot-close" aria-label="Close window"></button><span class="app-dot"></span><span class="app-dot"></span>
+              <span class="app-wtitle">Rihanna's OOTD Studio</span>
+            </header>
+            <div class="app-wbody">
+              <a class="app-cover" href="software/ootd-studio/index.html" target="_blank" rel="noopener" tabindex="-1"><img src="images/software/ootd-thumb.jpg" width="800" height="600" alt="A hand-drawn outfit flat-lay taped to a notebook page: pink cardigan, white baby tee, cream pleated skirt, berry bag and Mary Janes" loading="lazy" /></a>
+              <div class="app-info">
+                <p class="app-no">No. 02</p>
+                <h2 class="app-name">Rihanna's OOTD Studio</h2>
+                <p class="app-desc">A hand-drawn outfit for every day of your week, picked for your city's live weather, the holidays and festivals around you, campus life like game days and finals, and this week's trend. Switch between 15 cities, shuffle a look, and copy the list.</p>
+                <ul class="app-tags"><li>Web app</li><li>Live weather</li><li>Hand-drawn</li><li>Phone &amp; desktop</li></ul>
+                <a class="app-open" href="software/ootd-studio/index.html" target="_blank" rel="noopener">Open the app <span aria-hidden="true">&#8599;</span></a>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <nav class="os-dock" aria-label="Dock">
+          <button type="button" class="dock-app" data-app="color" aria-label="Color Studio"><svg viewBox="0 0 100 100" aria-hidden="true"><rect x="5" y="5" width="90" height="90" rx="26" fill="#F6CFD3" stroke="#3A1F2B" stroke-width="3"/><g transform="translate(50 50)" stroke="#3A1F2B" stroke-width="2"><ellipse rx="8" ry="17" cy="-17" fill="#E8545A"/><ellipse rx="8" ry="17" cy="-17" fill="#F29E4C" transform="rotate(45)"/><ellipse rx="8" ry="17" cy="-17" fill="#F6D58E" transform="rotate(90)"/><ellipse rx="8" ry="17" cy="-17" fill="#7CC08A" transform="rotate(135)"/><ellipse rx="8" ry="17" cy="-17" fill="#6FA8DC" transform="rotate(180)"/><ellipse rx="8" ry="17" cy="-17" fill="#9B7FD1" transform="rotate(225)"/><ellipse rx="8" ry="17" cy="-17" fill="#C2416B" transform="rotate(270)"/><ellipse rx="8" ry="17" cy="-17" fill="#F2B8C6" transform="rotate(315)"/><circle r="10" fill="#F6D58E"/></g><path d="M45 51 q5 5 10 0" fill="none" stroke="#3A1F2B" stroke-width="2" stroke-linecap="round"/><circle cx="46" cy="47" r="1.4" fill="#3A1F2B"/><circle cx="54" cy="47" r="1.4" fill="#3A1F2B"/></svg></button>
+          <button type="button" class="dock-app" data-app="ootd" aria-label="OOTD Studio"><svg viewBox="0 0 100 100" aria-hidden="true"><rect x="5" y="5" width="90" height="90" rx="26" fill="#F6D58E" stroke="#3A1F2B" stroke-width="3"/><path d="M50 22 c0 -6 8 -6 8 0 c0 4 -4 5 -8 9" fill="none" stroke="#3A1F2B" stroke-width="2.6" stroke-linecap="round"/><path d="M50 31 L22 45 L78 45 Z" fill="none" stroke="#3A1F2B" stroke-width="2.6" stroke-linejoin="round"/><path d="M40 45 L44 52 L56 52 L60 45 L63 50 L59 58 L70 82 L30 82 L41 58 L37 50 Z" fill="#F2B8C6" stroke="#3A1F2B" stroke-width="2.4" stroke-linejoin="round"/><path d="M44 58 L56 58" stroke="#3A1F2B" stroke-width="2"/><circle cx="40" cy="70" r="2" fill="#fff"/><circle cx="50" cy="75" r="2" fill="#fff"/><circle cx="60" cy="68" r="2" fill="#fff"/><path d="M74 20 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2z" fill="#fff" stroke="#3A1F2B" stroke-width="1.4"/></svg></button>
+          <span class="dock-sep" aria-hidden="true"></span>
+          <span class="dock-app is-soon" aria-hidden="true"><svg viewBox="0 0 100 100" aria-hidden="true"><rect x="7" y="7" width="86" height="86" rx="25" fill="rgba(255,251,247,.55)" stroke="#3A1F2B" stroke-width="2.4" stroke-dasharray="7 6"/><path d="M50 34 v32 M34 50 h32" stroke="#3A1F2B" stroke-width="3" stroke-linecap="round"/></svg></span>
+        </nav>
       </div>
+      <span class="os-led" aria-hidden="true"></span>
     </div>
   </div>
 
@@ -696,7 +720,7 @@
   </div>
 
   </div></div><!-- /#stage /#viewport -->
-  <script src="script.js?v=2026-11-17"></script>
+  <script src="script.js?v=2026-11-18"></script>
   <script src="experience.js?v=2026-11-17"></script>
   <script>
     /* Lock the 1707x1067 room to 16:10 and scale to fit any screen */
