@@ -15,10 +15,23 @@
   const store = { get(k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } },
                   set(k, v) { try { sessionStorage.setItem(k, v); } catch (e) {} } };
 
+  /* ── 0. PAGE LINKS: #about, #digital-art, … open that page straight away (shareable) ── */
+  const LINKS = { 'about': 'nameplateItem', 'digital-art': 'windowItem', 'traditional-art': 'artItem', '3d-models': 'shelfItem',
+                  'games': 'gametableItem', 'software': 'softwareItem', 'floral': 'flowersItem', 'notes': 'noteboardItem' };
+  const linked = LINKS[location.hash.slice(1)] || (location.hash === '#index' ? 'indexBtn' : null);
+  // a linked page has no object to grow out of, so it simply appears
+  if (linked) {
+    document.body.classList.add('is-deeplink');
+    addEventListener('load', () => setTimeout(() => {
+      const el = document.getElementById(linked); if (el) el.click();
+      setTimeout(() => document.body.classList.remove('is-deeplink'), 1200);
+    }, 150), { once: true });
+  }
+
   /* ── 1. ARRIVAL ─────────────────────────────────────────── */
   const intro = $('#intro');
   if (intro) {
-    if (store.get('introSeen') || reduced) {
+    if (store.get('introSeen') || reduced || linked) {
       intro.remove();
     } else {
       document.body.classList.add('is-arriving');
