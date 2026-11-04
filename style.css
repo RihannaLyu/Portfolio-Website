@@ -3668,3 +3668,15 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
   .art-item .hover-label      { left: 36.5%; bottom: 3vw; }   /* under the canvas (the chair is the rest); kept on the page */
   .software-item .hover-label { bottom: 11vw; }               /* the cart's bottom runs off the page: sit on its visible edge */
 }
+
+/* ── PHONE WALL v3.2 — smaller light switch; the cart sized to match the easel; both moved up right
+   under Games & VR / 3D Models (the page now ends just below them) ── */
+@media (max-width: 768px) {
+  .wall { height: max(calc(var(--top) + 217vw), 100vh); }
+  .switch-item    { --cw: 7.5vw; left: 78.4vw; }
+  /* the easel: 48vw wide → ~60vw tall; the cart at the same height (31.5vw wide), centred in its half */
+  .software-item  { --cw: 31.5vw; top: calc(var(--top) + 153vw); bottom: auto; left: 9.25vw; }
+  .art-item       { top: calc(var(--top) + 153vw); bottom: auto; }
+  .software-item .hover-label { bottom: -2.4vw; }
+  .art-item .hover-label      { bottom: -2.4vw; }
+}
