@@ -441,6 +441,11 @@ body.lights-off .dark-overlay { opacity: 1; }
    exactly over it. They share the object's image class, so size, crop
    (MOBILE WALL), hover and night filters all follow the object. ── */
 .gametable-overlay { position: absolute; top: 0; left: 0; pointer-events: none; }
+/* the console is masked off the middle shelf: the Meta Quest 3 has that shelf to itself */
+.gametable-img:not(.gametable-overlay) {
+  -webkit-mask: url('images/gametable-mask.svg') 0 0 / 100% 100% no-repeat;
+          mask: url('images/gametable-mask.svg') 0 0 / 100% 100% no-repeat;
+}
 
 /* ── SOFTWARE CART (rolling computer cart; opens the SOFTWARE PAGE) — on the floor between the
    game shelf and the noteboard, under the light switch ── */

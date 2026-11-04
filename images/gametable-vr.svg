@@ -1,7 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1689 1608" width="1689" height="1608">
-  <!-- VR set for the game shelf, drawn on the same 1689×1608 canvas as gametable.PNG so it lies
-       exactly on top: a white VR headset resting on the console (middle shelf), with one
-       controller beside it, and a glowing "VR" sticker on the shelf's leg. -->
+  <!-- Meta Quest 3 on the game shelf, drawn on the same 1689×1608 canvas as gametable.PNG so it
+       lies exactly on top. It has the middle shelf to itself (the console is masked away by
+       gametable-mask.svg): the white visor with its three pill-shaped sensor clusters, the grey
+       fabric straps, and the two ring-less Touch Plus controllers, plus a glowing "VR" tag. -->
   <defs>
     <filter id="wc" x="-3%" y="-3%" width="106%" height="106%">
       <feTurbulence type="fractalNoise" baseFrequency="0.025" numOctaves="3" seed="15" result="wob"/>
@@ -13,37 +14,69 @@
       <feBlend in="paint" in2="speckPaint" mode="multiply"/>
     </filter>
     <linearGradient id="shell" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#fbfbfd"/><stop offset="1" stop-color="#cfd0d8"/>
+      <stop offset="0" stop-color="#ffffff"/><stop offset="0.6" stop-color="#eeeef2"/><stop offset="1" stop-color="#c9cad3"/>
     </linearGradient>
-    <linearGradient id="visor" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#2c2c38"/><stop offset="1" stop-color="#121218"/>
+    <linearGradient id="shellSide" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#d9dae2"/><stop offset="1" stop-color="#f6f6f9"/>
+    </linearGradient>
+    <linearGradient id="pill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3a3b44"/><stop offset="1" stop-color="#16161b"/>
+    </linearGradient>
+    <linearGradient id="strap" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8b8c96"/><stop offset="1" stop-color="#5c5d66"/>
     </linearGradient>
   </defs>
 
   <g filter="url(#wc)">
-    <!-- headset, resting on top of the console -->
-    <ellipse cx="1150" cy="848" rx="190" ry="12" fill="#1a1410" opacity="0.25"/>
-    <!-- strap looping behind -->
-    <path d="M985 790 C 960 700, 1340 700, 1316 790" fill="none" stroke="#6e6f7a" stroke-width="26" stroke-linecap="round"/>
-    <path d="M985 790 C 960 700, 1340 700, 1316 790" fill="none" stroke="#9fa0aa" stroke-width="10" stroke-linecap="round"/>
-    <!-- body -->
-    <rect x="968" y="738" width="364" height="110" rx="42" fill="url(#shell)" stroke="#6e6f7a" stroke-width="5"/>
-    <rect x="992" y="756" width="316" height="72" rx="30" fill="url(#visor)"/>
-    <path d="M1010 770 Q 1150 750 1290 770" stroke="#ffffff" stroke-width="5" fill="none" opacity="0.25"/>
-    <!-- tracking cameras -->
-    <g fill="#3a3a46" stroke="#8a8b96" stroke-width="3">
-      <circle cx="1022" cy="806" r="10"/><circle cx="1278" cy="806" r="10"/><circle cx="1110" cy="812" r="7"/><circle cx="1190" cy="812" r="7"/>
-    </g>
-    <circle cx="1150" cy="794" r="6" fill="#7ff0f0"/>
+    <!-- soft shadow on the middle shelf -->
+    <ellipse cx="1220" cy="1034" rx="330" ry="14" fill="#1a1410" opacity="0.28"/>
 
-    <!-- one controller lying beside it on the console -->
-    <g transform="rotate(-12 1440 812)">
-      <circle cx="1440" cy="790" r="44" fill="none" stroke="#e8e9ef" stroke-width="16"/>
-      <circle cx="1440" cy="790" r="44" fill="none" stroke="#8a8b96" stroke-width="3"/>
-      <rect x="1424" y="820" width="32" height="40" rx="14" fill="url(#shell)" stroke="#6e6f7a" stroke-width="4"/>
+    <!-- ── headset ── -->
+    <!-- top strap looping over, and the side straps running back -->
+    <path d="M1080 900 C 1080 800, 1360 800, 1360 900" fill="none" stroke="url(#strap)" stroke-width="30" stroke-linecap="round"/>
+    <path d="M1080 900 C 1080 800, 1360 800, 1360 900" fill="none" stroke="#a9aab3" stroke-width="4" stroke-dasharray="2 10" opacity="0.7"/>
+    <path d="M1020 960 C 990 940, 984 900, 1000 878" fill="none" stroke="url(#strap)" stroke-width="28" stroke-linecap="round"/>
+    <path d="M1420 960 C 1450 940, 1456 900, 1440 878" fill="none" stroke="url(#strap)" stroke-width="28" stroke-linecap="round"/>
+    <!-- visor body: wide, soft-cornered, slightly curved -->
+    <path d="M1010 912 C 1010 884, 1032 872, 1064 870 L 1376 870 C 1408 872, 1430 884, 1430 912
+             L 1430 990 C 1430 1016, 1410 1030, 1380 1030 L 1060 1030 C 1030 1030, 1010 1016, 1010 990 Z"
+          fill="url(#shell)" stroke="#8a8b96" stroke-width="5"/>
+    <path d="M1036 884 C 1120 874, 1320 874, 1404 884" fill="none" stroke="#ffffff" stroke-width="6" opacity="0.9" stroke-linecap="round"/>
+    <!-- bottom lip: the light-grey facial interface peeking out -->
+    <path d="M1060 1030 C 1120 1044, 1320 1044, 1380 1030" fill="none" stroke="#b9bac4" stroke-width="10" stroke-linecap="round"/>
+    <!-- the three pill-shaped sensor clusters (Quest 3's signature face) -->
+    <rect x="1066" y="900" width="62" height="104" rx="31" fill="url(#pill)" stroke="#0e0e12" stroke-width="3"/>
+    <rect x="1189" y="892" width="62" height="120" rx="31" fill="url(#pill)" stroke="#0e0e12" stroke-width="3"/>
+    <rect x="1312" y="900" width="62" height="104" rx="31" fill="url(#pill)" stroke="#0e0e12" stroke-width="3"/>
+    <g fill="#55566a" stroke="#9fa0b4" stroke-width="2.4">
+      <circle cx="1097" cy="930" r="11"/><circle cx="1097" cy="974" r="11"/>
+      <circle cx="1220" cy="922" r="10"/><circle cx="1220" cy="982" r="10"/>
+      <circle cx="1343" cy="930" r="11"/><circle cx="1343" cy="974" r="11"/>
+    </g>
+    <g fill="#ffffff" opacity="0.7">
+      <circle cx="1093" cy="926" r="3"/><circle cx="1093" cy="970" r="3"/><circle cx="1216" cy="918" r="3"/>
+      <circle cx="1216" cy="978" r="3"/><circle cx="1339" cy="926" r="3"/><circle cx="1339" cy="970" r="3"/>
+    </g>
+    <circle cx="1220" cy="952" r="5" fill="#7ff0f0" stroke="#1d8f9a" stroke-width="1.5"/>
+    <path d="M1066 900 C 1080 896, 1110 896, 1124 904" fill="none" stroke="#6a6b78" stroke-width="2" opacity="0.6"/>
+
+    <!-- ── Touch Plus controllers (no tracking rings), resting on the shelf ── -->
+    <g transform="translate(930 1030) rotate(-14)">
+      <path d="M-34 0 C -46 -30, -40 -74, -14 -96 C 6 -112, 34 -104, 40 -82 C 46 -60, 32 -40, 26 -12 C 24 0, 10 6, -6 6 C -20 6, -30 4, -34 0 Z"
+            fill="url(#shellSide)" stroke="#8a8b96" stroke-width="4"/>
+      <circle cx="6" cy="-74" r="13" fill="#2a2b33" stroke="#0e0e12" stroke-width="2"/>
+      <circle cx="6" cy="-74" r="7" fill="#4a4b56"/>
+      <circle cx="-14" cy="-50" r="6" fill="#2a2b33"/><circle cx="4" cy="-44" r="6" fill="#2a2b33"/>
+    </g>
+    <g transform="translate(1520 1030) rotate(12) scale(-1 1)">
+      <path d="M-34 0 C -46 -30, -40 -74, -14 -96 C 6 -112, 34 -104, 40 -82 C 46 -60, 32 -40, 26 -12 C 24 0, 10 6, -6 6 C -20 6, -30 4, -34 0 Z"
+            fill="url(#shellSide)" stroke="#8a8b96" stroke-width="4"/>
+      <circle cx="6" cy="-74" r="13" fill="#2a2b33" stroke="#0e0e12" stroke-width="2"/>
+      <circle cx="6" cy="-74" r="7" fill="#4a4b56"/>
+      <circle cx="-14" cy="-50" r="6" fill="#2a2b33"/><circle cx="4" cy="-44" r="6" fill="#2a2b33"/>
     </g>
 
-    <!-- glowing "VR" sticker on the shelf's left leg -->
+    <!-- glowing "VR" tag on the shelf's left leg -->
     <g transform="translate(840 1180) rotate(-4)">
       <rect x="-6" y="0" width="64" height="40" rx="8" fill="#1c1c24" stroke="#7ff0f0" stroke-width="4"/>
       <text x="26" y="29" text-anchor="middle" font-family="Georgia, serif" font-weight="700" font-size="24" fill="#7ff0f0">VR</text>
