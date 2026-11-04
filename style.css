@@ -3633,3 +3633,38 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
   .beam-3 { --bx: 66.4vw; --by: calc(var(--top) + 18.3vw); --bl: 45vw; --ba: 14deg; }
   .beam-4 { --bx: 84.3vw; --by: calc(var(--top) + 18.1vw); --bl: 30vw; --ba:  2deg; }
 }
+
+/* ── PHONE WALL v3.1 — every label horizontal at the bottom centre of its object; Games & VR right
+   under About Me; the right column lifted; the middle + bottom rows split into two equal halves ── */
+@media (max-width: 768px) {
+  .wall { height: max(calc(var(--top) + 232vw), 100vh); }        /* the page ends at the bottom row */
+
+  /* right column, lifted */
+  .noteboard-item { top: calc(var(--top) + 25vw); }
+  .flowers-item   { top: calc(var(--top) + 66vw); }
+  .switch-item    { top: calc(var(--top) + 105.5vw); }   /* clear of the Floral Design label */
+
+  /* middle row: two equal halves */
+  .gametable-item { --cw: 46vw; top: calc(var(--top) + 119vw); left: 2vw; }       /* 2–48vw */
+  .shelf-item     { --cw: 46vw; top: calc(var(--top) + 123.5vw); left: 52vw; }     /* 52–98vw */
+
+  /* bottom row: two equal halves, both running off the bottom of the page */
+  .software-item  { --cw: 46vw; top: calc(var(--top) + 152vw); left: 2vw; }       /* 2–48vw */
+  .art-item       { --cw: 48vw; left: 52vw; bottom: 0; top: auto; }               /* 52–100vw */
+
+  /* labels: horizontal, centred at the bottom edge of each object */
+  .hover-label,
+  .noteboard-item .hover-label, .flowers-item .hover-label, .gametable-item .hover-label,
+  .shelf-item .hover-label, .software-item .hover-label, .art-item .hover-label, .lighting-item .hover-label {
+    writing-mode: horizontal-tb;
+    top: auto;
+    bottom: -2.4vw;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    padding: 3px 10px;
+    white-space: nowrap;
+  }
+  .art-item .hover-label      { left: 36.5%; bottom: 3vw; }   /* under the canvas (the chair is the rest); kept on the page */
+  .software-item .hover-label { bottom: 11vw; }               /* the cart's bottom runs off the page: sit on its visible edge */
+}
