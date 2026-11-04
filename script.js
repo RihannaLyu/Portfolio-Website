@@ -249,7 +249,7 @@ function openModels() {
 function closeModels() {
   modelsPage.classList.remove('open');
   document.body.style.overflow = '';
-  mvStop();                                   // phone viewer (see 3D MODELS — PHONE VIEWER)
+  if (typeof tvClose === 'function') tvClose();   // stop any playing build (see 3D MODELS — TV PILE)
 }
 
 // ── GAMES PAGE ────────────────────────────────────────────
@@ -1164,7 +1164,7 @@ if (document.fonts) document.fonts.ready.then(queuePhoneGalleries);
 
 
 /* ═══════════════════════════════════════════════════════════
-   3D MODELS — TV CAROUSEL
+   3D MODELS — TV PILE
    ═══════════════════════════════════════════════════════════ */
 const MODELS_BASE = 'images/3Dmodels/';
 const MODEL_VIDEOS = [
@@ -1190,198 +1190,69 @@ const MODEL_VIDEOS = [
   }
 ];
 
-const tvCarousel = document.getElementById('tvCarousel');
-const tvTrack    = document.getElementById('tvTrack');
-const tvArrowL   = document.getElementById('tvArrowLeft');
-const tvArrowR   = document.getElementById('tvArrowRight');
+/* THE TV PILE: four little sets, all on one screen. Choosing one brings it forward (big, centred,
+   the others dimmed behind) and plays it with its controls; "All channels", Esc or a click on
+   the backdrop puts it back. One design for desktop and phone. */
+const tvWall       = document.getElementById('tvWall');
+const tvFocus      = document.getElementById('tvFocus');
+const tvFocusVideo = document.getElementById('tvFocusVideo');
+const tvFocusTitle = document.getElementById('tvFocusTitle');
+const tvFocusNo    = document.getElementById('tvFocusNo');
+const tvFocusBack  = document.getElementById('tvFocusBack');
+let tvLastSet = null;
 
-let tvSlides  = [];
-let tvActive  = 0;                                            // opens on the first video (Dragon Door)
-
-function buildTVSlides() {
-  if (!tvTrack) return;
-  tvTrack.innerHTML = '';
-  tvSlides = MODEL_VIDEOS.map((m, i) => {
-    const stage = document.createElement('div');
-    stage.className = 'tv-stage';
-    
-    stage.innerHTML = `
-      <div class="tv-screen-container">
-        <div class="tv-screen">
-          <video class="tv-screen-media" 
-                 poster="${MODELS_BASE}${m.poster}" 
-                 src="${MODELS_BASE}${m.video}" 
-                 playsinline 
-                 preload="none">
-          </video>
-        </div>
-        <img class="tv-frame" src="${MODELS_BASE}tv.PNG" alt="${m.title}" />
-        <button class="tv-play-btn" aria-label="Play ${m.title}">
-          <svg viewBox="0 0 100 100" width="100%" height="100%">
-            <circle cx="50" cy="50" r="47"></circle>
-            <polygon points="41,31 41,69 72,50"></polygon>
-          </svg>
-        </button>
-        <div class="tv-title-label">${m.title}</div>
-      </div>
-    `;
-
-    const video   = stage.querySelector('video');
-    const playBtn = stage.querySelector('.tv-play-btn');
-
-    playBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (i !== tvActive) { tvGoTo(i); return; }
-      video.play();
-    });
-    video.addEventListener('play',  () => { stage.classList.add('is-playing'); video.controls = true; });
-    video.addEventListener('ended', () => {
-      stage.classList.remove('is-playing'); video.controls = false; video.currentTime = 0;
-    });
-    stage.addEventListener('click', () => { if (i !== tvActive) tvGoTo(i); });
-
-    tvTrack.appendChild(stage);
-    return { stage, video };
-  });
-  tvGoTo(tvActive, false);
-}
-
-function tvGoTo(i, animate = true) {
-  i = Math.max(0, Math.min(MODEL_VIDEOS.length - 1, i));
-  // pause the TV we're leaving
-  if (tvSlides[tvActive]) {
-    tvSlides[tvActive].video.pause();
-    tvSlides[tvActive].stage.classList.remove('is-playing');
-    tvSlides[tvActive].video.controls = false;
-  }
-  tvActive = i;
-
-  if (!animate) tvTrack.style.transition = 'none';
-  const slide  = tvSlides[i].stage;
-  const offset = tvCarousel.offsetWidth / 2 - (slide.offsetLeft + slide.offsetWidth / 2);
-  tvTrack.style.transform = 'translateX(' + offset + 'px)';
-  if (!animate) { void tvTrack.offsetWidth; tvTrack.style.transition = ''; }
-
-  tvSlides.forEach((s, idx) => s.stage.classList.toggle('is-active', idx === i));
-  if (tvArrowL) tvArrowL.disabled = (i === 0);
-  if (tvArrowR) tvArrowR.disabled = (i === MODEL_VIDEOS.length - 1);
-}
-
-if (tvArrowL) tvArrowL.addEventListener('click', () => tvGoTo(tvActive - 1));
-if (tvArrowR) tvArrowR.addEventListener('click', () => tvGoTo(tvActive + 1));
-window.addEventListener('resize', () => { if (tvSlides.length) tvGoTo(tvActive, false); });
-
-// recentre after the page opens (layout is final once visible)
-if (typeof shelfItem !== 'undefined' && shelfItem) {
-  shelfItem.addEventListener('click', () => setTimeout(() => tvGoTo(tvActive, false), 60));
-}
-// pause everything when the page closes
-if (typeof modelsClose !== 'undefined' && modelsClose) {
-  modelsClose.addEventListener('click', () => {
-    tvSlides.forEach(s => { s.video.pause(); s.stage.classList.remove('is-playing'); s.video.controls = false; });
+function buildTVWall() {
+  if (!tvWall) return;
+  tvWall.innerHTML = '';
+  MODEL_VIDEOS.forEach((m, i) => {
+    const set = document.createElement('button');
+    set.type = 'button';
+    set.className = 'tv-set';
+    set.style.setProperty('--n', i);
+    set.setAttribute('aria-label', 'Play ' + m.title);
+    set.innerHTML = `
+      <span class="tv-antenna" aria-hidden="true"><i></i><i></i></span>
+      <span class="tv-body">
+        <span class="tv-glass"><img class="tv-poster" src="${MODELS_BASE}${m.poster}" alt="" loading="lazy" /></span>
+        <img class="tv-frame" src="${MODELS_BASE}tv.PNG" alt="" />
+        <span class="tv-channel" aria-hidden="true">CH ${String(i + 1).padStart(2, '0')}</span>
+        <span class="tv-play" aria-hidden="true"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="46"/><polygon points="42,32 42,68 70,50"/></svg></span>
+      </span>
+      <span class="tv-name">${m.title}</span>`;
+    set.addEventListener('click', () => tvOpen(i, set));
+    tvWall.appendChild(set);
   });
 }
 
-buildTVSlides();
-
-/* ═══════════════════════════════════════════════════════════
-   3D MODELS — PHONE VIEWER (768px and narrower; CSS hides the TVs)
-   ═══════════════════════════════════════════════════════════ */
-const mvViewer = document.getElementById('mvViewer');
-const mvThumb  = document.getElementById('mvThumb');
-const mvVideo  = document.getElementById('mvVideo');
-const mvTitle  = document.getElementById('mvTitle');
-const mvCount  = document.getElementById('mvCount');
-
-let mvIndex = 0;
-let mvBusy  = false;
-
-function mvStop() {
-  if (!mvVideo) return;
-  mvVideo.pause();
-  mvVideo.controls = false;
-}
-
-function mvShow(i) {
+function tvOpen(i, fromSet) {
   const m = MODEL_VIDEOS[i];
-  mvIndex = i;
-  mvStop();
-  // poster when there is one, otherwise the browser shows the first frame
-  mvVideo.poster  = m.poster ? MODELS_BASE + m.poster : '';
-  mvVideo.preload = m.poster ? 'none' : 'metadata';
-  mvVideo.src     = MODELS_BASE + m.video + (m.poster ? '' : '#t=0.1');
-  mvTitle.textContent = m.title;
-  mvCount.textContent = (i + 1) + ' / ' + MODEL_VIDEOS.length;
-  mvThumb.setAttribute('aria-label', 'Play ' + m.title);
+  tvLastSet = fromSet || null;
+  tvFocusTitle.textContent = m.title;
+  tvFocusNo.textContent = 'CH ' + String(i + 1).padStart(2, '0');
+  tvFocusVideo.poster = MODELS_BASE + m.poster;
+  tvFocusVideo.src = MODELS_BASE + m.video;
+  tvFocus.setAttribute('aria-hidden', 'false');
+  modelsPage.classList.add('is-watching');
+  tvFocusVideo.play().catch(() => {});                       // the click is the user's gesture
+  setTimeout(() => tvFocusBack.focus({ preventScroll: true }), 80);
 }
 
-// slide out (0.15s), swap, slide in from the other side (0.15s); loops at both ends
-function mvStep(dir) {
-  if (mvBusy) return;
-  mvBusy = true;
-  const n     = MODEL_VIDEOS.length;
-  const out   = dir > 0 ? 'is-leaving-left'   : 'is-leaving-right';
-  const enter = dir > 0 ? 'is-entering-right' : 'is-entering-left';
-  mvViewer.classList.add('is-switching');
-  mvThumb.classList.add(out);
-  setTimeout(() => {
-    mvShow((mvIndex + dir + n) % n);
-    mvThumb.classList.remove(out);
-    mvThumb.classList.add(enter);
-    void mvThumb.offsetWidth;
-    mvThumb.classList.remove(enter);
-    mvViewer.classList.remove('is-switching');
-    mvBusy = false;
-  }, 150);
+function tvClose() {
+  if (!modelsPage.classList.contains('is-watching')) return false;
+  tvFocusVideo.pause();
+  modelsPage.classList.remove('is-watching');
+  tvFocus.setAttribute('aria-hidden', 'true');
+  if (tvLastSet) tvLastSet.focus({ preventScroll: true });
+  setTimeout(() => { if (!modelsPage.classList.contains('is-watching')) tvFocusVideo.removeAttribute('src'); }, 450);
+  return true;
 }
 
-// fullscreen with the phone's own controls (iPhone only has webkitEnterFullscreen)
-function mvPlay() {
-  const v = mvVideo;
-  v.controls = true;
-  if (v.requestFullscreen) {
-    v.requestFullscreen().catch(() => { if (v.webkitEnterFullscreen) v.webkitEnterFullscreen(); });
-    v.play().catch(() => {});
-  } else if (v.webkitEnterFullscreen) {
-    v.play().catch(() => {});
-    v.webkitEnterFullscreen();
-  } else {
-    v.play().catch(() => {});
-  }
+if (tvFocus) {
+  tvFocusBack.addEventListener('click', tvClose);
+  tvFocus.addEventListener('click', (e) => { if (e.target === tvFocus) tvClose(); });
+  // Esc steps back to all channels first (before the page-wide Esc closes the page)
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modelsPage.classList.contains('is-watching')) { e.stopImmediatePropagation(); tvClose(); }
+  }, true);
 }
-
-if (mvViewer) {
-  document.getElementById('mvPrev').addEventListener('click', () => mvStep(-1));
-  document.getElementById('mvNext').addEventListener('click', () => mvStep(1));
-
-  // swipe left/right on the thumbnail; a plain tap plays
-  let touchX = null, touchY = 0, swiped = false;
-  mvThumb.addEventListener('touchstart', (e) => {
-    touchX = e.touches[0].clientX; touchY = e.touches[0].clientY; swiped = false;
-  }, { passive: true });
-  mvThumb.addEventListener('touchend', (e) => {
-    if (touchX === null) return;
-    const dx = e.changedTouches[0].clientX - touchX;
-    const dy = e.changedTouches[0].clientY - touchY;
-    touchX = null;
-    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
-      swiped = true;                            // swallow the click that may follow the swipe
-      setTimeout(() => { swiped = false; }, 400);
-      mvStep(dx < 0 ? 1 : -1);
-    }
-  });
-  mvThumb.addEventListener('click', () => { if (swiped) { swiped = false; return; } mvPlay(); });
-  mvThumb.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); mvPlay(); }
-  });
-
-  // leaving fullscreen returns to the thumbnail, paused, on the same video
-  const mvFsChange = () => {
-    if ((document.fullscreenElement || document.webkitFullscreenElement) !== mvVideo) mvStop();
-  };
-  document.addEventListener('fullscreenchange', mvFsChange);
-  document.addEventListener('webkitfullscreenchange', mvFsChange);
-  mvVideo.addEventListener('webkitendfullscreen', mvStop);
-
-  mvShow(0);
-}
+buildTVWall();

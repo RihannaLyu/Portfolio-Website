@@ -4225,3 +4225,191 @@ body.page-open .index-btn, body.index-open .index-btn, body.is-arriving .index-b
    but not clickable, no hover lift, no label. */
 .lighting-item.is-placeholder { pointer-events: none; cursor: default; }
 .lighting-item.is-placeholder:hover, .lighting-item.is-placeholder:active { transform: none; }
+
+/* ═══════════════════════════════════════════════════════════
+   3D MODELS — THE TV PILE
+   The page is the room's own cream plaster. Four of the painted sets sit in a cosy, slightly
+   crooked pile — every build on screen at once — each with rabbit-ear antennas, a channel
+   sticker and a label pill. Hover: the set lifts, its antennas wiggle, its screen warms up.
+   Choose one and it comes forward, big, and plays; the pile dims behind it.
+   ═══════════════════════════════════════════════════════════ */
+.models-page {
+  background-color: var(--c-wall);
+  background-image:
+    radial-gradient(900px 520px at 50% 0%, rgba(255, 250, 240, 0.7), transparent 70%),
+    url("images/wall-grain.svg");
+  background-size: 100% 100%, 256px 256px;
+  background-repeat: no-repeat, repeat;
+  background-blend-mode: normal, soft-light;
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+  padding: 26px 20px 0;
+  overflow: hidden;
+  container-type: size;
+}
+.models-page .models-close {            /* the dark-page close style is !important, so this must be too */
+  border: 1px solid rgba(46, 36, 32, 0.25) !important; background: rgba(250, 246, 240, 0.8) !important; color: var(--c-ink) !important;
+}
+.models-head { text-align: center; position: relative; z-index: 2; }
+.models-eyebrow {
+  margin: 0 0 4px;
+  font: 500 11px/1 var(--f-sans); letter-spacing: 0.24em; text-transform: uppercase;
+  color: rgba(46, 36, 32, 0.55);
+}
+.models-page .models-title { color: var(--c-ink) !important; margin: 0; }
+.models-page .models-title::after { margin-top: 12px; }
+
+/* the pile: two by two, sized so both rows always fit the screen */
+.tv-wall {
+  --set-w: min(33cqw, calc((100cqh - 250px) / 1.62), 520px);   /* sized by the page's own box (it sits in the scaled stage) */
+  display: grid;
+  grid-template-columns: repeat(2, var(--set-w));
+  column-gap: clamp(24px, 4vw, 64px);
+  row-gap: clamp(8px, 2vh, 22px);
+  margin: auto 0;
+  padding: 10px 0 26px;
+}
+.tv-set {
+  --tilt: 0deg; --lift: 0px;
+  position: relative;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  width: var(--set-w);
+  padding: calc(var(--set-w) * 0.13) 0 0;
+  border: 0; background: none; cursor: pointer;
+  rotate: var(--tilt);
+  transform: translateY(var(--lift));
+  transition: transform 0.45s cubic-bezier(.34, 1.56, .64, 1);
+  -webkit-tap-highlight-color: transparent;
+}
+.tv-set:nth-child(1) { --tilt: -2.2deg; }
+.tv-set:nth-child(2) { --tilt: 1.8deg;  margin-top: 14px; }
+.tv-set:nth-child(3) { --tilt: 1.2deg;  margin-top: -6px; }
+.tv-set:nth-child(4) { --tilt: -1.6deg; margin-top: 8px; }
+.tv-set:hover, .tv-set:focus-visible { --lift: -8px; }
+.tv-set:active { --lift: -2px; }
+.tv-set:focus-visible { outline: none; }
+.tv-set:focus-visible .tv-name { outline: 2px solid var(--c-accent); outline-offset: 3px; }
+
+.tv-body { position: relative; display: block; width: 100%; aspect-ratio: 740 / 493; }
+.tv-glass {
+  position: absolute; left: 16.5%; top: 8.5%; width: 58%; height: 74%;
+  overflow: hidden; border-radius: 9% / 12%;
+  background: #1d1a24;
+}
+.tv-poster { width: 100%; height: 100%; object-fit: cover; display: block;
+  filter: saturate(0.85) brightness(0.86); transition: filter 0.45s ease; }
+.tv-glass::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(120% 90% at 30% 20%, rgba(255, 255, 255, 0.22), transparent 45%),
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.10) 0 1px, transparent 1px 3px);
+  box-shadow: inset 0 0 28px rgba(0, 0, 0, 0.55);
+}
+.tv-set:hover .tv-poster, .tv-set:focus-visible .tv-poster { filter: saturate(1.05) brightness(1.06); }
+.tv-body .tv-frame {
+  position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none;
+  filter: drop-shadow(0 16px 18px rgba(74, 52, 40, 0.28));
+}
+.tv-play {
+  position: absolute; left: 45.5%; top: 45.5%; width: 17%; aspect-ratio: 1;
+  translate: -50% -50%; scale: 0.7; opacity: 0;
+  transition: opacity 0.3s ease, scale 0.4s cubic-bezier(.34, 1.56, .64, 1);
+}
+.tv-play svg { width: 100%; height: 100%; display: block; }
+.tv-play circle  { fill: rgba(250, 246, 240, 0.88); stroke: var(--c-accent); stroke-width: 3; }
+.tv-play polygon { fill: var(--c-ink); }
+.tv-set:hover .tv-play, .tv-set:focus-visible .tv-play { opacity: 1; scale: 1; }
+
+.tv-channel {
+  position: absolute; right: 4.5%; top: -5%;
+  padding: 4px 9px 3px;
+  font: 600 10px/1 var(--f-sans); letter-spacing: 0.14em;
+  color: var(--c-ink); background: #F6D9D3;
+  border-radius: 4px; rotate: 6deg;
+  box-shadow: 0 2px 6px rgba(74, 52, 40, 0.18);
+}
+.tv-set:nth-child(2) .tv-channel { background: #DDE6D2; rotate: -5deg; }
+.tv-set:nth-child(3) .tv-channel { background: #D9E2EE; rotate: 4deg; }
+.tv-set:nth-child(4) .tv-channel { background: #F3E2BF; rotate: -7deg; }
+
+.tv-antenna {
+  position: absolute; left: 44%; top: 0; width: 0; height: calc(var(--set-w) * 0.15);
+}
+.tv-antenna::after {
+  content: ""; position: absolute; left: -16px; bottom: -4px; width: 32px; height: 10px;
+  border-radius: 16px 16px 3px 3px; background: #5a4334;
+}
+.tv-antenna i {
+  position: absolute; left: 0; bottom: 0; width: 2px; height: 100%;
+  background: #4a3a31; border-radius: 2px; transform-origin: 50% 100%;
+}
+.tv-antenna i::before {
+  content: ""; position: absolute; top: -4px; left: -3px; width: 8px; height: 8px;
+  border-radius: 50%; background: var(--c-accent);
+}
+.tv-antenna i:first-child { rotate: -28deg; }
+.tv-antenna i:last-child  { rotate: 24deg; height: 86%; }
+.tv-set:hover .tv-antenna i { animation: antennaWiggle 0.9s ease-in-out; }
+.tv-set:hover .tv-antenna i:last-child { animation-delay: 0.08s; }
+@keyframes antennaWiggle {
+  0%, 100% { transform: rotate(0); } 25% { transform: rotate(-7deg); } 60% { transform: rotate(5deg); }
+}
+
+.tv-name {
+  font: 500 11px/1 var(--f-sans); letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--c-ink);
+  padding: 7px 14px; border-radius: 999px;
+  background: rgba(250, 246, 240, 0.9); border: 1px solid rgba(46, 36, 32, 0.14);
+  box-shadow: 0 6px 14px -10px rgba(46, 36, 32, 0.5);
+  white-space: nowrap;
+}
+
+/* watching: the chosen set comes forward */
+.tv-focus {
+  position: absolute; inset: 0; z-index: 5;
+  display: grid; place-items: center;
+  background: rgba(241, 235, 225, 0.72);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  opacity: 0; visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0s 0.4s;
+}
+.models-page.is-watching .tv-focus { opacity: 1; visibility: visible; transition: opacity 0.4s ease, visibility 0s; }
+.tv-focus-inner {
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+  scale: 0.86; transition: scale 0.55s cubic-bezier(.34, 1.4, .64, 1);
+}
+.models-page.is-watching .tv-focus-inner { scale: 1; }
+.tv-focus-set { position: relative; width: min(84cqw, calc((100cqh - 170px) * 1.5), 1080px); aspect-ratio: 740 / 493; }
+.tv-focus-set .tv-frame { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;
+  filter: drop-shadow(0 26px 30px rgba(74, 52, 40, 0.3)); }
+.tv-focus-set .tv-glass { background: #000; z-index: 2; }
+.tv-focus-set .tv-glass::after { display: none; }
+.tv-focus-video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.tv-focus-bar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; justify-content: center; }
+.tv-focus-no {
+  font: 600 10px/1 var(--f-sans); letter-spacing: 0.14em; color: var(--c-ink);
+  padding: 5px 9px 4px; border-radius: 4px; background: #F6D9D3; rotate: -4deg;
+}
+.tv-focus-title { margin: 0; font: italic 500 clamp(1.5rem, 2.6vw, 2.1rem)/1 var(--f-serif); color: var(--c-ink); }
+.tv-focus-back {
+  font: 500 11px/1 var(--f-sans); letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--c-wall); background: var(--c-ink); border: 0; border-radius: 999px;
+  padding: 10px 18px; cursor: pointer; transition: background 0.25s ease, color 0.25s ease;
+}
+.tv-focus-back:hover { background: var(--c-rose); color: var(--c-ink); }
+.tv-back-arrow { font-style: normal; margin-right: 4px; }
+
+/* the pile rises in, one set after another */
+.models-page.open .tv-set { animation: riseIn 0.9s var(--ease) both; animation-delay: calc(var(--n, 0) * 90ms + 260ms); }
+
+@media (max-width: 768px) {
+  .models-page { padding: calc(20px + env(safe-area-inset-top, 0px)) 12px 0; }
+  .tv-wall { --set-w: 45.5cqw; column-gap: 3.5cqw; row-gap: 4cqh; }
+  .tv-name { font-size: 9px; letter-spacing: 0.12em; padding: 6px 10px; white-space: normal; text-align: center; line-height: 1.3; max-width: 100%; }
+  .tv-channel { font-size: 8px; padding: 3px 6px 2px; }
+  .tv-play { opacity: 0.9; scale: 0.85; }
+  .tv-antenna::after { width: 22px; left: -11px; height: 7px; }
+  .tv-focus-set { width: 94cqw; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tv-set:hover .tv-antenna i { animation: none; }
+}

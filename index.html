@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Rihanna Lyu — Portfolio</title>
   <!-- ?v= : bump the date after each update so phones fetch the new style.css + script.js together -->
-  <link rel="stylesheet" href="style.css?v=2026-11-16b" />
+  <link rel="stylesheet" href="style.css?v=2026-11-17" />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet" />
   <!-- handwriting fonts for the Leave a Note page -->
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
@@ -76,35 +76,27 @@
 
   <!-- 3D MODELS PAGE -->
   <div class="models-page" id="modelsPage">
-    <div class="tv-vignette"></div>
-    <button class="models-close" id="modelsClose">✕</button>
-    <h1 class="models-title">3D Model Builds</h1>
+    <button class="models-close" id="modelsClose" aria-label="Close">✕</button>
+    <header class="models-head">
+      <p class="models-eyebrow">Four builds · pick a channel</p>
+      <h1 class="models-title">3D Model Builds</h1>
+    </header>
 
-    <!-- carousel of TVs; each slide is generated from MODEL_VIDEOS in script.js -->
-    <div class="tv-carousel" id="tvCarousel">
-      <div class="tv-track" id="tvTrack"></div>
-      <div class="tv-arrows">
-        <button class="tv-arrow tv-arrow-left"  id="tvArrowLeft"  aria-label="Previous model">&#8249;</button>
-        <button class="tv-arrow tv-arrow-right" id="tvArrowRight" aria-label="Next model">&#8250;</button>
-      </div>
-    </div>
+    <!-- THE TV PILE: every build on its own little set, all on one screen (built from MODEL_VIDEOS
+         in script.js). Choosing one brings it forward, big, and plays it. -->
+    <div class="tv-wall" id="tvWall"></div>
 
-    <!-- phone viewer (768px and narrower): one vertical thumbnail instead of the TVs -->
-    <div class="mv-viewer" id="mvViewer">
-      <div class="mv-stage">
-        <button class="mv-arrow mv-arrow-left"  id="mvPrev" aria-label="Previous model">&#8249;</button>
-        <div class="mv-thumb" id="mvThumb" role="button" tabindex="0">
-          <video class="mv-video" id="mvVideo" playsinline></video>
-          <svg class="mv-play" viewBox="0 0 100 100" aria-hidden="true">
-            <circle cx="50" cy="50" r="47"></circle>
-            <polygon points="41,31 41,69 72,50"></polygon>
-          </svg>
+    <div class="tv-focus" id="tvFocus" aria-hidden="true">
+      <div class="tv-focus-inner" role="dialog" aria-modal="true" aria-labelledby="tvFocusTitle">
+        <div class="tv-focus-set">
+          <div class="tv-glass"><video class="tv-focus-video" id="tvFocusVideo" playsinline controls preload="none"></video></div>
+          <img class="tv-frame" src="images/3Dmodels/tv.PNG" alt="" />
         </div>
-        <button class="mv-arrow mv-arrow-right" id="mvNext" aria-label="Next model">&#8250;</button>
-      </div>
-      <div class="mv-caption">
-        <div class="mv-title" id="mvTitle"></div>
-        <div class="mv-count" id="mvCount"></div>
+        <div class="tv-focus-bar">
+          <span class="tv-focus-no" id="tvFocusNo"></span>
+          <h2 class="tv-focus-title" id="tvFocusTitle"></h2>
+          <button type="button" class="tv-focus-back" id="tvFocusBack"><i class="tv-back-arrow" aria-hidden="true">←</i> All channels</button>
+        </div>
       </div>
     </div>
   </div>
@@ -688,8 +680,8 @@
   </div>
 
   </div></div><!-- /#stage /#viewport -->
-  <script src="script.js?v=2026-11-16"></script>
-  <script src="experience.js?v=2026-11-14"></script>
+  <script src="script.js?v=2026-11-17"></script>
+  <script src="experience.js?v=2026-11-17"></script>
   <script>
     /* Lock the 1707x1067 room to 16:10 and scale to fit any screen */
     (function () {
