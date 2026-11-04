@@ -2806,9 +2806,9 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
   /* bottom row, standing on one floor line: the headphone shelf (the desk half of the image is
      cropped away), the software cart, then the easel + chair (the chair runs off the right edge) */
   .gametable-item { --cw: 30vw; --ar: 0.952; --x0: .472; --x1: .965; --y0: .12;
-                    bottom: 0; left: 2.5vw; }                       /* 2.5–32.5vw */
+                    bottom: 8vw; left: 2.5vw; }                     /* 2.5–32.5vw; the bottom row stands 8vw up */
   .art-item       { --cw: 42vw; --ar: 0.75; --x0: .188; --x1: .751; --y0: .053;
-                    bottom: 0; left: 63.7vw; }                      /* the screen edge cuts the chair in half (its middle is 86% across) */
+                    bottom: 8vw; left: 63.7vw; }                      /* the screen edge cuts the chair in half (its middle is 86% across) */
 
   /* ── SELF-PORTRAIT: the centerpiece ── */
   .portrait-item {
@@ -3339,7 +3339,7 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
     --cw: 25vw; --ar: 1.786; --x0: .043; --x1: .957; --y0: .016; --y1: .992;
     --iw: calc(var(--cw) / (var(--x1) - var(--x0)));
     position: absolute;
-    bottom: -2.8vw; left: 35.5vw;      /* 35.5–60.5vw */        /* wheels below the floor edge, like the shelf's legs */
+    bottom: 5.2vw; left: 35.5vw;       /* 35.5–60.5vw (8vw up, like the shelf + easel) */        /* wheels below the floor edge, like the shelf's legs */
     top: auto; right: auto;
     width: var(--cw);
     height: calc(var(--iw) * var(--ar) * (var(--y1) - var(--y0)));
