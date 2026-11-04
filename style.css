@@ -3680,3 +3680,11 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
   .software-item .hover-label { bottom: -2.4vw; }
   .art-item .hover-label      { bottom: -2.4vw; }
 }
+
+/* ── PHONE WALL v3.3 — a smaller, lower light switch; the Software + Graphic Design labels sit in
+   the middle of their pictures ── */
+@media (max-width: 768px) {
+  .switch-item    { --cw: 6.5vw; top: calc(var(--top) + 108vw); left: 78.9vw; }
+  .software-item .hover-label,
+  .art-item .hover-label { top: 50%; bottom: auto; transform: translate(-50%, -50%); }
+}
