@@ -773,6 +773,212 @@ function closeFlowers() {
   document.body.style.overflow = '';
 }
 
+// ── NOTEBOARD ─────────────────────────────────────────────
+// A public board of sticky notes, plus "you are visitor No. …". Notes and the visitor count
+// live in a free Supabase project (see supabase-setup.sql). Paste its Project URL and
+// publishable (anon) key below. Until then the board runs in preview mode: notes are kept only
+// in this browser, and the visitor number shows 1,000.
+const NOTES_API = {
+  url: '',                                  // ◄ e.g. 'https://abcdefgh.supabase.co'
+  key: '',                                  // ◄ the project's publishable / anon key
+};
+const VISITOR_START = 1000;                 // the first visitor is No. 1,000
+const NOTE_MAX      = 280;
+const notesOnline   = Boolean(NOTES_API.url && NOTES_API.key);
+
+const noteboardItem = document.getElementById('noteboardItem');
+const notesPage     = document.getElementById('notesPage');
+const notesClose    = document.getElementById('notesClose');
+const notesVisitor  = document.getElementById('notesVisitor');
+const notesBoard    = document.getElementById('notesBoard');
+const noteForm      = document.getElementById('noteForm');
+const notePaper     = document.getElementById('notePaper');
+const noteText      = document.getElementById('noteText');
+const noteName      = document.getElementById('noteName');
+const noteEmail     = document.getElementById('noteEmail');
+const noteCount     = document.getElementById('noteCount');
+const notePinBtn    = document.getElementById('notePinBtn');
+const noteStatus    = document.getElementById('noteStatus');
+const noteColorBtns = [...document.querySelectorAll('.note-color')];
+let noteColor = 'yellow';
+
+function safeGet(k)    { try { return localStorage.getItem(k); } catch (e) { return null; } }
+function safeSet(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* private mode */ } }
+
+function sbFetch(path, options = {}) {
+  const headers = { apikey: NOTES_API.key, 'Content-Type': 'application/json', ...options.headers };
+  // legacy anon keys are JWTs and also go in Authorization; new publishable keys don't
+  if (NOTES_API.key.startsWith('eyJ')) headers.Authorization = 'Bearer ' + NOTES_API.key;
+  return fetch(NOTES_API.url.replace(/\/$/, '') + '/rest/v1/' + path, { ...options, headers })
+    .then(res => { if (!res.ok) throw new Error('Supabase ' + res.status); return res; });
+}
+
+// ── visitor number: each browser counts once (its id is kept in localStorage) ──
+function ordinal(n) {
+  const s = ['th', 'st', 'nd', 'rd'], v = n % 100;
+  return n.toLocaleString('en-US') + (s[(v - 20) % 10] || s[v] || s[0]);
+}
+function showVisitorNumber(n) {
+  notesVisitor.innerHTML = `You are the <strong>${ordinal(n)}</strong> visitor to this website`;
+}
+function visitorId() {
+  let id = safeGet('visitorId');
+  if (!id) {
+    id = (crypto.randomUUID && crypto.randomUUID()) ||
+         'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+           const r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 3 | 8)).toString(16);
+         });
+    safeSet('visitorId', id);
+  }
+  return id;
+}
+function registerVisit() {
+  const cached = Number(safeGet('visitorNumber'));
+  if (cached) showVisitorNumber(cached);
+  if (!notesOnline) { if (!cached) showVisitorNumber(VISITOR_START); return; }
+  sbFetch('rpc/register_visit', { method: 'POST', body: JSON.stringify({ vid: visitorId() }) })
+    .then(res => res.json())
+    .then(position => {
+      const n = VISITOR_START - 1 + Number(position);
+      safeSet('visitorNumber', n);
+      showVisitorNumber(n);
+    })
+    .catch(() => { if (!cached) notesVisitor.textContent = 'Welcome, visitor'; });
+}
+registerVisit();                              // counted on arrival, not only when the board opens
+
+// ── the board ──
+function noteTilt(id) {                        // a steady little tilt per note
+  const h = String(id).split('').reduce((a, c) => (a * 31 + c.charCodeAt(0)) | 0, 7);
+  return ((Math.abs(h) % 9) - 4) * 0.8 + 'deg';
+}
+function renderNote(note, isNew) {
+  const el = document.createElement('article');
+  el.className = 'board-note' + (isNew ? ' is-new' : '');
+  el.dataset.color = ['yellow', 'pink', 'mint', 'blue', 'peach'].includes(note.color) ? note.color : 'yellow';
+  el.style.setProperty('--tilt', noteTilt(note.id));
+  const text = document.createElement('p');
+  text.className = 'board-note-text';
+  text.textContent = note.body;                // textContent: visitors' words are never run as HTML
+  const by = document.createElement('p');
+  by.className = 'board-note-by';
+  const date = new Date(note.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  by.textContent = '— ' + (note.name ? note.name + ', ' : '') + date;
+  el.append(text, by);
+  return el;
+}
+function showNotes(notes) {
+  notesBoard.innerHTML = '';
+  if (!notes.length) {
+    notesBoard.innerHTML = '<p class="notes-empty">No notes yet. Be the first to pin one!</p>';
+    return;
+  }
+  notes.forEach(n => notesBoard.appendChild(renderNote(n)));
+}
+function demoNotes() {
+  try { return JSON.parse(safeGet('demoNotes') || '[]'); } catch (e) { return []; }
+}
+function loadNotes() {
+  if (!notesOnline) { showNotes(demoNotes()); return; }
+  notesBoard.innerHTML = '<p class="notes-empty">Loading notes…</p>';
+  sbFetch('notes?select=id,created_at,body,name,color&order=created_at.desc&limit=200')
+    .then(res => res.json())
+    .then(showNotes)
+    .catch(() => { notesBoard.innerHTML = '<p class="notes-empty">The board couldn\'t load right now. Please try again later.</p>'; });
+}
+
+// ── writing a note ──
+function setNoteColor(color) {
+  noteColor = color;
+  notePaper.dataset.color = color;
+  noteColorBtns.forEach(b => {
+    const on = b.dataset.color === color;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-checked', on);
+  });
+}
+noteColorBtns.forEach(b => b.addEventListener('click', () => setNoteColor(b.dataset.color)));
+noteText.addEventListener('input', () => { noteCount.textContent = noteText.value.length + ' / ' + NOTE_MAX; });
+
+noteForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const body = noteText.value.trim();
+  if (!body) { noteStatus.textContent = 'Write something first!'; noteText.focus(); return; }
+  const note = {
+    body: body.slice(0, NOTE_MAX),
+    name: noteName.value.trim().slice(0, 40) || null,
+    color: noteColor,
+  };
+  const email = noteEmail.value.trim().slice(0, 120);
+  notePinBtn.disabled = true;
+  noteStatus.textContent = 'Pinning…';
+
+  const done = () => {
+    const shown = { ...note, id: 'new-' + Date.now(), created_at: new Date().toISOString() };
+    notesBoard.querySelector('.notes-empty')?.remove();
+    notesBoard.prepend(renderNote(shown, true));
+    noteForm.reset();
+    setNoteColor(noteColor);
+    noteCount.textContent = '0 / ' + NOTE_MAX;
+    noteStatus.textContent = email ? 'Pinned! Thank you. I\'ll write back to you.' : 'Pinned! Thank you for your note.';
+    setTimeout(() => { notePinBtn.disabled = false; }, 8000);   // a short pause between notes
+  };
+
+  if (!notesOnline) {                          // preview mode: this browser only
+    const all = demoNotes();
+    all.unshift({ ...note, id: 'demo-' + Date.now(), created_at: new Date().toISOString() });
+    safeSet('demoNotes', JSON.stringify(all.slice(0, 50)));
+    done();
+    return;
+  }
+  // the email goes in its own column, which visitors can write but never read back
+  sbFetch('notes', { method: 'POST', headers: { Prefer: 'return=minimal' },
+                     body: JSON.stringify({ ...note, email: email || null }) })
+    .then(done)
+    .catch(() => {
+      notePinBtn.disabled = false;
+      noteStatus.textContent = 'Sorry, that didn\'t pin. Please try again in a moment.';
+    });
+});
+
+// ── open / close ──
+function openNotes() {
+  notesPage.classList.add('open');
+  notesPage.scrollTop = 0;
+  document.body.style.overflow = 'hidden';
+  noteStatus.textContent = '';
+  loadNotes();
+}
+function closeNotes() {
+  notesPage.classList.remove('open');
+  document.body.style.overflow = '';
+}
+noteboardItem.addEventListener('click', openNotes);
+noteboardItem.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openNotes(); }
+});
+notesClose.addEventListener('click', closeNotes);
+
+// ── SOFTWARE PAGE (opened from the computer cart) ────────
+const softwareItem  = document.getElementById('softwareItem');
+const softwarePage  = document.getElementById('softwarePage');
+const softwareClose = document.getElementById('softwareClose');
+
+function openSoftware() {
+  softwarePage.classList.add('open');
+  softwarePage.scrollTop = 0;
+  document.body.style.overflow = 'hidden';
+}
+function closeSoftware() {
+  softwarePage.classList.remove('open');
+  document.body.style.overflow = '';
+}
+softwareItem.addEventListener('click', openSoftware);
+softwareItem.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openSoftware(); }
+});
+softwareClose.addEventListener('click', closeSoftware);
+
 // ── WINDOW PAGE ───────────────────────────────────────────
 const windowItem  = document.getElementById('windowItem');
 const windowPage  = document.getElementById('windowPage');
@@ -895,6 +1101,8 @@ document.addEventListener('keydown', (e) => {
     closeGames();
     closeLighting();
     closeFlowers();
+    closeNotes();
+    closeSoftware();
     closeWindow();
     closeLightbox();
   }

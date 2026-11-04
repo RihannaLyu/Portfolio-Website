@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 200" width="600" height="200">
+  <!-- Noteboard: a cork strip in a wooden frame with pinned sticky notes, painted with a
+       watercolor filter (wobbly edges + paper grain) to sit with the hand-painted wall objects. -->
+  <defs>
+    <!-- watercolor: wobble the edges, then press paper grain into the paint -->
+    <filter id="wc" x="-4%" y="-6%" width="108%" height="112%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" seed="7" result="wob"/>
+      <feDisplacementMap in="SourceGraphic" in2="wob" scale="5" xChannelSelector="R" yChannelSelector="G" result="paint"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="3" result="grain"/>
+      <feColorMatrix in="grain" type="matrix"
+        values="0 0 0 0 0.22  0 0 0 0 0.16  0 0 0 0 0.10  0 0 0 -1.2 0.6" result="specks"/>
+      <feComposite in="specks" in2="paint" operator="in" result="speckPaint"/>
+      <feBlend in="paint" in2="speckPaint" mode="multiply" result="grained"/>
+      <feGaussianBlur in="grained" stdDeviation="0.35"/>
+    </filter>
+    <!-- cork: warm tan with dark crumbs -->
+    <filter id="cork" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.55" numOctaves="3" seed="11" result="n"/>
+      <feColorMatrix in="n" type="matrix"
+        values="0 0 0 0 0.48  0 0 0 0 0.31  0 0 0 0 0.16  0 0 0 -1.8 0.8" result="crumbs"/>
+      <feComposite in="crumbs" in2="SourceGraphic" operator="in" result="c"/>
+      <feBlend in="SourceGraphic" in2="c" mode="multiply"/>
+    </filter>
+    <linearGradient id="wood" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9a6436"/>
+      <stop offset="0.5" stop-color="#7d4c26"/>
+      <stop offset="1" stop-color="#5e371a"/>
+    </linearGradient>
+    <radialGradient id="pinRed" cx="0.38" cy="0.35" r="0.7">
+      <stop offset="0" stop-color="#ff9a8a"/><stop offset="0.45" stop-color="#d63a2f"/><stop offset="1" stop-color="#7e1712"/>
+    </radialGradient>
+    <radialGradient id="pinGold" cx="0.38" cy="0.35" r="0.7">
+      <stop offset="0" stop-color="#fff1b8"/><stop offset="0.45" stop-color="#d9a93a"/><stop offset="1" stop-color="#7a5714"/>
+    </radialGradient>
+    <radialGradient id="pinBlue" cx="0.38" cy="0.35" r="0.7">
+      <stop offset="0" stop-color="#c9e2ff"/><stop offset="0.45" stop-color="#3f7fd6"/><stop offset="1" stop-color="#1b3f78"/>
+    </radialGradient>
+  </defs>
+
+  <g filter="url(#wc)">
+    <!-- wooden frame + cork -->
+    <rect x="8" y="14" width="584" height="176" rx="7" fill="url(#wood)" stroke="#3f2410" stroke-width="3"/>
+    <rect x="22" y="27" width="556" height="150" rx="3" fill="#d3a676" filter="url(#cork)"/>
+    <rect x="22" y="27" width="556" height="150" rx="3" fill="none" stroke="#5e371a" stroke-width="2" opacity="0.6"/>
+    <path d="M14 22 H586" stroke="#c48a55" stroke-width="2" opacity="0.55"/>
+
+    <!-- sticky notes (soft shadow, paper, scribbled lines, a curled corner) -->
+    <g transform="translate(52 44) rotate(-6)">
+      <rect x="3" y="5" width="92" height="92" fill="#3b2410" opacity="0.18"/>
+      <rect width="92" height="92" fill="#f6d86b" stroke="#c9a334" stroke-width="1.5"/>
+      <path d="M70 92 L92 70 L92 92 Z" fill="#e2bd48"/>
+      <path d="M12 30 q18 -4 34 0 t32 -1 M12 46 q16 3 30 0 t36 1 M12 62 q14 -3 28 0" stroke="#8a6a1c" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(166 38) rotate(4)">
+      <rect x="3" y="5" width="92" height="92" fill="#3b2410" opacity="0.18"/>
+      <rect width="92" height="92" fill="#f3a9bd" stroke="#c96f88" stroke-width="1.5"/>
+      <path d="M14 34 q14 -5 30 0 t30 -2 M14 50 q18 4 34 0 t26 1" stroke="#9c3f5a" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+      <path d="M40 70 c-6 -8 -16 -2 -10 6 l10 9 l10 -9 c6 -8 -4 -14 -10 -6 z" fill="#d9536f" opacity="0.85"/>
+    </g>
+    <g transform="translate(280 46) rotate(-3)">
+      <rect x="3" y="5" width="92" height="92" fill="#3b2410" opacity="0.18"/>
+      <rect width="92" height="92" fill="#a9dcbf" stroke="#5f9d7a" stroke-width="1.5"/>
+      <path d="M12 28 q18 3 34 0 t34 1 M12 44 q16 -4 32 0 t30 -1 M12 60 q20 3 36 0" stroke="#2f6b4b" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+      <path d="M58 74 l6 -6 l14 14" stroke="#2f6b4b" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(394 40) rotate(5)">
+      <rect x="3" y="5" width="92" height="92" fill="#3b2410" opacity="0.18"/>
+      <rect width="92" height="92" fill="#aecbee" stroke="#5f86b8" stroke-width="1.5"/>
+      <path d="M0 0 L22 0 L0 22 Z" fill="#8fb2dd"/>
+      <path d="M14 32 q16 -3 30 0 t32 0 M14 48 q18 3 32 0 t28 -1 M14 64 q12 -3 26 0" stroke="#2f4f7d" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(500 50) rotate(-7)">
+      <rect x="3" y="5" width="66" height="66" fill="#3b2410" opacity="0.18"/>
+      <rect width="66" height="66" fill="#f8c08f" stroke="#c98a52" stroke-width="1.5"/>
+      <path d="M10 24 q12 -3 24 0 t22 0 M10 40 q12 3 24 0" stroke="#8a5420" stroke-width="2" fill="none" stroke-linecap="round"/>
+    </g>
+
+    <!-- push pins -->
+    <g>
+      <ellipse cx="99" cy="45" rx="7" ry="3" fill="#2a170a" opacity="0.3"/><circle cx="97" cy="40" r="7" fill="url(#pinRed)"/>
+      <ellipse cx="214" cy="40" rx="7" ry="3" fill="#2a170a" opacity="0.3"/><circle cx="212" cy="35" r="7" fill="url(#pinGold)"/>
+      <ellipse cx="327" cy="48" rx="7" ry="3" fill="#2a170a" opacity="0.3"/><circle cx="325" cy="43" r="7" fill="url(#pinBlue)"/>
+      <ellipse cx="442" cy="42" rx="7" ry="3" fill="#2a170a" opacity="0.3"/><circle cx="440" cy="37" r="7" fill="url(#pinRed)"/>
+      <ellipse cx="535" cy="52" rx="6" ry="2.6" fill="#2a170a" opacity="0.3"/><circle cx="533" cy="47" r="6" fill="url(#pinGold)"/>
+    </g>
+  </g>
+</svg>

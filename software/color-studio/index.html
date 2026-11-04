@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<script>try { const t = localStorage.getItem("rcs-theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rihanna's Color Studio</title>
+<meta name="description" content="Snap a selfie and find the color season that makes you glow. Your photo never leaves your phone.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,0..100,0..1;1,9..144,300..800,0..100,0..1&family=Pinyon+Script&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<canvas id="silk" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="nav">
+  <a class="brand" href="#top"><span class="script">Rihanna's</span> Color Studio</a>
+  <div class="nav-right">
+    <a class="nav-link" href="#seasons">See all 16 seasons</a>
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span><i aria-hidden="true"></i>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="hero-copy">
+      <h1>Find the colors<br>that make you
+        <span class="glow">glow<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 16 C 50 4, 120 4, 196 14"/></svg></span>
+      </h1>
+      <p class="lede">One selfie. Ten seconds. Your personal color season, your palette, and a mirror to try every shade on.</p>
+      <a class="btn" href="#studio">Take my selfie</a>
+      <p class="privacy">Your photo stays on your phone. Nothing is uploaded.</p>
+    </div>
+    <div class="hero-art">
+      <svg id="bloom" viewBox="-200 -200 400 400" role="img" aria-label="A flower whose 16 petals are the 16 color seasons"></svg>
+      <div class="bloom-center"><span>16</span><small>seasons</small></div>
+    </div>
+  </section>
+
+  <section id="studio" class="studio">
+    <div class="stage" id="stage">
+      <div class="stage-inner">
+        <div class="stage-idle" id="stageIdle">
+          <p class="idle-title">Ready for your close-up?</p>
+          <p class="idle-sub">Face a window, skip the filter, and let some hair show.</p>
+          <div class="idle-actions">
+            <button class="btn" id="btnCamera">Open camera</button>
+            <label class="btn btn-ghost" for="fileInput">Upload a photo</label>
+            <input type="file" id="fileInput" accept="image/*" hidden>
+          </div>
+        </div>
+
+        <div class="stage-live" id="stageLive" hidden>
+          <video id="video" playsinline muted autoplay></video>
+          <svg class="guide" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <ellipse cx="50" cy="47" rx="23" ry="31"></ellipse>
+          </svg>
+          <div class="live-hint" id="liveHint">Center your face in the oval</div>
+          <div class="live-actions">
+            <button class="btn btn-ghost btn-sm" id="btnCancel">Cancel</button>
+            <button class="shutter" id="btnShutter" aria-label="Take selfie"><span></span></button>
+            <span></span>
+          </div>
+        </div>
+
+        <div class="stage-scan" id="stageScan" hidden>
+          <canvas id="scanCanvas"></canvas>
+          <div class="scanline" aria-hidden="true"></div>
+          <div class="scan-steps" id="scanSteps" aria-live="polite"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="refine">
+      <p class="refine-label">Quick question, for a truer read:</p>
+      <div class="chips" data-quiz="metal" role="group" aria-label="Which jewelry flatters you">
+        <span>Gold or silver jewelry?</span>
+        <button type="button" data-v="gold">Gold</button>
+        <button type="button" data-v="silver">Silver</button>
+        <button type="button" data-v="both">Both</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="results" class="results" hidden>
+    <div class="result-top">
+      <div class="drape-wrap">
+        <canvas id="drape" width="720" height="720" aria-label="Your portrait framed in a color from your palette"></canvas>
+        <p class="drape-caption" id="drapeCaption"></p>
+      </div>
+      <div class="result-copy">
+        <span class="sticker" id="resFamily">Spring</span>
+        <p class="you-are">You're a</p>
+        <h2 class="season-name" id="resName">—</h2>
+        <div class="traits" id="resTraits"></div>
+        <p class="season-desc" id="resDesc"></p>
+        <div class="result-actions">
+          <button class="btn" id="btnSave">Save my palette</button>
+          <button class="btn btn-ghost" id="btnRetake">Retake</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="chips-head">
+      <h3>Your palette</h3>
+      <p>Tap a color to try it on.</p>
+    </div>
+    <div class="paint-chips" id="resPalette"></div>
+
+    <div class="extras">
+      <div><h4>Your metals</h4><div class="metals" id="resMetals"></div></div>
+      <div><h4>Keep away from your face</h4><div class="avoid" id="resAvoid"></div></div>
+    </div>
+    <p class="fineprint" id="resNote"></p>
+  </section>
+
+  <section id="seasons" class="seasons">
+    <h2>All <em>16</em> seasons</h2>
+    <div class="tabs" role="tablist" id="familyTabs"></div>
+    <div class="season-cards" id="seasonCards"></div>
+  </section>
+</main>
+
+<footer class="foot">
+  <p><span class="script">Rihanna's</span> Color Studio</p>
+  <small>For fun and inspiration. Daylight gives the truest result.</small>
+</footer>
+
+<div class="toast" id="toast" role="status" hidden></div>
+<script type="module" src="app.js"></script>
+</body>
+</html>

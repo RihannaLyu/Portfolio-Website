@@ -73,7 +73,7 @@ body.lights-off .dark-overlay { opacity: 1; }
   flex-direction: column;
   align-items: center;
   gap: 0;
-  margin-bottom: -130px;
+  margin-bottom: -70px;                 /* -130 before the nameplate moved up 60px; keeps the portrait in place */
   margin-left: 20px;
   filter: drop-shadow(0 0 0px rgba(255,180,60,0));
   transition: filter 1.2s ease;
@@ -112,7 +112,7 @@ body.lights-off .dark-overlay { opacity: 1; }
 /* ── NAMEPLATE PNG ── */
 .nameplate-item {
   position: relative;
-  margin-top: -70px;
+  margin-top: -130px;                   /* tucked just under the portrait (room for the noteboard below) */
   cursor: pointer;
   transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), filter 1.2s ease;
 }
@@ -410,6 +410,70 @@ body.lights-off .dark-overlay { opacity: 1; }
 }
 .window-item:hover .window-img { filter: drop-shadow(2px 6px 16px rgba(0,0,0,0.35)); }
 
+/* ── NOTEBOARD (sticky notes; opens the NOTEBOARD PAGE) — under the nameplate ── */
+.noteboard-item {
+  position: absolute;
+  left: calc(50% - 210px);              /* centred under the portrait */
+  bottom: 18px;
+  cursor: pointer;
+  width: 440px;
+  transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), filter 1.2s ease;
+  z-index: 50;
+  outline: none;
+}
+.noteboard-item:hover { transform: scale(1.06); }
+.noteboard-item:active { transform: scale(0.98); }
+.noteboard-item:focus-visible .noteboard-img { outline: 2px solid #F3D27A; outline-offset: 4px; }
+.noteboard-img {
+  width: 440px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(2px 4px 10px rgba(0,0,0,0.25));
+  transition: filter 0.3s ease;
+}
+.noteboard-item:hover .noteboard-img { filter: drop-shadow(2px 6px 16px rgba(0,0,0,0.35)); }
+.noteboard-item:hover .hover-label,
+.noteboard-item:focus-visible .hover-label { opacity: 1; }
+
+/* ── SOFTWARE CART (rolling computer cart; opens the SOFTWARE PAGE) — on the floor between the
+   game shelf and the noteboard, under the light switch ── */
+.software-item {
+  position: absolute;
+  left: calc(50% - 337px);
+  bottom: 2px;
+  width: 124px;
+  cursor: pointer;
+  transform-origin: 50% 100%;
+  transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), filter 1.2s ease;
+  z-index: 50;
+  outline: none;
+}
+.software-item:hover { transform: scale(1.08); }
+.software-item:active { transform: scale(0.98); }
+.software-item:focus-visible .software-img { outline: 2px solid #F3D27A; outline-offset: 4px; }
+.software-img {
+  width: 124px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(2px 4px 10px rgba(0,0,0,0.25));
+  transition: filter 0.3s ease;
+}
+.software-item:hover .software-img { filter: drop-shadow(2px 6px 16px rgba(0,0,0,0.35)); }
+.software-item .hover-label { top: 34%; }              /* over the cart's open middle, not the screen */
+.software-item:hover .hover-label,
+.software-item:focus-visible .hover-label { opacity: 1; }
+
+/* screen-reader-only text (form labels) */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* ── HOVER LABELS ── */
 .hover-label {
   position: absolute;
@@ -506,7 +570,7 @@ body.lights-off .dark-overlay { opacity: 1; }
    SHARED FULL PAGE STYLES
 ══════════════════════════════════ */
 .models-page, .games-page, .lighting-page,
-.flowers-page, .window-page {
+.flowers-page, .window-page, .notes-page, .software-page {
   position: fixed;
   inset: 0;
   background: #1A1208;
@@ -523,14 +587,14 @@ body.lights-off .dark-overlay { opacity: 1; }
   transition: opacity 0.4s ease, visibility 0s linear 0.4s;
 }
 .models-page.open, .games-page.open, .lighting-page.open,
-.flowers-page.open, .window-page.open {
+.flowers-page.open, .window-page.open, .notes-page.open, .software-page.open {
   opacity: 1; pointer-events: all;
   visibility: visible;
   transition: opacity 0.4s ease, visibility 0s;
 }
 
 .models-close, .games-close, .lighting-close,
-.flowers-close, .window-close {
+.flowers-close, .window-close, .notes-close, .software-close {
   position: fixed;
   top: 24px; right: 28px;
   width: 48px; height: 48px;
@@ -546,13 +610,339 @@ body.lights-off .dark-overlay { opacity: 1; }
   z-index: 301;
 }
 .models-close:hover, .games-close:hover, .lighting-close:hover,
-.flowers-close:hover, .window-close:hover {
+.flowers-close:hover, .window-close:hover, .notes-close:hover, .software-close:hover {
   transform: scale(1.15) rotate(8deg);
   border-color: #B8A070;
   background: rgba(184,160,112,0.1);
 }
 .models-close:active, .games-close:active, .lighting-close:active,
-.flowers-close:active, .window-close:active { transform: scale(0.92); }
+.flowers-close:active, .window-close:active, .notes-close:active, .software-close:active { transform: scale(0.92); }
+
+/* ══════════════════════════════════
+   SOFTWARE PAGE — the collection of websites + apps (script.js: SOFTWARE PAGE)
+══════════════════════════════════ */
+.software-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 64px 40px 90px;
+  color: #E8D5A0;
+}
+.software-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2.8rem;
+  font-weight: 400;
+  text-align: center;
+  letter-spacing: 1px;
+  color: #E8D5A0;
+  margin-bottom: 12px;
+}
+.software-intro {
+  text-align: center;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  font-size: 17px;
+  color: rgba(232,213,160,0.78);
+  padding-bottom: 26px;
+  margin-bottom: 44px;
+  border-bottom: 1px solid rgba(232, 213, 160, 0.2);
+}
+.software-grid { display: grid; gap: 34px; }
+.software-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  background: #161616;
+  border: 1px solid #2a2a2a;
+  border-radius: 4px;
+  overflow: hidden;
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.software-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.6);
+  border-color: #E8D5A0;
+}
+.software-thumb { display: block; overflow: hidden; background: #f4d3d6; }
+.software-thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(.2,.8,.2,1);
+}
+.software-card:hover .software-thumb img { transform: scale(1.04) rotate(-0.6deg); }
+.software-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 34px 38px;
+  font-family: 'Playfair Display', Georgia, serif;
+}
+.software-no {
+  font-size: 13px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #B8A070;
+  margin-bottom: 10px;
+}
+.software-name {
+  font-size: 2rem;
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.15;
+  color: #F5E6BF;
+  margin-bottom: 14px;
+}
+.software-desc { font-size: 15.5px; line-height: 1.7; color: #cccccc; margin-bottom: 20px; }
+.software-tags { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 26px; }
+.software-tags li {
+  font-size: 12.5px;
+  letter-spacing: 0.06em;
+  padding: 4px 12px;
+  border: 1px solid rgba(184,160,112,0.45);
+  border-radius: 999px;
+  color: #E8D5A0;
+}
+.software-open {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 26px;
+  border: 1.5px solid #E8D5A0;
+  border-radius: 999px;
+  color: #1A1208;
+  background: #E8D5A0;
+  text-decoration: none;
+  font-size: 15px;
+  letter-spacing: 0.06em;
+  transition: background 0.2s, color 0.2s, transform 0.2s cubic-bezier(.34,1.56,.64,1);
+}
+.software-open:hover { background: transparent; color: #E8D5A0; transform: translateY(-2px); }
+.software-open:focus-visible, .software-thumb:focus-visible { outline: 2px solid #F3D27A; outline-offset: 4px; }
+.software-soon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 30px;
+  border: 1px dashed rgba(184,160,112,0.35);
+  border-radius: 4px;
+  font-family: 'Playfair Display', Georgia, serif;
+}
+.software-soon .software-no { margin: 0; }
+.software-soon-text { font-style: italic; color: rgba(232,213,160,0.55); }
+
+/* ══════════════════════════════════
+   NOTEBOARD PAGE — "you are visitor No. …", a sticky-note composer, and the public board
+   (script.js: NOTEBOARD)
+══════════════════════════════════ */
+.notes-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 56px 40px 80px;
+  text-align: center;
+}
+.notes-visitor {
+  display: inline-block;
+  margin: 0 0 22px;
+  padding: 8px 22px;
+  border: 1px solid rgba(184,160,112,0.5);
+  border-radius: 999px;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  font-size: 17px;
+  letter-spacing: 0.04em;
+  color: #E8D5A0;
+  background: rgba(184,160,112,0.08);
+}
+.notes-visitor strong { color: #F5C842; font-weight: 600; font-style: normal; }
+.notes-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 42px;
+  font-style: italic;
+  font-weight: 400;
+  color: #E8D5A0;
+  margin: 0 0 14px;
+}
+.notes-intro {
+  max-width: 620px;
+  margin: 0 auto 30px;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: rgba(232,213,160,0.85);
+}
+.notes-intro a { color: #F5C842; }
+
+/* sticky-note colours, shared by the composer and the board */
+[data-color="yellow"] { --note-bg: #F6D86B; --note-ink: #4a3a10; --note-edge: #c9a334; }
+[data-color="pink"]   { --note-bg: #F3A9BD; --note-ink: #4f1f2c; --note-edge: #c96f88; }
+[data-color="mint"]   { --note-bg: #A9DCBF; --note-ink: #1f4632; --note-edge: #5f9d7a; }
+[data-color="blue"]   { --note-bg: #AECBEE; --note-ink: #1f3557; --note-edge: #5f86b8; }
+[data-color="peach"]  { --note-bg: #F8C08F; --note-ink: #4f2d10; --note-edge: #c98a52; }
+
+/* the composer: one big sticky note to write on */
+.note-composer { max-width: 440px; margin: 0 auto 44px; }
+.note-paper {
+  position: relative;
+  padding: 30px 22px 18px;
+  background: var(--note-bg);
+  border-bottom: 3px solid var(--note-edge);
+  box-shadow: 0 12px 26px rgba(0,0,0,0.35);
+  transform: rotate(-1deg);
+  text-align: left;
+  transition: background 0.25s ease;
+}
+.note-paper-pin {
+  position: absolute;
+  top: 9px; left: 50%;
+  width: 16px; height: 16px;
+  margin-left: -8px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 35%, #ff9a8a, #d63a2f 45%, #7e1712);
+  box-shadow: 0 3px 4px rgba(0,0,0,0.35);
+}
+.note-paper textarea,
+.note-field {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--note-ink);
+  font-family: 'Playfair Display', Georgia, serif;
+  outline: none;
+}
+.note-paper textarea {
+  display: block;
+  min-height: 130px;
+  resize: vertical;
+  font-size: 18px;
+  line-height: 1.5;
+  font-style: italic;
+}
+.note-field {
+  display: block;
+  margin-top: 8px;
+  padding: 6px 2px;
+  font-size: 14px;
+  border-top: 1px dashed color-mix(in srgb, var(--note-ink) 35%, transparent);
+}
+.note-paper textarea::placeholder,
+.note-field::placeholder { color: var(--note-ink); opacity: 0.55; }
+
+.note-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
+}
+.note-colors { display: flex; gap: 8px; }
+.note-color {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 2px solid rgba(232,213,160,0.35);
+  background: var(--note-bg);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.note-color.active { border-color: #F5C842; box-shadow: 0 0 0 2px #1A1208, 0 0 0 4px #F5C842; }
+.note-count {
+  margin-left: auto;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 13px;
+  color: rgba(232,213,160,0.6);
+}
+.note-pin-btn {
+  padding: 10px 20px;
+  border: 1px solid #E8D5A0;
+  border-radius: 999px;
+  background: linear-gradient(#EBD9A6, #C9AD6E);
+  color: #1A1208;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.note-pin-btn:hover { transform: translateY(-1px); }
+.note-pin-btn:disabled { opacity: 0.5; cursor: default; transform: none; }
+.note-status {
+  min-height: 1.4em;
+  margin: 12px 0 0;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  font-size: 15px;
+  color: #E8D5A0;
+}
+
+/* the public board: cork, with every note pinned at a slight tilt */
+.notes-board {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 26px 22px;
+  min-height: 220px;
+  padding: 30px 26px;
+  border: 12px solid #7d4c26;
+  border-radius: 8px;
+  background-color: #cfa272;
+  background-image:
+    radial-gradient(rgba(96, 58, 26, 0.38) 1px, transparent 1.7px),
+    radial-gradient(rgba(255, 236, 205, 0.28) 1px, transparent 1.7px);
+  background-size: 7px 7px, 11px 11px;
+  background-position: 0 0, 3px 5px;
+  box-shadow: inset 0 0 30px rgba(60, 30, 10, 0.45), 0 14px 30px rgba(0,0,0,0.4);
+}
+.board-note {
+  position: relative;
+  padding: 26px 16px 14px;
+  background: var(--note-bg);
+  color: var(--note-ink);
+  border-bottom: 2px solid var(--note-edge);
+  box-shadow: 0 8px 14px rgba(40, 20, 5, 0.35);
+  transform: rotate(var(--tilt, 0deg));
+  text-align: left;
+  font-family: 'Playfair Display', Georgia, serif;
+}
+.board-note::before {                   /* push pin */
+  content: '';
+  position: absolute;
+  top: 8px; left: 50%;
+  width: 13px; height: 13px;
+  margin-left: -6.5px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 35%, var(--pin-hi, #ff9a8a), var(--pin, #d63a2f) 45%, var(--pin-lo, #7e1712));
+  box-shadow: 0 3px 4px rgba(0,0,0,0.35);
+}
+.board-note:nth-child(3n+2)::before { --pin-hi: #fff1b8; --pin: #d9a93a; --pin-lo: #7a5714; }
+.board-note:nth-child(3n)::before   { --pin-hi: #c9e2ff; --pin: #3f7fd6; --pin-lo: #1b3f78; }
+.board-note-text {
+  margin: 0;
+  font-size: 16px;
+  font-style: italic;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.board-note-by {
+  margin: 10px 0 0;
+  font-size: 12px;
+  opacity: 0.75;
+  text-align: right;
+}
+.board-note.is-new { animation: notePinned 0.45s cubic-bezier(.34,1.56,.64,1); }
+@keyframes notePinned {
+  from { transform: translateY(-14px) rotate(var(--tilt, 0deg)) scale(1.06); opacity: 0; }
+}
+.notes-empty {
+  grid-column: 1 / -1;
+  align-self: center;
+  margin: 0;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  font-size: 17px;
+  color: #4a2a10;
+  text-align: center;
+}
 
 .models-title, .lighting-title, .window-title {
   font-family: 'Playfair Display', Georgia, serif;
@@ -2197,12 +2587,14 @@ body.lights-off .switch-item:hover .switch-img {                      /* still e
   filter: drop-shadow(2px 3px 6px transparent) brightness(calc(var(--night-object-brightness) + 0.25));
 }
 body.lights-off :is(.window-item .window-img, .shelf-item .shelf-img, .flowers-item .flowers-img,
-                    .art-item .art-img, .gametable-item .gametable-img) {
+                    .art-item .art-img, .gametable-item .gametable-img, .noteboard-item .noteboard-img,
+                    .software-item .software-img) {
   filter: drop-shadow(2px 4px 10px transparent) brightness(var(--night-object-brightness)) saturate(var(--night-object-saturation));
 }
 /* hovering an object at night lifts it out of the dark a little */
 body.lights-off :is(.window-item:hover .window-img, .shelf-item:hover .shelf-img, .flowers-item:hover .flowers-img,
-                    .art-item:hover .art-img, .gametable-item:hover .gametable-img) {
+                    .art-item:hover .art-img, .gametable-item:hover .gametable-img,
+                    .noteboard-item:hover .noteboard-img, .software-item:hover .software-img) {
   filter: drop-shadow(2px 6px 16px transparent) brightness(calc(var(--night-object-brightness) + 0.15)) saturate(calc(var(--night-object-saturation) + 0.1));
 }
 /* the switch's ring is a light-mode cue only; at night the tooltip + hover do the job */
@@ -2224,7 +2616,7 @@ body.lights-off .hover-label {
   transition: opacity 0.2s ease, text-shadow 0.2s ease;
 }
 body.lights-off :is(.lighting-item, .flowers-item, .window-item, .shelf-item, .gametable-item,
-                    .art-item, .nameplate-item):hover .hover-label {
+                    .art-item, .nameplate-item, .noteboard-item, .software-item):hover .hover-label {
   --label-glow-now: calc(var(--label-glow) * 1.4);
 }
 /* the track keeps its one warm white at night: no coloured hover burst */
@@ -2232,7 +2624,8 @@ body.lights-off .light-burst { display: none; }
 
 /* ── SWITCHING ── object filters ease over 0.8s only while the mode changes, so hover speeds stay as they were */
 body.lights-switching :is(.shelf-img, .flowers-img, .art-img, .gametable-img, .lighting-img,
-                          .window-img, .nameplate-img, .switch-img, .portrait-frame) { transition: filter 0.8s ease; will-change: filter; }
+                          .window-img, .nameplate-img, .switch-img, .portrait-frame, .noteboard-img,
+                          .software-img) { transition: filter 0.8s ease; will-change: filter; }
 /* lights back on: the room flickers before it settles */
 body.lights-flicker-on :is(.night-tint, .night-shade, .dark-overlay) { animation: roomLightsOn 0.8s linear both; }
 /* lights off: the track lights stutter on */
@@ -2323,7 +2716,7 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
        --y0/--y1   drawing's top/bottom edge, as a fraction of the PNG height
        --ar        PNG height / width                                        */
   .switch-item, .shelf-item, .gametable-item, .art-item,
-  .lighting-item, .flowers-item, .window-item, .nameplate-item {
+  .lighting-item, .flowers-item, .window-item, .nameplate-item, .noteboard-item {
     --x0: 0; --x1: 1; --y0: 0; --y1: 1;
     --iw: calc(var(--cw) / (var(--x1) - var(--x0)));
     position: absolute;
@@ -2334,7 +2727,7 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
     -webkit-tap-highlight-color: transparent;
   }
   .switch-img, .shelf-img, .gametable-img, .art-img,
-  .lighting-img, .flowers-img, .window-img, .nameplate-img {
+  .lighting-img, .flowers-img, .window-img, .nameplate-img, .noteboard-img {
     position: absolute;
     width: var(--iw);
     max-width: none;
@@ -2354,6 +2747,9 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
                     top: calc(var(--top) + 16vw); left: 4.3vw; }
   .flowers-item   { --cw: 68vw; --ar: 0.485; --x0: .221; --x1: .791; --y0: .088; --y1: .876;
                     top: calc(var(--top) + 39.5vw); left: 26vw; }   /* above the portrait (z 50 > 40) */
+  /* small noteboard strip, to the right of the 3D Models shelf */
+  .noteboard-item { --cw: 38vw; --ar: 0.3333; --x0: .013; --x1: .987; --y0: .07; --y1: .95;
+                    top: calc(var(--top) + 21vw); left: 57vw; }
   /* middle: switch sits right of the portrait (portrait + nameplate below) */
   .switch-item    { --cw: 8vw;  --ar: 1.56;
                     top: calc(var(--top) + 100vw); left: 81.5vw; }
@@ -2383,10 +2779,10 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
   /* ── TOUCH: no sticky hover zoom, just a press-in on tap ── */
   .switch-item:hover, .shelf-item:hover, .gametable-item:hover, .art-item:hover,
   .lighting-item:hover, .flowers-item:hover, .window-item:hover,
-  .nameplate-item:hover { transform: none; }
+  .nameplate-item:hover, .noteboard-item:hover { transform: none; }
   .switch-item:active, .shelf-item:active, .gametable-item:active, .art-item:active,
   .lighting-item:active, .flowers-item:active, .window-item:active,
-  .nameplate-item:active { transform: scale(0.96); }
+  .nameplate-item:active, .noteboard-item:active { transform: scale(0.96); }
 
   /* ── LABELS: always shown (no hover on touch), straight, and kept on screen ── */
   .hover-label {
@@ -2439,7 +2835,7 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
 
   /* ── CLOSE BUTTONS: smaller, tucked in the corner, readable over content ── */
   .models-close, .games-close, .lighting-close, .flowers-close,
-  .window-close, .art-close, .series-close, .game-launch-close {
+  .window-close, .art-close, .series-close, .game-launch-close, .notes-close {
     position: fixed;
     top: calc(12px + var(--safe));     /* --safe: never under the camera (viewport-fit=cover) */
     right: 12px;
@@ -2458,7 +2854,7 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
     z-index: 650;
   }
   /* with viewport-fit=cover the pages run up under the camera: start their content below it */
-  .games-page, .lighting-page, .flowers-page, .series-overlay, .viewer-overlay {
+  .games-page, .lighting-page, .flowers-page, .series-overlay, .viewer-overlay, .notes-page {
     border-top: var(--safe) solid #1A1208;
   }
   .models-page { padding-top: calc(18px + var(--safe)); }
@@ -2842,6 +3238,25 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
   }
   .stage-play-btn { width: 64px; height: 64px; }
 
+  /* ── NOTEBOARD PAGE ── */
+  .notes-content { padding: 64px 14px 40px; }
+  .notes-visitor { font-size: 14px; padding: 7px 16px; margin-bottom: 16px; }
+  .notes-title { font-size: 30px; }
+  .notes-intro { font-size: 15px; margin-bottom: 22px; }
+  .note-composer { margin-bottom: 30px; }
+  .note-paper textarea { font-size: 17px; min-height: 110px; }
+  .note-field { font-size: 16px; }      /* 16px+ stops iPhones zooming in on focus */
+  .note-count { margin-left: 0; }
+  .note-pin-btn { width: 100%; padding: 12px 20px; }
+  .notes-board {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 12px;
+    padding: 20px 12px;
+    border-width: 8px;
+  }
+  .board-note { padding: 22px 11px 10px; }
+  .board-note-text { font-size: 14px; }
+
   /* ── FLORAL DESIGN ── */
   .flowers-content { padding: 70px 16px 40px; }
   .flowers-page-title { margin-bottom: 30px; }
@@ -2860,4 +3275,57 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
   /* ── LIGHTBOX (kept consistent, not currently opened by any button) ── */
   .lightbox-inner { max-width: 94vw; }
   .lightbox-img { max-height: 70vh; }
+}
+
+/* ── SOFTWARE CART + SOFTWARE PAGE on phones (768px and narrower) ──
+   The cart uses the same CROPPED PNG MECHANISM as the other wall objects (see MOBILE WALL):
+   it stands in the column right of the portrait, under the light switch, above the easel. */
+@media (max-width: 768px) {
+  .software-item {
+    --cw: 13vw; --ar: 2.643; --x0: .036; --x1: .964; --y0: .024; --y1: .995;
+    --iw: calc(var(--cw) / (var(--x1) - var(--x0)));
+    position: absolute;
+    top: calc(var(--top) + 114.5vw); left: 83vw;
+    right: auto; bottom: auto;
+    width: var(--cw);
+    height: calc(var(--iw) * var(--ar) * (var(--y1) - var(--y0)));
+    margin: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .software-img {
+    position: absolute;
+    width: var(--iw);
+    max-width: none;
+    height: auto;
+    left: calc(var(--iw) * var(--x0) * -1);
+    top:  calc(var(--iw) * var(--ar) * var(--y0) * -1);
+    pointer-events: none;
+  }
+  .software-item:hover { transform: none; }
+  .software-item:active { transform: scale(0.96); }
+  .software-item .hover-label { top: 40%; bottom: auto; left: -4vw; right: -4vw; }   /* across the open middle */
+
+  .software-close {
+    position: fixed;
+    top: calc(12px + var(--safe));
+    right: 12px;
+    width: 44px; height: 44px;
+    border: 2px solid rgba(184,160,112,0.6);
+    background: rgba(26,18,8,0.85);
+    color: #E8D5A0;
+    z-index: 650;
+  }
+  .software-page { border-top: var(--safe) solid #1A1208; }
+  .software-content { padding: 70px 14px 48px; }
+  .software-title { font-size: 30px; margin-bottom: 8px; padding: 0 48px; }
+  .software-intro { font-size: 15px; padding-bottom: 18px; margin-bottom: 26px; }
+  .software-grid { gap: 22px; }
+  .software-card { grid-template-columns: minmax(0, 1fr); }
+  .software-card:hover { transform: none; box-shadow: none; }
+  .software-thumb img { height: auto; aspect-ratio: 4 / 3; }
+  .software-info { padding: 22px 20px 26px; }
+  .software-name { font-size: 1.6rem; }
+  .software-desc { font-size: 15px; }
+  .software-open { align-self: stretch; justify-content: center; padding: 14px 20px; }
+  .software-soon { flex-direction: column; gap: 6px; padding: 22px; }
 }

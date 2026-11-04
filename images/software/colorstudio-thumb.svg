@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <!-- Thumbnail for Rihanna's Color Studio: an open makeup compact. The mirror reflects the
+       16-season flower; the pan holds seven season colors. Silk ribbons drift behind. -->
+  <defs>
+    <filter id="wc" x="-3%" y="-3%" width="106%" height="106%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="3" seed="5" result="wob"/>
+      <feDisplacementMap in="SourceGraphic" in2="wob" scale="5" xChannelSelector="R" yChannelSelector="G" result="paint"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="2" result="grain"/>
+      <feColorMatrix in="grain" type="matrix"
+        values="0 0 0 0 0.30  0 0 0 0 0.18  0 0 0 0 0.20  0 0 0 -1.2 0.55" result="specks"/>
+      <feComposite in="specks" in2="paint" operator="in" result="speckPaint"/>
+      <feBlend in="paint" in2="speckPaint" mode="multiply"/>
+    </filter>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fbeee8"/><stop offset="1" stop-color="#f4d3d6"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f7dc9a"/><stop offset="0.45" stop-color="#d4a54e"/><stop offset="1" stop-color="#9c7027"/>
+    </linearGradient>
+    <radialGradient id="mirror" cx="0.35" cy="0.3" r="0.85">
+      <stop offset="0" stop-color="#ffffff"/><stop offset="0.55" stop-color="#f7e3e8"/><stop offset="1" stop-color="#dcbfcc"/>
+    </radialGradient>
+    <radialGradient id="pan" cx="0.4" cy="0.35" r="0.8">
+      <stop offset="0" stop-color="#fffaf3"/><stop offset="1" stop-color="#f1dfd0"/>
+    </radialGradient>
+    <radialGradient id="shine" cx="0.35" cy="0.3" r="0.6">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.7"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <g id="petal"><path d="M0 -14 C13 -30 15 -54 0 -70 C-15 -54 -13 -30 0 -14 Z"/></g>
+    <g id="spark"><path d="M0 -16 C2 -4 4 -2 16 0 C4 2 2 4 0 16 C-2 4 -4 2 -16 0 C-4 -2 -2 -4 0 -16 Z"/></g>
+  </defs>
+
+  <rect width="800" height="600" fill="url(#bg)"/>
+
+  <g filter="url(#wc)">
+    <!-- silk ribbons -->
+    <path d="M-20 120 C 160 60, 300 190, 470 120 S 720 70, 820 130 L820 190 C 700 140, 600 200, 470 185 S 160 130, -20 185 Z" fill="#f7c9cf" opacity="0.75"/>
+    <path d="M-20 430 C 140 380, 300 500, 480 440 S 700 400, 820 450 L820 500 C 690 470, 600 520, 470 505 S 150 450, -20 495 Z" fill="#f8dcb5" opacity="0.75"/>
+    <path d="M-20 520 C 170 490, 320 580, 500 535 S 720 510, 820 540 L820 610 L-20 610 Z" fill="#dccbeb" opacity="0.7"/>
+
+    <!-- shadow under the compact -->
+    <ellipse cx="405" cy="478" rx="330" ry="26" fill="#a0596c" opacity="0.18"/>
+
+    <!-- hinge -->
+    <rect x="390" y="268" width="30" height="64" rx="10" fill="url(#gold)" stroke="#7a5420" stroke-width="3"/>
+    <path d="M396 284 H414 M396 300 H414 M396 316 H414" stroke="#7a5420" stroke-width="2" opacity="0.6"/>
+
+    <!-- LID: gold ring + mirror with the flower reflected -->
+    <circle cx="250" cy="300" r="158" fill="url(#gold)" stroke="#7a5420" stroke-width="4"/>
+    <circle cx="250" cy="300" r="140" fill="none" stroke="#fbe8b8" stroke-width="3" opacity="0.8"/>
+    <circle cx="250" cy="300" r="128" fill="url(#mirror)" stroke="#9c7027" stroke-width="3"/>
+    <g transform="translate(250 302)" stroke="#7a3b4c" stroke-width="1.6" fill-opacity="0.92">
+      <use href="#petal" transform="rotate(0)"   fill="#F96E46"/>
+      <use href="#petal" transform="rotate(30)"  fill="#F4D35E"/>
+      <use href="#petal" transform="rotate(60)"  fill="#9BC53D"/>
+      <use href="#petal" transform="rotate(90)"  fill="#3AB7D0"/>
+      <use href="#petal" transform="rotate(120)" fill="#8E7CC3"/>
+      <use href="#petal" transform="rotate(150)" fill="#C06C84"/>
+      <use href="#petal" transform="rotate(180)" fill="#E0A23A"/>
+      <use href="#petal" transform="rotate(210)" fill="#B5472E"/>
+      <use href="#petal" transform="rotate(240)" fill="#7A1F2B"/>
+      <use href="#petal" transform="rotate(270)" fill="#2338A8"/>
+      <use href="#petal" transform="rotate(300)" fill="#D1006F"/>
+      <use href="#petal" transform="rotate(330)" fill="#F2A3B5"/>
+      <circle r="18" fill="#F6D58E" stroke="#7a3b4c" stroke-width="2"/>
+      <!-- a tiny smile in the flower's heart -->
+      <circle cx="-6" cy="-3" r="2.4" fill="#5a2a36" stroke="none"/><circle cx="6" cy="-3" r="2.4" fill="#5a2a36" stroke="none"/>
+      <path d="M-6 4 Q0 10 6 4" fill="none" stroke="#5a2a36" stroke-width="2.2" stroke-linecap="round"/>
+      <ellipse cx="-11" cy="4" rx="3.5" ry="2" fill="#f28c9a" stroke="none" opacity="0.8"/><ellipse cx="11" cy="4" rx="3.5" ry="2" fill="#f28c9a" stroke="none" opacity="0.8"/>
+    </g>
+    <path d="M170 220 L210 180 M160 252 L232 180" stroke="#ffffff" stroke-width="9" stroke-linecap="round" opacity="0.55"/>
+
+    <!-- PAN: gold ring + seven pressed colors -->
+    <circle cx="560" cy="300" r="158" fill="url(#gold)" stroke="#7a5420" stroke-width="4"/>
+    <circle cx="560" cy="300" r="140" fill="none" stroke="#fbe8b8" stroke-width="3" opacity="0.8"/>
+    <circle cx="560" cy="300" r="128" fill="url(#pan)" stroke="#9c7027" stroke-width="3"/>
+    <g stroke="#8a5a50" stroke-width="2.5">
+      <circle cx="560" cy="300" r="34" fill="#C2416B"/>
+      <circle cx="636" cy="300" r="32" fill="#F6D58E"/>
+      <circle cx="598" cy="234" r="32" fill="#9BC53D"/>
+      <circle cx="522" cy="234" r="32" fill="#3AB7D0"/>
+      <circle cx="484" cy="300" r="32" fill="#8E7CC3"/>
+      <circle cx="522" cy="366" r="32" fill="#F96E46"/>
+      <circle cx="598" cy="366" r="32" fill="#2338A8"/>
+    </g>
+    <g fill="url(#shine)">
+      <circle cx="552" cy="290" r="20"/><circle cx="628" cy="290" r="18"/><circle cx="590" cy="224" r="18"/><circle cx="514" cy="224" r="18"/>
+      <circle cx="476" cy="290" r="18"/><circle cx="514" cy="356" r="18"/><circle cx="590" cy="356" r="18"/>
+    </g>
+
+    <!-- sparkles + hearts -->
+    <use href="#spark" transform="translate(98 92) scale(1.3)" fill="#f6d58e" stroke="#c99a3a" stroke-width="1.2"/>
+    <use href="#spark" transform="translate(724 96) scale(0.9)" fill="#ffffff" stroke="#e5a9b6" stroke-width="1.4"/>
+    <use href="#spark" transform="translate(744 470) scale(1.2)" fill="#f6d58e" stroke="#c99a3a" stroke-width="1.2"/>
+    <use href="#spark" transform="translate(70 470) scale(0.8)" fill="#ffffff" stroke="#e5a9b6" stroke-width="1.4"/>
+    <use href="#spark" transform="translate(405 92) scale(0.7)" fill="#ffffff" stroke="#e5a9b6" stroke-width="1.4"/>
+    <path d="M700 196 c-7 -10 -20 -3 -13 7 l13 11 l13 -11 c7 -10 -6 -17 -13 -7 z" fill="#e8708a" stroke="#a8455c" stroke-width="1.6"/>
+    <path d="M110 300 c-5 -7 -14 -2 -9 5 l9 8 l9 -8 c5 -7 -4 -12 -9 -5 z" fill="#f2a3b5" stroke="#a8455c" stroke-width="1.4"/>
+  </g>
+</svg>

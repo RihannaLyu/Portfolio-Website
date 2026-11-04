@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Rihanna Lyu — Portfolio</title>
   <!-- ?v= : bump the date after each update so phones fetch the new style.css + script.js together -->
-  <link rel="stylesheet" href="style.css?v=2026-11-02" />
+  <link rel="stylesheet" href="style.css?v=2026-11-04" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
 </head>
 <body>
@@ -310,6 +310,81 @@
     </div>
   </div>
 
+  <!-- NOTEBOARD PAGE: visitor number + public sticky notes (script.js: NOTEBOARD) -->
+  <div class="notes-page" id="notesPage">
+    <button class="notes-close" id="notesClose" aria-label="Close">✕</button>
+    <div class="notes-content">
+      <p class="notes-visitor" id="notesVisitor">Welcome, visitor</p>
+      <h1 class="notes-title">Leave a Note</h1>
+      <p class="notes-intro">
+        Say hi, share a thought, or ask me anything, and pin it to the board.
+        Want me to write back? Add your email below; only I can see it.
+        You can also reach me at <a href="mailto:rihannalyu@gmail.com">rihannalyu@gmail.com</a>.
+      </p>
+
+      <form class="note-composer" id="noteForm" autocomplete="off">
+        <div class="note-paper" id="notePaper" data-color="yellow">
+          <span class="note-paper-pin" aria-hidden="true"></span>
+          <label class="sr-only" for="noteText">Your note</label>
+          <textarea id="noteText" maxlength="280" rows="5" required
+                    placeholder="Write your note here…"></textarea>
+          <label class="sr-only" for="noteName">Your name (optional)</label>
+          <input id="noteName" class="note-field" maxlength="40" placeholder="Your name (optional)" />
+          <label class="sr-only" for="noteEmail">Your email (optional, only Rihanna sees it)</label>
+          <input id="noteEmail" class="note-field" type="email" maxlength="120" inputmode="email"
+                 placeholder="Your email, so I can reply (only I see it)" />
+        </div>
+        <div class="note-controls">
+          <div class="note-colors" role="radiogroup" aria-label="Note color">
+            <button type="button" class="note-color active" data-color="yellow" role="radio" aria-checked="true" aria-label="Yellow"></button>
+            <button type="button" class="note-color" data-color="pink" role="radio" aria-checked="false" aria-label="Pink"></button>
+            <button type="button" class="note-color" data-color="mint" role="radio" aria-checked="false" aria-label="Mint"></button>
+            <button type="button" class="note-color" data-color="blue" role="radio" aria-checked="false" aria-label="Blue"></button>
+            <button type="button" class="note-color" data-color="peach" role="radio" aria-checked="false" aria-label="Peach"></button>
+          </div>
+          <span class="note-count" id="noteCount">0 / 280</span>
+          <button type="submit" class="note-pin-btn" id="notePinBtn">Pin it to the board</button>
+        </div>
+        <p class="note-status" id="noteStatus" role="status"></p>
+      </form>
+
+      <div class="notes-board" id="notesBoard" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <!-- SOFTWARE PAGE: websites + apps I've built, opened from the computer cart (script.js: SOFTWARE PAGE) -->
+  <div class="software-page" id="softwarePage">
+    <button class="software-close" id="softwareClose" aria-label="Close">✕</button>
+    <div class="software-content">
+      <h1 class="software-title">Software &amp; Websites</h1>
+      <p class="software-intro">Apps and sites I've designed and built, all free to try in your browser.</p>
+
+      <div class="software-grid">
+        <!-- No. 01 — add new projects as more <article class="software-card"> blocks -->
+        <article class="software-card">
+          <a class="software-thumb" href="software/color-studio/index.html" target="_blank" rel="noopener"
+             aria-label="Open Rihanna's Color Studio in a new tab">
+            <img src="images/software/colorstudio-thumb.svg" width="800" height="600" alt="An open makeup compact: a smiling 16-season flower in the mirror and seven color pans" />
+          </a>
+          <div class="software-info">
+            <p class="software-no">No. 01</p>
+            <h2 class="software-name">Rihanna's Color Studio</h2>
+            <p class="software-desc">Take a selfie and find your color season. The app reads the undertone, depth and contrast of your skin, hair and eyes, matches you to one of 16 season palettes, and lets you try each shade on. Your photo never leaves your phone.</p>
+            <ul class="software-tags">
+              <li>Web app</li><li>Camera</li><li>Color science</li><li>Phone &amp; desktop</li>
+            </ul>
+            <a class="software-open" href="software/color-studio/index.html" target="_blank" rel="noopener">Open the app <span aria-hidden="true">&#8599;</span></a>
+          </div>
+        </article>
+
+        <div class="software-soon" aria-hidden="true">
+          <p class="software-no">No. 02</p>
+          <p class="software-soon-text">Next build in the works…</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- DIGITAL ART PAGE -->
  <div class="window-page" id="windowPage">
     <button class="window-close" id="windowClose">✕</button>
@@ -503,6 +578,14 @@
       <img src="images/window.PNG" class="window-img" alt="Digital art window" />
       <div class="hover-label">Digital Art</div>
     </div>
+    <div class="noteboard-item" id="noteboardItem" role="button" tabindex="0" aria-label="Open the noteboard and leave a note">
+      <img src="images/noteboard.svg" class="noteboard-img" alt="" />
+      <div class="hover-label">Leave a Note</div>
+    </div>
+    <div class="software-item" id="softwareItem" role="button" tabindex="0" aria-label="Open Software and Websites">
+      <img src="images/software-cart.svg" class="software-img" alt="" />
+      <div class="hover-label"><span class="label-wide">Software &amp; Web</span><span class="label-phone">Software</span></div>
+    </div>
 
   </div>
 
@@ -540,7 +623,7 @@
   </div>
 
   </div></div><!-- /#stage /#viewport -->
-  <script src="script.js?v=2026-11-02"></script>
+  <script src="script.js?v=2026-11-04"></script>
   <script>
     /* Lock the 1707x1067 room to 16:10 and scale to fit any screen */
     (function () {
