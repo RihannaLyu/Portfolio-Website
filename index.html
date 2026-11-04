@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Rihanna Lyu — Portfolio</title>
   <!-- ?v= : bump the date after each update so phones fetch the new style.css + script.js together -->
-  <link rel="stylesheet" href="style.css?v=2026-11-18" />
+  <link rel="stylesheet" href="style.css?v=2026-11-19" />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet" />
   <!-- handwriting fonts for the Leave a Note page -->
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
@@ -77,26 +77,39 @@
   <!-- 3D MODELS PAGE -->
   <div class="models-page" id="modelsPage">
     <button class="models-close" id="modelsClose" aria-label="Close">✕</button>
-    <header class="models-head">
-      <p class="models-eyebrow">Four builds · pick a channel</p>
-      <h1 class="models-title">3D Model Builds</h1>
-    </header>
 
-    <!-- THE TV PILE: every build on its own little set, all on one screen (built from MODEL_VIDEOS
-         in script.js). Choosing one brings it forward, big, and plays it. -->
-    <div class="tv-wall" id="tvWall"></div>
+    <!-- 3D MODEL BUILDS: four drafting sheets, one quarter of the screen each (built from MODEL_VIDEOS
+         in script.js): a hand-inked frame around each build, a dimension line, a title block. Hover
+         plays a silent preview; choosing one opens the player (arrows / swipe between builds). -->
+    <div class="mb-grid" id="mbGrid"></div>
 
-    <div class="tv-focus" id="tvFocus" aria-hidden="true">
-      <div class="tv-focus-inner" role="dialog" aria-modal="true" aria-labelledby="tvFocusTitle">
-        <div class="tv-focus-set">
-          <div class="tv-glass"><video class="tv-focus-video" id="tvFocusVideo" playsinline controls preload="none"></video></div>
-          <img class="tv-frame" src="images/3Dmodels/tv.PNG" alt="" />
+    <div class="mb-seal">
+      <svg class="mb-seal-ring" viewBox="0 0 200 200" aria-hidden="true">
+        <defs><path id="mbRing" d="M100 100 m-78 0 a78 78 0 1 1 156 0 a78 78 0 1 1 -156 0"/></defs>
+        <circle cx="100" cy="100" r="96" class="mb-seal-disc"/>
+        <circle cx="100" cy="100" r="62" class="mb-seal-inner"/>
+        <text><textPath href="#mbRing" startOffset="0">3D MODEL BUILDS · FOUR STUDIES IN MOTION · </textPath></text>
+      </svg>
+      <h1 class="mb-seal-title"><span>3D</span> Model Builds</h1>
+    </div>
+
+    <div class="mb-viewer" id="mbViewer" role="dialog" aria-modal="true" aria-labelledby="mbTitle" hidden>
+      <div class="mb-vtop">
+        <span class="mb-vcount" id="mbCount"></span>
+        <h2 class="mb-vtitle" id="mbTitle"></h2>
+        <button type="button" class="mb-vclose" id="mbClose" aria-label="Close the player"><i class="ico ico-close" aria-hidden="true"></i></button>
+      </div>
+      <div class="mb-stage" id="mbStage">
+        <div class="mb-screen">
+          <video class="mb-video" id="mbVideo" playsinline controls preload="none"></video>
+          <svg class="mb-ink mb-vink" viewBox="0 0 1000 562" preserveAspectRatio="none" aria-hidden="true"></svg>
         </div>
-        <div class="tv-focus-bar">
-          <span class="tv-focus-no" id="tvFocusNo"></span>
-          <h2 class="tv-focus-title" id="tvFocusTitle"></h2>
-          <button type="button" class="tv-focus-back" id="tvFocusBack"><i class="tv-back-arrow" aria-hidden="true">←</i> All channels</button>
-        </div>
+        <p class="mb-swipe" aria-hidden="true">swipe for the next build · down to close</p>
+      </div>
+      <div class="mb-vnav">
+        <button type="button" class="mb-step" id="mbPrev"><span class="mb-arrow" aria-hidden="true">←</span><span class="mb-step-name" id="mbPrevName"></span></button>
+        <div class="mb-dots" id="mbDots" role="tablist" aria-label="Builds"></div>
+        <button type="button" class="mb-step mb-step-next" id="mbNext"><span class="mb-step-name" id="mbNextName"></span><span class="mb-arrow" aria-hidden="true">→</span></button>
       </div>
     </div>
   </div>
@@ -720,8 +733,8 @@
   </div>
 
   </div></div><!-- /#stage /#viewport -->
-  <script src="script.js?v=2026-11-18"></script>
-  <script src="experience.js?v=2026-11-17"></script>
+  <script src="script.js?v=2026-11-19"></script>
+  <script src="experience.js?v=2026-11-19"></script>
   <script>
     /* Lock the 1707x1067 room to 16:10 and scale to fit any screen */
     (function () {

@@ -249,7 +249,7 @@ function openModels() {
 function closeModels() {
   modelsPage.classList.remove('open');
   document.body.style.overflow = '';
-  if (typeof tvClose === 'function') tvClose();   // stop any playing build (see 3D MODELS — TV PILE)
+  if (typeof mbClose === 'function') mbClose();   // stop any playing build (see 3D MODELS — FOUR DRAFTING SHEETS)
 }
 
 // ── GAMES PAGE ────────────────────────────────────────────
@@ -1210,7 +1210,7 @@ if (document.fonts) document.fonts.ready.then(queuePhoneGalleries);
 
 
 /* ═══════════════════════════════════════════════════════════
-   3D MODELS — TV PILE
+   3D MODELS — FOUR DRAFTING SHEETS
    ═══════════════════════════════════════════════════════════ */
 const MODELS_BASE = 'images/3Dmodels/';
 const MODEL_VIDEOS = [
@@ -1236,69 +1236,144 @@ const MODEL_VIDEOS = [
   }
 ];
 
-/* THE TV PILE: four little sets, all on one screen. Choosing one brings it forward (big, centred,
-   the others dimmed behind) and plays it with its controls; "All channels", Esc or a click on
-   the backdrop puts it back. One design for desktop and phone. */
-const tvWall       = document.getElementById('tvWall');
-const tvFocus      = document.getElementById('tvFocus');
-const tvFocusVideo = document.getElementById('tvFocusVideo');
-const tvFocusTitle = document.getElementById('tvFocusTitle');
-const tvFocusNo    = document.getElementById('tvFocusNo');
-const tvFocusBack  = document.getElementById('tvFocusBack');
-let tvLastSet = null;
+/* FOUR DRAFTING SHEETS: each build on its own quarter of the screen, framed in hand-inked lines with
+   a dimension line and a title block. A fine pointer hovering a sheet plays a silent preview in place;
+   choosing one opens the player, where arrows / dots / ← → keys (and a swipe on phones) move between
+   builds and Esc, × or a swipe down closes it. */
+const mbGrid   = document.getElementById('mbGrid');
+const mbViewer = document.getElementById('mbViewer');
+const mbVideo  = document.getElementById('mbVideo');
+const mbStage  = document.getElementById('mbStage');
+let mbIndex = 0, mbLastSheet = null;
 
-function buildTVWall() {
-  if (!tvWall) return;
-  tvWall.innerHTML = '';
+// a quick ink line: a few gently jittered points, smoothed, drawn twice (viewBox 1000 x 562)
+function mbInk(seed) {
+  let a = seed * 9301 + 49297;
+  const rnd = () => ((a = (a * 9301 + 49297) % 233280) / 233280);
+  const rect = (inset, amp) => {
+    const pts = [], W = 1000, H = 562, i = inset;
+    const edge = (x1, y1, x2, y2, n) => { for (let k = 0; k < n; k++) { const t = k / n; pts.push([x1 + (x2 - x1) * t + (rnd() - 0.5) * amp, y1 + (y2 - y1) * t + (rnd() - 0.5) * amp]); } };
+    edge(i, i, W - i, i, 7); edge(W - i, i, W - i, H - i, 4); edge(W - i, H - i, i, H - i, 7); edge(i, H - i, i, i, 4);
+    let d = `M${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
+    for (let k = 1; k <= pts.length; k++) {
+      const p = pts[k % pts.length], q = pts[k - 1];
+      d += ` Q${q[0].toFixed(1)} ${q[1].toFixed(1)} ${((q[0] + p[0]) / 2).toFixed(1)} ${((q[1] + p[1]) / 2).toFixed(1)}`;
+    }
+    return d + 'Z';
+  };
+  const mark = (x, y, dx, dy) => `M${x + dx * 26} ${y}H${x + dx * 70}M${x} ${y + dy * 26}V${y + dy * 70}`;
+  return `<path class="ink-a" d="${rect(-4, 7)}"/><path class="ink-b" d="${rect(-2, 11)}"/>`
+    + `<path class="ink-mark" d="${mark(-14, -14, -1, -1)}${mark(1014, -14, 1, -1)}${mark(-14, 576, -1, 1)}${mark(1014, 576, 1, 1)}"/>`;
+}
+
+function buildModelSheets() {
+  if (!mbGrid) return;
+  mbGrid.innerHTML = '';
+  const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
   MODEL_VIDEOS.forEach((m, i) => {
-    const set = document.createElement('button');
-    set.type = 'button';
-    set.className = 'tv-set';
-    set.style.setProperty('--n', i);
-    set.setAttribute('aria-label', 'Play ' + m.title);
-    set.innerHTML = `
-      <span class="tv-antenna" aria-hidden="true"><i></i><i></i></span>
-      <span class="tv-body">
-        <span class="tv-glass"><img class="tv-poster" src="${MODELS_BASE}${m.poster}" alt="" loading="lazy" /></span>
-        <img class="tv-frame" src="${MODELS_BASE}tv.PNG" alt="" />
-        <span class="tv-channel" aria-hidden="true">CH ${String(i + 1).padStart(2, '0')}</span>
-        <span class="tv-play" aria-hidden="true"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="46"/><polygon points="42,32 42,68 70,50"/></svg></span>
+    const no = String(i + 1).padStart(2, '0');
+    const sheet = document.createElement('button');
+    sheet.type = 'button';
+    sheet.className = 'mb-sheet';
+    sheet.style.setProperty('--n', i);
+    sheet.setAttribute('aria-label', `Play ${m.title}, study ${i + 1} of ${MODEL_VIDEOS.length}`);
+    sheet.innerHTML = `
+      <span class="mb-dim" aria-hidden="true"><i></i><em>16 : 9</em><i></i></span>
+      <span class="mb-frame">
+        <img class="mb-still" src="${MODELS_BASE}${m.poster}" alt="" loading="lazy" />
+        <video class="mb-preview" muted playsinline loop preload="none"></video>
+        <svg class="mb-ink" viewBox="0 0 1000 562" preserveAspectRatio="none" aria-hidden="true">${mbInk(i + 3)}</svg>
+        <span class="mb-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z"/></svg> Play</span>
       </span>
-      <span class="tv-name">${m.title}</span>`;
-    set.addEventListener('click', () => tvOpen(i, set));
-    tvWall.appendChild(set);
+      <span class="mb-block" aria-hidden="true">
+        <span class="mb-no">N° ${no}</span>
+        <span class="mb-name">${m.title}</span>
+        <span class="mb-meta">Study ${i + 1} of ${MODEL_VIDEOS.length}<span class="mb-meta-cta"> · view</span></span>
+      </span>`;
+    const pv = sheet.querySelector('.mb-preview');
+    if (fine) {
+      sheet.addEventListener('mouseenter', () => {
+        if (!pv.src) pv.src = MODELS_BASE + m.video;
+        pv.play().then(() => sheet.classList.add('is-previewing')).catch(() => {});
+      });
+      sheet.addEventListener('mouseleave', () => { pv.pause(); sheet.classList.remove('is-previewing'); });
+    }
+    sheet.addEventListener('click', () => { pv.pause(); sheet.classList.remove('is-previewing'); mbOpen(i, sheet); });
+    mbGrid.appendChild(sheet);
   });
+  // player dots
+  const dots = document.getElementById('mbDots');
+  dots.innerHTML = '';
+  MODEL_VIDEOS.forEach((m, i) => {
+    const d = document.createElement('button');
+    d.type = 'button'; d.role = 'tab'; d.className = 'mb-dot';
+    d.setAttribute('aria-label', m.title);
+    d.addEventListener('click', () => mbShow(i));
+    dots.appendChild(d);
+  });
+  mbViewer.querySelector('.mb-vink').innerHTML = mbInk(11);
 }
 
-function tvOpen(i, fromSet) {
-  const m = MODEL_VIDEOS[i];
-  tvLastSet = fromSet || null;
-  tvFocusTitle.textContent = m.title;
-  tvFocusNo.textContent = 'CH ' + String(i + 1).padStart(2, '0');
-  tvFocusVideo.poster = MODELS_BASE + m.poster;
-  tvFocusVideo.src = MODELS_BASE + m.video;
-  tvFocus.setAttribute('aria-hidden', 'false');
+function mbShow(i, dir = 0) {
+  const n = MODEL_VIDEOS.length;
+  mbIndex = (i + n) % n;
+  const m = MODEL_VIDEOS[mbIndex];
+  document.getElementById('mbCount').textContent = `N° ${String(mbIndex + 1).padStart(2, '0')} / ${String(n).padStart(2, '0')}`;
+  document.getElementById('mbTitle').textContent = m.title;
+  document.getElementById('mbPrevName').textContent = MODEL_VIDEOS[(mbIndex - 1 + n) % n].title;
+  document.getElementById('mbNextName').textContent = MODEL_VIDEOS[(mbIndex + 1) % n].title;
+  document.querySelectorAll('#mbDots .mb-dot').forEach((d, k) => d.setAttribute('aria-selected', String(k === mbIndex)));
+  mbStage.classList.remove('from-left', 'from-right');
+  if (dir) { void mbStage.offsetWidth; mbStage.classList.add(dir > 0 ? 'from-right' : 'from-left'); }
+  mbVideo.pause();
+  mbVideo.poster = MODELS_BASE + m.poster;
+  mbVideo.src = MODELS_BASE + m.video;
+  mbVideo.play().catch(() => {});
+}
+
+function mbOpen(i, fromSheet) {
+  mbLastSheet = fromSheet || null;
+  if (fromSheet) {                                   // the player opens out of the sheet you chose
+    const r = fromSheet.getBoundingClientRect(), p = modelsPage.getBoundingClientRect(), k = p.width / (modelsPage.offsetWidth || p.width);
+    mbViewer.style.setProperty('--ox', ((r.left + r.width / 2 - p.left) / k) + 'px');
+    mbViewer.style.setProperty('--oy', ((r.top + r.height / 2 - p.top) / k) + 'px');
+  }
+  mbViewer.hidden = false;
+  requestAnimationFrame(() => mbViewer.classList.add('is-open'));
   modelsPage.classList.add('is-watching');
-  tvFocusVideo.play().catch(() => {});                       // the click is the user's gesture
-  setTimeout(() => tvFocusBack.focus({ preventScroll: true }), 80);
+  mbShow(i);
+  setTimeout(() => document.getElementById('mbClose').focus({ preventScroll: true }), 80);
 }
 
-function tvClose() {
+function mbClose() {
   if (!modelsPage.classList.contains('is-watching')) return false;
-  tvFocusVideo.pause();
+  mbVideo.pause();
+  mbViewer.classList.remove('is-open');
   modelsPage.classList.remove('is-watching');
-  tvFocus.setAttribute('aria-hidden', 'true');
-  if (tvLastSet) tvLastSet.focus({ preventScroll: true });
-  setTimeout(() => { if (!modelsPage.classList.contains('is-watching')) tvFocusVideo.removeAttribute('src'); }, 450);
+  setTimeout(() => { if (!mbViewer.classList.contains('is-open')) { mbViewer.hidden = true; mbVideo.removeAttribute('src'); mbVideo.load(); } }, 450);
+  if (mbLastSheet) mbLastSheet.focus({ preventScroll: true });
   return true;
 }
 
-if (tvFocus) {
-  tvFocusBack.addEventListener('click', tvClose);
-  tvFocus.addEventListener('click', (e) => { if (e.target === tvFocus) tvClose(); });
-  // Esc steps back to all channels first (before the page-wide Esc closes the page)
+if (mbViewer) {
+  document.getElementById('mbClose').addEventListener('click', mbClose);
+  document.getElementById('mbPrev').addEventListener('click', () => mbShow(mbIndex - 1, -1));
+  document.getElementById('mbNext').addEventListener('click', () => mbShow(mbIndex + 1, 1));
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modelsPage.classList.contains('is-watching')) { e.stopImmediatePropagation(); tvClose(); }
+    if (!modelsPage.classList.contains('is-watching')) return;
+    if (e.key === 'Escape') { e.stopImmediatePropagation(); mbClose(); }
+    else if (e.key === 'ArrowRight') { e.preventDefault(); mbShow(mbIndex + 1, 1); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); mbShow(mbIndex - 1, -1); }
   }, true);
+  // phones: swipe left / right for the next build, down to close
+  let sx = null, sy = 0, st = 0;
+  mbStage.addEventListener('touchstart', (e) => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; st = Date.now(); }, { passive: true });
+  mbStage.addEventListener('touchend', (e) => {
+    if (sx === null) return;
+    const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy; sx = null;
+    if (Date.now() - st > 700) return;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3) mbShow(mbIndex + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1);
+    else if (dy > 90 && dy > Math.abs(dx) * 1.3) mbClose();
+  });
 }
-buildTVWall();
+buildModelSheets();

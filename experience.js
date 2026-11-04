@@ -64,7 +64,7 @@
 
   /* page-open state: hides the Index button under any open page, and drives the entrances */
   const WATCH = PAGES.concat([$('#notebookWrap'), $('#gameLaunch'), $('#viewerOverlay'), $('#seriesOverlay'), $('#pieceViewer'), $('#lightbox')].filter(Boolean));
-  const ENTER = '.digital-art-card, .floral-item, .software-card, .software-soon, .individual-art-card, .series-stack, .board-note, .note-composer, .notes-hint, .city-island, .tv-set';
+  const ENTER = '.digital-art-card, .floral-item, .software-card, .software-soon, .individual-art-card, .series-stack, .board-note, .note-composer, .notes-hint, .city-island, .mb-sheet';
   function syncOpen() {
     const anyOpen = WATCH.some(el => el.classList.contains('open')) || document.body.classList.contains('art-tabs-open');
     document.body.classList.toggle('page-open', anyOpen);
