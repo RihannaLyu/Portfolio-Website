@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 680" width="360" height="680">
+  <!-- Tall noteboard for the phone wall: a cork board in a wooden frame with sticky notes pinned
+       upright, painted with the same watercolor filter as the wide noteboard (noteboard.svg). -->
+  <defs>
+    <filter id="wc" x="-6%" y="-4%" width="112%" height="108%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" seed="7" result="wob"/>
+      <feDisplacementMap in="SourceGraphic" in2="wob" scale="5" xChannelSelector="R" yChannelSelector="G" result="paint"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="3" result="grain"/>
+      <feColorMatrix in="grain" type="matrix"
+        values="0 0 0 0 0.22  0 0 0 0 0.16  0 0 0 0 0.10  0 0 0 -1.2 0.6" result="specks"/>
+      <feComposite in="specks" in2="paint" operator="in" result="speckPaint"/>
+      <feBlend in="paint" in2="speckPaint" mode="multiply" result="grained"/>
+      <feGaussianBlur in="grained" stdDeviation="0.35"/>
+    </filter>
+    <filter id="cork" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.55" numOctaves="3" seed="11" result="n"/>
+      <feColorMatrix in="n" type="matrix"
+        values="0 0 0 0 0.48  0 0 0 0 0.31  0 0 0 0 0.16  0 0 0 -1.8 0.8" result="crumbs"/>
+      <feComposite in="crumbs" in2="SourceGraphic" operator="in" result="c"/>
+      <feBlend in="SourceGraphic" in2="c" mode="multiply"/>
+    </filter>
+    <linearGradient id="wood" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#9a6436"/><stop offset="0.5" stop-color="#7d4c26"/><stop offset="1" stop-color="#5e371a"/>
+    </linearGradient>
+    <radialGradient id="pinRed" cx="0.38" cy="0.35" r="0.7"><stop offset="0" stop-color="#ff9a8a"/><stop offset="0.45" stop-color="#d63a2f"/><stop offset="1" stop-color="#7e1712"/></radialGradient>
+    <radialGradient id="pinGold" cx="0.38" cy="0.35" r="0.7"><stop offset="0" stop-color="#fff1b8"/><stop offset="0.45" stop-color="#d9a93a"/><stop offset="1" stop-color="#7a5714"/></radialGradient>
+    <radialGradient id="pinBlue" cx="0.38" cy="0.35" r="0.7"><stop offset="0" stop-color="#c9e2ff"/><stop offset="0.45" stop-color="#3f7fd6"/><stop offset="1" stop-color="#1b3f78"/></radialGradient>
+  </defs>
+
+  <g filter="url(#wc)">
+    <!-- wooden frame + cork -->
+    <rect x="8" y="8" width="344" height="664" rx="8" fill="url(#wood)" stroke="#3f2410" stroke-width="3"/>
+    <rect x="24" y="24" width="312" height="632" rx="3" fill="#d3a676" filter="url(#cork)"/>
+    <rect x="24" y="24" width="312" height="632" rx="3" fill="none" stroke="#5e371a" stroke-width="2" opacity="0.6"/>
+    <path d="M16 16 V664" stroke="#c48a55" stroke-width="2" opacity="0.5"/>
+
+    <!-- sticky notes, upright, two staggered columns -->
+    <g transform="translate(40 44) rotate(-5)">
+      <rect x="3" y="5" width="120" height="116" fill="#3b2410" opacity="0.18"/>
+      <rect width="120" height="116" fill="#efd99b" stroke="#c9a334" stroke-width="1.5"/>
+      <path d="M96 116 L120 92 L120 116 Z" fill="#dcc070"/>
+      <path d="M14 38 q22 -5 42 0 t42 -1 M14 58 q20 4 38 0 t44 1 M14 78 q18 -4 36 0" stroke="#8a6a1c" stroke-width="3" fill="none" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(186 92) rotate(4)">
+      <rect x="3" y="5" width="122" height="118" fill="#3b2410" opacity="0.18"/>
+      <rect width="122" height="118" fill="#efc3c0" stroke="#c96f88" stroke-width="1.5"/>
+      <path d="M16 38 q18 -6 38 0 t38 -2 M16 58 q22 5 42 0 t32 1" stroke="#9c3f5a" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M58 86 c-7 -10 -20 -3 -13 7 l13 11 l13 -11 c7 -10 -6 -16 -13 -7 z" fill="#d9536f" opacity="0.85"/>
+    </g>
+    <g transform="translate(46 216) rotate(3)">
+      <rect x="3" y="5" width="122" height="120" fill="#3b2410" opacity="0.18"/>
+      <rect width="122" height="120" fill="#cadbc1" stroke="#5f9d7a" stroke-width="1.5"/>
+      <path d="M14 36 q22 4 42 0 t44 1 M14 56 q20 -5 40 0 t38 -1 M14 76 q24 4 44 0" stroke="#2f6b4b" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M78 96 l8 -8 l18 18" stroke="#2f6b4b" stroke-width="3" fill="none" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(190 276) rotate(-4)">
+      <rect x="3" y="5" width="118" height="116" fill="#3b2410" opacity="0.18"/>
+      <rect width="118" height="116" fill="#c9d7e6" stroke="#5f86b8" stroke-width="1.5"/>
+      <path d="M0 0 L26 0 L0 26 Z" fill="#a8bfdc"/>
+      <path d="M16 40 q20 -4 38 0 t40 0 M16 60 q22 4 40 0 t34 -1 M16 80 q16 -4 32 0" stroke="#2f4f7d" stroke-width="3" fill="none" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(44 396) rotate(-3)">
+      <rect x="3" y="5" width="120" height="114" fill="#3b2410" opacity="0.18"/>
+      <rect width="120" height="114" fill="#f1cfad" stroke="#c98a52" stroke-width="1.5"/>
+      <path d="M14 36 q18 -4 36 0 t38 0 M14 56 q18 4 36 0 t30 1" stroke="#8a5420" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <circle cx="80" cy="84" r="9" fill="none" stroke="#8a5420" stroke-width="3"/><path d="M76 82 h2 M84 82 h2 M76 88 q4 3 8 0" stroke="#8a5420" stroke-width="2" fill="none" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(188 458) rotate(5)">
+      <rect x="3" y="5" width="120" height="118" fill="#3b2410" opacity="0.18"/>
+      <rect width="120" height="118" fill="#efd99b" stroke="#c9a334" stroke-width="1.5"/>
+      <path d="M16 38 q20 4 40 0 t40 1 M16 58 q18 -4 36 0 t40 0" stroke="#8a6a1c" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M30 84 l6 -12 l6 12 l12 2 l-9 8 l3 12 l-12 -6 l-12 6 l3 -12 l-9 -8 Z" fill="#e7b84a" opacity="0.85"/>
+    </g>
+    <g transform="translate(52 556) rotate(4)">
+      <rect x="3" y="5" width="110" height="80" fill="#3b2410" opacity="0.18"/>
+      <rect width="110" height="80" fill="#efc3c0" stroke="#c96f88" stroke-width="1.5"/>
+      <path d="M14 32 q18 -4 36 0 t34 0 M14 52 q20 4 38 0" stroke="#9c3f5a" stroke-width="3" fill="none" stroke-linecap="round"/>
+    </g>
+
+    <!-- push pins -->
+    <g>
+      <ellipse cx="100" cy="54" rx="8" ry="3.5" fill="#2a170a" opacity="0.3"/><circle cx="98" cy="48" r="8" fill="url(#pinRed)"/>
+      <ellipse cx="248" cy="101" rx="8" ry="3.5" fill="#2a170a" opacity="0.3"/><circle cx="246" cy="95" r="8" fill="url(#pinGold)"/>
+      <ellipse cx="108" cy="226" rx="8" ry="3.5" fill="#2a170a" opacity="0.3"/><circle cx="106" cy="220" r="8" fill="url(#pinBlue)"/>
+      <ellipse cx="250" cy="285" rx="8" ry="3.5" fill="#2a170a" opacity="0.3"/><circle cx="248" cy="279" r="8" fill="url(#pinRed)"/>
+      <ellipse cx="104" cy="404" rx="8" ry="3.5" fill="#2a170a" opacity="0.3"/><circle cx="102" cy="398" r="8" fill="url(#pinGold)"/>
+      <ellipse cx="248" cy="468" rx="8" ry="3.5" fill="#2a170a" opacity="0.3"/><circle cx="246" cy="462" r="8" fill="url(#pinBlue)"/>
+      <ellipse cx="108" cy="564" rx="7" ry="3" fill="#2a170a" opacity="0.3"/><circle cx="106" cy="559" r="7" fill="url(#pinRed)"/>
+    </g>
+  </g>
+</svg>

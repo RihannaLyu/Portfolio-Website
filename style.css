@@ -3571,3 +3571,65 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
 .art-item       { filter: saturate(1.08) contrast(1.02) sepia(0.06); }
 .shelf-item     { filter: saturate(1.1) sepia(0.06); }
 .lighting-item  { filter: sepia(0.04); }
+
+/* ═══════════════════════════════════════════════════════════
+   PHONE WALL v3 — laid out to Rihanna's draft (all sizes in vw, from the draft's proportions).
+   Top → bottom: track lights · portrait + nameplate (left) with a tall noteboard, a vertical
+   flower structure and the light switch down the right · a horizontal Games & VR shelf beside
+   the 3D model shelf · the software cart and the easel (its chair running off the right edge).
+   The noteboard, flowers and game shelf use phone-only drawings (<picture> in index.html).
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  :root { --drop: 0vw; }
+  .wall { height: max(calc(var(--top) + 237.6vw), 100vh); }   /* the page ends at the bottom row */
+
+  .lighting-item  { --cw: 71vw; --ar: 0.204; --x0: .127; --x1: .876; --y0: .207; --y1: .844;
+                    top: calc(var(--top) + 7.6vw); left: 14.7vw; }
+  .portrait-item  { top: calc(var(--top) + 24.7vw); left: 3vw; width: 69vw; }
+  .frame-inner    { --fw: 69vw; }
+
+  /* right column: tall noteboard → vertical flowers → light switch */
+  .noteboard-item { --cw: 20vw; --ar: 1.889; --x0: .01; --x1: .99; --y0: .006; --y1: .994;
+                    top: calc(var(--top) + 28.8vw); left: 74.7vw; }
+  .flowers-item   { --cw: 24vw; --ar: 1.395; --x0: .03; --x1: .95; --y0: .04; --y1: .99;
+                    top: calc(var(--top) + 72vw); left: 70.5vw; }
+  .switch-item    { --cw: 9vw; --ar: 1.56;
+                    top: calc(var(--top) + 110vw); left: 77.6vw; }
+
+  /* middle row: horizontal Games & VR shelf + the 3D model shelf */
+  .gametable-item { --cw: 51vw; --ar: 0.643; --x0: .007; --x1: .993; --y0: .025; --y1: 1;
+                    top: calc(var(--top) + 124vw); bottom: auto; left: 2.4vw; }
+  .gametable-overlay { display: none; }                         /* the Quest 3 is in the phone drawing */
+  .gametable-img:not(.gametable-overlay) { -webkit-mask: none; mask: none; }
+  .shelf-item     { --cw: 43vw; --ar: 0.491; --x0: .025; --x1: .983; --y0: .058; --y1: .947;
+                    top: calc(var(--top) + 131vw); left: 54.7vw; }
+
+  /* bottom row: the software cart + the easel, both running off the bottom of the page */
+  .software-item  { --cw: 46vw; top: calc(var(--top) + 158vw); bottom: auto; left: 2.4vw; }
+  .art-item       { --cw: 59.5vw; --ar: 0.75; --x0: .188; --x1: .751; --y0: .053;
+                    top: auto; bottom: 0; left: 50.5vw; }           /* the screen edge runs through the chair */
+
+  /* labels */
+  .lighting-item .hover-label { bottom: -2.4vw; }
+  .noteboard-item .hover-label,
+  .flowers-item .hover-label {                                     /* read bottom-to-top, like the draft */
+    writing-mode: vertical-rl;
+    top: 50%; bottom: auto;
+    padding: 10px 3px;
+  }
+  .noteboard-item .hover-label { left: auto; right: -2vw; transform: translateY(-50%) rotate(180deg); }
+  .flowers-item .hover-label   { left: -3vw; right: auto; transform: translateY(-50%) rotate(180deg); }
+  .gametable-item .hover-label { top: 44%; bottom: auto; left: 0; right: 0; }
+  .shelf-item .hover-label     { bottom: -2.4vw; }
+  .software-item .hover-label  { top: 30%; bottom: auto; left: 0; right: 0; }
+  .art-item .hover-label       { top: 46%; bottom: auto; left: 0; right: calc(100% - 43.4vw); }
+
+  /* night: the portrait's spotlight + the four beams, re-aimed */
+  .night-shade {
+    --pool-key: radial-gradient(ellipse calc(50vw * var(--key-size)) calc(56vw * var(--key-size)) at 37.5vw calc(var(--top) + 64vw), var(--pool-stops-key));
+  }
+  .beam-1 { --bx: 17.2vw; --by: calc(var(--top) + 18.8vw); --bl: 30vw; --ba: -6deg; }
+  .beam-2 { --bx: 34.6vw; --by: calc(var(--top) + 17.3vw); --bl: 40vw; --ba:  4deg; }
+  .beam-3 { --bx: 66.4vw; --by: calc(var(--top) + 18.3vw); --bl: 45vw; --ba: 14deg; }
+  .beam-4 { --bx: 84.3vw; --by: calc(var(--top) + 18.1vw); --bl: 30vw; --ba:  2deg; }
+}
