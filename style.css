@@ -3688,3 +3688,10 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
   .software-item .hover-label,
   .art-item .hover-label { top: 50%; bottom: auto; transform: translate(-50%, -50%); }
 }
+
+/* ── PHONE WALL v3.4 — the page ends exactly at the bottom of the cart + easel (213vw), with no
+   minimum height, so there is nothing to scroll to below them ── */
+@media (max-width: 768px) {
+  .wall  { height: calc(var(--top) + 213.1vw); }
+  #stage { min-height: 0; }
+}
