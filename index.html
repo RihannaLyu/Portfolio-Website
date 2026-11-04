@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Rihanna Lyu — Portfolio</title>
   <!-- ?v= : bump the date after each update so phones fetch the new style.css + script.js together -->
-  <link rel="stylesheet" href="style.css?v=2026-11-22" />
+  <link rel="stylesheet" href="style.css?v=2026-11-23" />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet" />
   <!-- handwriting fonts for the Leave a Note page -->
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
@@ -178,28 +178,28 @@
             <span class="city-island-tag">Second Chance</span>
           </span>
         </button>
-        <button class="city-island" id="kungfuIsland" type="button" aria-label="Kung Fu Master" data-video="images/3Dmodels/kungfumaster.mp4" data-poster="images/3Dmodels/kungfumaster.jpg"
+        <button class="city-island" id="kungfuIsland" type="button" aria-label="Kung Fu Master" data-how="desktop" data-video="images/3Dmodels/kungfumaster.mp4" data-poster="images/3Dmodels/kungfumaster.jpg"
                 style="--top:3%; --left:54%; --w:280px">
           <span class="city-island-inner">
             <span class="island-float"><span class="island-shadow" aria-hidden="true"></span><img class="city-island-img" src="images/gamedesign/kungfuisland-painted.png" alt="" /></span>
             <span class="city-island-tag">Kung Fu Master</span>
           </span>
         </button>
-        <button class="city-island" id="dragonIsland" type="button" aria-label="Dragon Door" data-video="images/3Dmodels/dragondoor.mp4" data-poster="images/3Dmodels/thumbnaildragon.jpg" data-vr="1"
+        <button class="city-island" id="dragonIsland" type="button" aria-label="Dragon Door" data-how="vr" data-video="images/3Dmodels/dragondoor.mp4" data-poster="images/3Dmodels/thumbnaildragon.jpg" data-vr="1"
                 style="--top:34%; --left:28%; --w:300px">
           <span class="city-island-inner">
             <span class="island-float"><span class="island-shadow" aria-hidden="true"></span><img class="city-island-img" src="images/gamedesign/dragonisland-painted.png?v=2" alt="" /></span>
             <span class="city-island-tag">Dragon Door</span>
           </span>
         </button>
-        <button class="city-island" id="bedroomIsland" type="button" aria-label="Master Bedroom Design" data-video="images/3Dmodels/masterbedroom.mp4" data-poster="images/3Dmodels/masterbedroom.jpg"
+        <button class="city-island" id="bedroomIsland" type="button" aria-label="Master Bedroom Design" data-how="desktop" data-video="images/3Dmodels/masterbedroom.mp4" data-poster="images/3Dmodels/masterbedroom.jpg"
                 style="--top:65%; --left:2%; --w:280px">
           <span class="city-island-inner">
             <span class="island-float"><span class="island-shadow" aria-hidden="true"></span><img class="city-island-img" src="images/gamedesign/bedroomisland-painted.png?v=2" alt="" /></span>
             <span class="city-island-tag">Master Bedroom Design</span>
           </span>
         </button>
-        <button class="city-island" id="endlessIsland" type="button" aria-label="Endless City" data-video="images/3Dmodels/endlesscity.mp4" data-poster="images/3Dmodels/endlesscity.jpg"
+        <button class="city-island" id="endlessIsland" type="button" aria-label="Endless City" data-how="desktop" data-video="images/3Dmodels/endlesscity.mp4" data-poster="images/3Dmodels/endlesscity.jpg"
                 style="--top:63%; --left:55%; --w:280px">
           <span class="city-island-inner">
             <span class="island-float"><span class="island-shadow" aria-hidden="true"></span><img class="city-island-img" src="images/gamedesign/endlessisland-painted.png?v=3" alt="" /></span>
@@ -208,14 +208,18 @@
         </button>
       </div>
 
-      <!-- demo player for builds that can't run in a browser (Unity / VR) -->
+      <!-- demo player for builds that can't run in a browser (Unity / VR): the demo at full size,
+           and how to get to the real thing -->
       <div class="gv" id="gameVideo" role="dialog" aria-modal="true" aria-labelledby="gvTitle" hidden>
         <div class="gv-top">
           <h2 class="gv-title" id="gvTitle"></h2>
           <button type="button" class="gv-close" id="gvClose" aria-label="Close">✕</button>
         </div>
-        <div class="gv-screen"><video class="gv-video" id="gvVideo" playsinline controls preload="none"></video></div>
-        <p class="gv-note" id="gvNote"></p>
+        <div class="gv-stage"><div class="gv-screen" id="gvScreen"><video class="gv-video" id="gvVideo" playsinline controls preload="auto"></video></div></div>
+        <div class="gv-how">
+          <p class="gv-note" id="gvNote"></p>
+          <a class="gv-ask" id="gvAsk" href="mailto:rihannalyu@gmail.com">Ask to play ✉</a>
+        </div>
       </div>
     </div>
   </div>
@@ -717,7 +721,7 @@
   </div>
 
   </div></div><!-- /#stage /#viewport -->
-  <script src="script.js?v=2026-11-22"></script>
+  <script src="script.js?v=2026-11-23"></script>
   <script src="experience.js?v=2026-11-22"></script>
   <script>
     /* Lock the 1707x1067 room to 16:10 and scale to fit any screen */

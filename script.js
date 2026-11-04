@@ -376,13 +376,24 @@ document.addEventListener('keydown', (e) => {
 // data-vr="1" adds the note that the real thing needs a headset.
 const gameVideo = document.getElementById('gameVideo');
 const gvVideo   = document.getElementById('gvVideo');
+// the player covers the whole Games page (not just the sky under the titles)
+if (gameVideo && gamesPage) gamesPage.appendChild(gameVideo);
+const GV_HOW = {
+  vr:      'VR game · put on a VR headset to play it · this is the demo',
+  desktop: 'Unity desktop game · not playable in a browser yet · this is the demo',
+};
 function openGameVideo(island) {
-  document.getElementById('gvTitle').textContent = island.querySelector('.city-island-tag').textContent;
+  const title = island.querySelector('.city-island-tag').textContent;
+  document.getElementById('gvTitle').textContent = title;
+  const how = island.dataset.how || 'desktop';
   const note = document.getElementById('gvNote');
-  note.textContent = island.dataset.vr ? 'VR build · play it with a headset · this is the demo' : '';
-  note.classList.toggle('is-vr', !!island.dataset.vr);
+  note.textContent = GV_HOW[how];
+  note.dataset.how = how;
+  document.getElementById('gvAsk').href = `mailto:rihannalyu@gmail.com?subject=${encodeURIComponent('Playing ' + title)}`;
   gvVideo.poster = island.dataset.poster || '';
   gvVideo.src = island.dataset.video;
+  // show the demo at its own shape (the VR one is a tall headset recording)
+  gvVideo.onloadedmetadata = () => document.getElementById('gvScreen').style.setProperty('--ar', gvVideo.videoWidth / gvVideo.videoHeight);
   gameVideo.hidden = false;
   requestAnimationFrame(() => gameVideo.classList.add('open'));
   gvVideo.play().catch(() => {});
