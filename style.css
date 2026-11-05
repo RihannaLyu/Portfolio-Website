@@ -4928,3 +4928,87 @@ body.is-deeplink :is(.models-page, .games-page, .flowers-page, .notes-page, .sof
   .gv-screen[style*="0.5"] { width: auto; height: 100%; }
   .gv-note { font-size: 18px !important; text-align: center; }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   3D MODELS — the gallery (models3d.js)
+   Sketchbook cards that each hold a live 3D model (drag to turn, tap to open), and a close-up
+   where the model fills the page beside a vertical screen playing how it was made.
+   ═══════════════════════════════════════════════════════════ */
+.models-page { display: block !important; overflow-y: auto !important; overflow-x: hidden; padding: 34px 48px 60px !important; place-items: initial; container-type: normal !important; }
+.models-page .models-title { text-align: center; margin: 0 0 28px !important; }
+.m3-empty { text-align: center; font: 700 26px/1.2 var(--f-hand); color: var(--sb-ink-soft); margin-top: 18vh; }
+
+.m3-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px 34px; max-width: 1400px; margin: 0 auto; }
+.m3-card {
+  margin: 0; position: relative; cursor: grab;
+  background: var(--sb-card); border: 2px solid var(--sb-ink); border-radius: 14px; box-shadow: var(--sb-pop);
+  padding: 10px 10px 4px;
+  animation: riseIn 0.8s var(--ease) both; animation-delay: calc(var(--i, 0) * 80ms + 200ms);
+}
+.m3-card:nth-child(odd) { rotate: -0.7deg; } .m3-card:nth-child(even) { rotate: 0.8deg; }
+.m3-card:active { cursor: grabbing; }
+.m3-card:focus-visible { outline: 3px solid var(--sb-butter); outline-offset: 4px; }
+.m3-card::before {
+  content: ""; position: absolute; z-index: 2; top: -12px; left: 50%; width: 80px; height: 22px; margin-left: -40px; rotate: -3deg; pointer-events: none;
+  background: rgba(246, 207, 211, 0.92);
+  clip-path: polygon(0 10%, 4% 0, 8% 10%, 12% 0, 88% 0, 92% 10%, 96% 0, 100% 10%, 100% 90%, 96% 100%, 92% 90%, 88% 100%, 12% 100%, 8% 90%, 4% 100%, 0 90%);
+}
+.m3-card:nth-child(3n+1)::before { background: rgba(246, 213, 142, 0.92); rotate: 2deg; }
+.m3-card:nth-child(3n+2)::before { background: rgba(207, 227, 212, 0.95); rotate: -4deg; }
+.m3-canvas {
+  position: relative; aspect-ratio: 1; border-radius: 8px; border: 1.5px solid var(--sb-ink); overflow: hidden;
+  background: radial-gradient(70% 60% at 50% 42%, #FFFDF8, #F2E9F3 70%, #E7DDF0);
+}
+.m3-canvas::after { content: ""; position: absolute; left: 22%; right: 22%; bottom: 12%; height: 8%; border-radius: 50%; background: radial-gradient(closest-side, rgba(74, 60, 100, 0.22), transparent); pointer-events: none; }
+.m3-canvas canvas, .m3-stage canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; display: block; z-index: 1; }
+.m3-card figcaption { font: 700 23px/1.1 var(--f-hand); text-align: center; padding: 9px 4px 7px; color: var(--sb-ink); }
+.m3-spin { position: absolute; left: 50%; top: 50%; width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 50%;
+  border: 3px solid rgba(58, 42, 38, 0.15); border-top-color: var(--sb-berry); animation: m3spin 0.9s linear infinite; }
+.is-loaded > .m3-spin, .is-broken > .m3-spin { display: none; }
+.is-broken::before { content: "couldn't load"; position: absolute; inset: 0; display: grid; place-items: center; font: 700 20px var(--f-hand); color: var(--sb-ink-soft); }
+@keyframes m3spin { to { transform: rotate(360deg); } }
+
+/* the close-up */
+.m3-view[hidden] { display: none !important; }
+.m3-view {
+  position: fixed; inset: 0; z-index: 50; display: grid; grid-template-rows: auto minmax(0, 1fr);
+  padding: 22px 34px 28px; gap: 14px;
+  background-color: var(--sb-paper); background-image: var(--sb-dots); background-size: 24px 24px;
+  opacity: 0; transition: opacity 0.3s ease;
+}
+.m3-view.open { opacity: 1; }
+.models-page.m3-viewing .models-close { opacity: 0; pointer-events: none; }
+.m3-view-top { display: flex; align-items: center; justify-content: center; position: relative; }
+.m3-title { margin: 0; font: italic 500 clamp(1.8rem, 2.8vw, 2.6rem)/1 var(--f-serif) !important; color: var(--sb-ink) !important; }
+.m3-close {
+  position: absolute; right: 0; top: 50%; translate: 0 -50%; width: 46px; height: 46px; border-radius: 50%; cursor: pointer; font-size: 16px;
+  background: var(--sb-card); color: var(--sb-ink); border: 2px solid var(--sb-ink); box-shadow: 3px 3px 0 var(--sb-ink);
+}
+.m3-close:hover { background: var(--sb-butter); }
+.m3-view-body { min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 34px; align-items: center; }
+.m3-view:not(.has-process) .m3-view-body { grid-template-columns: minmax(0, 1fr); }
+.m3-stage {
+  position: relative; height: 100%; min-height: 0; border-radius: 16px; border: 2px solid var(--sb-ink); box-shadow: 6px 6px 0 var(--sb-ink); overflow: hidden;
+  background: radial-gradient(60% 55% at 50% 45%, #FFFDF8, #F2E9F3 70%, #E2D7EE); cursor: grab;
+}
+.m3-stage:active { cursor: grabbing; }
+/* the vertical screen: a little phone with the making-of video */
+.m3-phone {
+  position: relative; height: min(100%, 760px); aspect-ratio: 9 / 19.5;
+  border: 2px solid var(--sb-ink); border-radius: 34px; background: #1B1613; padding: 10px; box-shadow: 6px 6px 0 var(--sb-ink);
+}
+.m3-view:not(.has-process) .m3-phone { display: none; }
+.m3-phone::before { content: ""; position: absolute; top: 16px; left: 50%; width: 64px; height: 7px; margin-left: -32px; border-radius: 6px; background: #3A302B; z-index: 2; }
+.m3-process { width: 100%; height: 100%; object-fit: cover; border-radius: 24px; display: block; background: #000; }
+
+@media (max-width: 768px) {
+  .models-page { padding: calc(64px + env(safe-area-inset-top, 0px)) 16px 40px !important; }
+  .m3-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px 14px; }
+  .m3-card { padding: 6px 6px 2px; }
+  .m3-card figcaption { font-size: 18px; padding: 6px 2px 5px; }
+  .m3-view { padding: calc(14px + env(safe-area-inset-top, 0px)) 12px calc(14px + env(safe-area-inset-bottom, 0px)); overflow-y: auto; display: block; }
+  .m3-view-top { margin-bottom: 12px; }
+  .m3-view-body { display: block; }
+  .m3-stage { height: 62vh; }
+  .m3-phone { height: auto; width: min(64vw, 280px); margin: 26px auto 10px; }
+}

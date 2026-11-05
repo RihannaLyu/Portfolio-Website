@@ -1,0 +1,18 @@
+How to add a 3D model to the 3D Models page
+===========================================
+
+1. On GitHub, open this folder (images/3Dmodels/models) and choose "Add file" -> "Upload files".
+2. Drop in your model as an .fbx file, then press "Commit changes".
+   It appears on the 3D Models page about a minute later.
+
+Optional, in the same folder:
+- A vertical "making of" video named after the model, ending in -process.mp4
+    dragon.fbx  ->  dragon-process.mp4
+  It plays in the tall screen beside the model when someone taps it.
+
+Tips
+- Export the FBX with "Embed Media" turned on, so its textures come along inside the file.
+- GitHub's website accepts files up to 25 MB each; keep models (and videos) under that.
+- The model's name on the page comes from the file name: "kung-fu-master.fbx" -> "Kung Fu Master".
+- To choose the order or the titles yourself, add a models.json here:
+    [ { "file": "dragon.fbx", "title": "Dragon", "process": "dragon-process.mp4" } ]
