@@ -1,0 +1,58 @@
+/* Dragon Door, walkable — sketchbook overlay on a full-screen 3D world */
+:root {
+  --ink: #3A2A26; --paper: #F6F0E6; --card: #FFFBF5; --berry: #C2416B; --butter: #F6D58E; --blush: #F6CFD3; --lilac: #DCCBEB;
+  --hand: 'Caveat', cursive; --serif: 'Cormorant Garamond', serif; --sans: 'DM Sans', system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: #2b1a14; overscroll-behavior: none; }
+#world { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
+#world:active { cursor: grabbing; }
+
+.dd-title { position: fixed; top: calc(14px + env(safe-area-inset-top, 0px)); left: 16px; pointer-events: none; }
+.dd-title h1 {
+  margin: 0; font: italic 500 30px/1 var(--serif); color: var(--ink);
+  background: var(--card); border: 2px solid var(--ink); border-radius: 12px; padding: 8px 16px 9px; box-shadow: 4px 4px 0 var(--ink); rotate: -1.5deg;
+}
+.dd-demo {
+  position: fixed; top: calc(16px + env(safe-area-inset-top, 0px)); right: 74px;
+  font: 600 13px/1 var(--sans); letter-spacing: .05em; color: #fff; background: var(--berry);
+  border: 2px solid var(--ink); border-radius: 999px; padding: 11px 16px; box-shadow: 3px 3px 0 var(--ink); cursor: pointer;
+}
+.dd-demo:hover { translate: -1px -1px; box-shadow: 4px 4px 0 var(--ink); }
+.dd-hint {
+  position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); translate: -50% 0; margin: 0; max-width: calc(100% - 32px);
+  font: 700 21px/1.15 var(--hand); color: var(--ink); text-align: center; white-space: nowrap; pointer-events: none;
+  padding: 6px 18px 7px; background: rgba(246, 213, 142, .93); rotate: -1deg; transition: opacity .8s;
+  clip-path: polygon(0 8%, 3% 0, 6% 9%, 9% 0, 91% 0, 94% 9%, 97% 0, 100% 8%, 100% 92%, 97% 100%, 94% 91%, 91% 100%, 9% 100%, 6% 91%, 3% 100%, 0 92%);
+}
+.dd-hint.gone { opacity: 0; }
+
+/* touch: a joystick to walk */
+.dd-stick { display: none; position: fixed; left: calc(22px + env(safe-area-inset-left, 0px)); bottom: calc(70px + env(safe-area-inset-bottom, 0px));
+  width: 112px; height: 112px; border-radius: 50%; border: 2px solid var(--ink); background: rgba(255, 251, 245, .55); touch-action: none; }
+.dd-stick i { position: absolute; left: 50%; top: 50%; width: 46px; height: 46px; margin: -23px 0 0 -23px; border-radius: 50%;
+  background: var(--card); border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--ink); }
+.touch .dd-stick { display: block; }
+
+/* loading */
+.dd-load { position: fixed; inset: 0; display: grid; place-items: center; background: var(--paper);
+  background-image: radial-gradient(rgba(58, 42, 38, .09) 1px, transparent 1.4px); background-size: 22px 22px; transition: opacity .9s; z-index: 5; }
+.dd-load.done { opacity: 0; pointer-events: none; }
+.dd-load-card { text-align: center; background: var(--card); border: 2px solid var(--ink); border-radius: 16px; box-shadow: 6px 6px 0 var(--ink); padding: 26px 40px 20px; rotate: -1deg; }
+.dd-load-card h1 { margin: 0 0 16px; font: italic 500 40px/1 var(--serif); color: var(--ink); }
+.dd-bar { width: 220px; height: 12px; border: 2px solid var(--ink); border-radius: 99px; overflow: hidden; background: #fff; }
+.dd-bar i { display: block; height: 100%; width: 0; background: var(--blush); transition: width .3s; }
+.dd-load-card p { margin: 10px 0 0; font: 700 21px var(--hand); color: var(--ink); }
+
+/* the VR demo */
+.dd-video { position: fixed; inset: 0; z-index: 6; display: grid; place-items: center; background: rgba(43, 26, 20, .82); padding: 56px 16px 16px; }
+.dd-video[hidden] { display: none; }
+.dd-video video { max-width: 100%; max-height: 100%; border: 2px solid var(--ink); border-radius: 14px; box-shadow: 6px 6px 0 var(--ink); background: #000; }
+.dd-video-close { position: absolute; top: calc(12px + env(safe-area-inset-top, 0px)); right: 16px; width: 44px; height: 44px; border-radius: 50%;
+  border: 2px solid var(--ink); background: var(--card); color: var(--ink); font-size: 16px; box-shadow: 3px 3px 0 var(--ink); cursor: pointer; }
+
+@media (max-width: 600px) {
+  .dd-title h1 { font-size: 23px; padding: 6px 12px 7px; }
+  .dd-demo { right: 66px; padding: 9px 12px; font-size: 12px; }
+  .dd-hint { font-size: 18px; white-space: normal; }
+}

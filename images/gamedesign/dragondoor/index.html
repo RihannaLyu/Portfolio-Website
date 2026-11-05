@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <title>Dragon Door</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Cormorant+Garamond:ital,wght@1,500&family=DM+Sans:wght@500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="world.css?v=1" />
+  <script type="importmap">
+  { "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
+      "three-mesh-bvh": "https://cdn.jsdelivr.net/npm/three-mesh-bvh@0.7.6/build/index.module.js"
+  } }
+  </script>
+</head>
+<body>
+  <canvas id="world" aria-label="Dragon Door, a walkable 3D world"></canvas>
+
+  <!-- loading: a sketchbook card -->
+  <div class="dd-load" id="ddLoad">
+    <div class="dd-load-card">
+      <h1>Dragon Door</h1>
+      <div class="dd-bar"><i id="ddBar"></i></div>
+      <p id="ddLoadText">filling the pond…</p>
+    </div>
+  </div>
+
+  <header class="dd-title"><h1>Dragon Door</h1></header>
+  <button class="dd-demo" id="ddDemo" type="button">VR demo ▶</button>
+  <p class="dd-hint" id="ddHint"></p>
+  <div class="dd-stick" id="ddStick" aria-hidden="true"><i id="ddKnob"></i></div>
+
+  <div class="dd-video" id="ddVideo" hidden>
+    <button class="dd-video-close" id="ddVideoClose" type="button" aria-label="Close">✕</button>
+    <video id="ddVideoEl" playsinline controls preload="none" poster="../../3Dmodels/thumbnaildragon.jpg"></video>
+  </div>
+
+  <script type="module" src="world.js?v=6"></script>
+</body>
+</html>
