@@ -94,11 +94,12 @@ function frame(object, camera, controls, pad = 1.25) {
   const box = new THREE.Box3().setFromObject(object);
   const size = box.getSize(new THREE.Vector3()), center = box.getCenter(new THREE.Vector3());
   object.position.sub(center);                                     // centre it on the origin
-  const r = Math.max(size.x, size.y, size.z) * 0.5 || 1;
+  // fit its height and width as seen from the front (a little extra width for the sway), whichever is tighter
+  const w = Math.max(size.x, Math.hypot(size.x, size.z) * 0.8) || 1, h = size.y || 1;
   const vfov = camera.fov * Math.PI / 180, hfov = 2 * Math.atan(Math.tan(vfov / 2) * (camera.aspect || 1));
-  const dist = (r / Math.sin(Math.min(vfov, hfov) / 2)) * pad;     // fit the narrower side (phones are tall)
+  const dist = Math.max((h / 2) / Math.tan(vfov / 2), (w / 2) / Math.tan(hfov / 2)) * pad + size.z / 2;
   camera.near = dist / 100; camera.far = dist * 100; camera.updateProjectionMatrix();
-  camera.position.set(dist * 0.55, dist * 0.32, dist * 0.78);
+  camera.position.set(0, dist * 0.17, dist * 0.985);               // straight at its face, a little above
   controls.target.set(0, 0, 0); controls.minDistance = dist * 0.25; controls.maxDistance = dist * 3; controls.update();
 }
 function lights(scene) {
@@ -110,12 +111,13 @@ function lights(scene) {
 /* one 3D view inside an element: its own renderer, made while visible and released when not */
 class View {
   constructor(el, model, { zoom = false } = {}) {
-    this.el = el; this.model = model; this.zoom = zoom; this.pad = zoom ? 0.8 : 1.05;
+    this.el = el; this.model = model; this.zoom = zoom; this.pad = zoom ? 1.12 : 1.3;
     this.scene = new THREE.Scene(); lights(this.scene);
     this.camera = new THREE.PerspectiveCamera(35, 1, 0.01, 1000);
     this.clock = new THREE.Clock(); this.ready = false; this.active = false;
     this.loading = loadModel(model.file).then(({ object, clips }) => {
-      this.object = object; this.scene.add(object);
+      // the model sits in a pivot at its own centre, so the idle sway turns it in place
+      this.object = object; this.pivot = new THREE.Group(); this.pivot.add(object); this.scene.add(this.pivot);
       if (clips.length) { this.mixer = new THREE.AnimationMixer(object); this.mixer.clipAction(clips[0]).play(); }
       if (this.controls) frame(object, this.camera, this.controls, this.pad);
       this.ready = true; this.el.classList.add('is-loaded');
@@ -129,9 +131,11 @@ class View {
     this.el.appendChild(this.renderer.domElement);
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     Object.assign(this.controls, { enableDamping: true, dampingFactor: 0.08, enablePan: false, enableZoom: this.zoom,
-                                   autoRotate: !reduced, autoRotateSpeed: this.zoom ? 0.8 : 1.4, rotateSpeed: 0.9 });
+                                   autoRotate: false, rotateSpeed: 0.9 });
     if (!this.zoom) this.renderer.domElement.style.touchAction = 'pan-y';   // phones: sideways turns the model, up/down scrolls the page
-    this.controls.addEventListener('start', () => { this.controls.autoRotate = false; });
+    // idle: a gentle sway that keeps the face toward the screen; the first drag hands it to the visitor
+    this.sway = !reduced; this.t0 = performance.now();
+    this.controls.addEventListener('start', () => { this.sway = false; });
     this.resize();
     if (this.object) frame(this.object, this.camera, this.controls, this.pad);
     this.ro = new ResizeObserver(() => this.resize()); this.ro.observe(this.el);
@@ -151,6 +155,10 @@ class View {
     if (!this.renderer) return;
     const dt = this.clock.getDelta();
     if (this.mixer && !reduced) this.mixer.update(dt);
+    if (this.pivot) {
+      const want = this.sway ? Math.sin((performance.now() - this.t0) / 1000 * (this.zoom ? 0.5 : 0.7)) * 0.32 : this.pivot.rotation.y;
+      this.pivot.rotation.y += (want - this.pivot.rotation.y) * 0.08;
+    }
     this.controls.update(); this.renderer.render(this.scene, this.camera);
   }
 }
