@@ -30,12 +30,13 @@ async function libs() {
 }
 
 /* ── which models are there? ── */
-const pretty = (s) => s.replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim().replace(/\b\w/g, c => c.toUpperCase());
+// "01-holy-crab" → "Holy Crab": a leading number only sets the order
+const pretty = (s) => s.replace(/^\d+[\s._-]*/, '').replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim().replace(/\b\w/g, c => c.toUpperCase());
 const abs = (f) => (/^(https?:)?\//.test(f) ? f : FOLDER + f);
 function fromFiles(files) {
   const lower = files.map(f => f.toLowerCase());
   const pick = (base, sfx) => { for (const s of sfx) { const i = lower.indexOf((base + s).toLowerCase()); if (i >= 0) return files[i]; } return null; };
-  return files.filter(f => /\.fbx$/i.test(f)).sort((a, b) => a.localeCompare(b)).map(f => {
+  return files.filter(f => /\.fbx$/i.test(f)).sort((a, b) => a.localeCompare(b, undefined, { numeric: true })).map(f => {
     const base = f.replace(/\.fbx$/i, '');
     const p = pick(base, ['-process.mp4', '-process.webm', '-process.mov', '_process.mp4', ' process.mp4']);
     return { title: pretty(base), file: abs(f), process: p ? abs(p) : null };
@@ -69,8 +70,24 @@ async function findModels() {
 }
 
 /* ── loading + framing a model ── */
+// Sculpting apps (Nomad etc.) bake colour into textures whose empty space is transparent, and the
+// exported material then says "transparent" — the model turns see-through and pale. Make it solid,
+// and soften the plastic shine so it reads like painted clay.
+function tidy(o) {
+  o.traverse(n => {
+    if (!n.isMesh) return;
+    [].concat(n.material).forEach(m => {
+      if (!m) return;
+      if (m.opacity >= 0.99) { m.transparent = false; m.opacity = 1; m.alphaTest = 0; m.depthWrite = true; }
+      if (m.specular) { m.specular.setScalar(0.12); m.shininess = Math.min(m.shininess || 30, 30); }
+      if (m.emissiveMap && m.emissive && m.emissive.getHex() === 0) m.emissiveMap = null;   // black glow maps do nothing
+      m.needsUpdate = true;
+    });
+  });
+  return o;
+}
 function loadModel(url) {
-  if (!cache.has(url)) cache.set(url, new Promise((res, rej) => new FBXLoader().load(url, (o) => res({ object: o, clips: o.animations || [] }), undefined, rej)));
+  if (!cache.has(url)) cache.set(url, new Promise((res, rej) => new FBXLoader().load(url, (o) => res({ object: tidy(o), clips: o.animations || [] }), undefined, rej)));
   return cache.get(url).then(({ object, clips }) => ({ object: cloneObj(object), clips }));
 }
 function frame(object, camera, controls, pad = 1.25) {
@@ -78,7 +95,8 @@ function frame(object, camera, controls, pad = 1.25) {
   const size = box.getSize(new THREE.Vector3()), center = box.getCenter(new THREE.Vector3());
   object.position.sub(center);                                     // centre it on the origin
   const r = Math.max(size.x, size.y, size.z) * 0.5 || 1;
-  const dist = (r / Math.sin((camera.fov * Math.PI / 180) / 2)) * pad;
+  const vfov = camera.fov * Math.PI / 180, hfov = 2 * Math.atan(Math.tan(vfov / 2) * (camera.aspect || 1));
+  const dist = (r / Math.sin(Math.min(vfov, hfov) / 2)) * pad;     // fit the narrower side (phones are tall)
   camera.near = dist / 100; camera.far = dist * 100; camera.updateProjectionMatrix();
   camera.position.set(dist * 0.55, dist * 0.32, dist * 0.78);
   controls.target.set(0, 0, 0); controls.minDistance = dist * 0.25; controls.maxDistance = dist * 3; controls.update();
@@ -92,14 +110,14 @@ function lights(scene) {
 /* one 3D view inside an element: its own renderer, made while visible and released when not */
 class View {
   constructor(el, model, { zoom = false } = {}) {
-    this.el = el; this.model = model; this.zoom = zoom;
+    this.el = el; this.model = model; this.zoom = zoom; this.pad = zoom ? 0.8 : 1.05;
     this.scene = new THREE.Scene(); lights(this.scene);
     this.camera = new THREE.PerspectiveCamera(35, 1, 0.01, 1000);
     this.clock = new THREE.Clock(); this.ready = false; this.active = false;
     this.loading = loadModel(model.file).then(({ object, clips }) => {
       this.object = object; this.scene.add(object);
       if (clips.length) { this.mixer = new THREE.AnimationMixer(object); this.mixer.clipAction(clips[0]).play(); }
-      if (this.controls) frame(object, this.camera, this.controls);
+      if (this.controls) frame(object, this.camera, this.controls, this.pad);
       this.ready = true; this.el.classList.add('is-loaded');
     }).catch(() => this.el.classList.add('is-broken'));
   }
@@ -114,8 +132,9 @@ class View {
                                    autoRotate: !reduced, autoRotateSpeed: this.zoom ? 0.8 : 1.4, rotateSpeed: 0.9 });
     if (!this.zoom) this.renderer.domElement.style.touchAction = 'pan-y';   // phones: sideways turns the model, up/down scrolls the page
     this.controls.addEventListener('start', () => { this.controls.autoRotate = false; });
-    if (this.object) frame(this.object, this.camera, this.controls);
-    this.resize(); this.ro = new ResizeObserver(() => this.resize()); this.ro.observe(this.el);
+    this.resize();
+    if (this.object) frame(this.object, this.camera, this.controls, this.pad);
+    this.ro = new ResizeObserver(() => this.resize()); this.ro.observe(this.el);
     this.active = true; loop();
   }
   stop() {

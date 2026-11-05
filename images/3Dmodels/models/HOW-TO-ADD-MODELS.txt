@@ -1,4 +1,4 @@
-How to add a 3D model to the 3D Models page
+﻿How to add a 3D model to the 3D Models page
 ===========================================
 
 1. On GitHub, open this folder (images/3Dmodels/models) and choose "Add file" -> "Upload files".
@@ -14,5 +14,10 @@ Tips
 - Export the FBX with "Embed Media" turned on, so its textures come along inside the file.
 - GitHub's website accepts files up to 25 MB each; keep models (and videos) under that.
 - The model's name on the page comes from the file name: "kung-fu-master.fbx" -> "Kung Fu Master".
+- A number at the start sets the order and is left out of the name:
+    01-dragon.fbx, 02-chippy.fbx, 03-holy-crab.fbx  ->  Dragon, Chippy, Holy Crab (in that order)
+  Files without a number come after the numbered ones.
+- Models from Nomad Sculpt are very detailed (big files). Running them through Blender with a
+  Decimate modifier (about 150k triangles) keeps the look and makes them load much faster.
 - To choose the order or the titles yourself, add a models.json here:
     [ { "file": "dragon.fbx", "title": "Dragon", "process": "dragon-process.mp4" } ]
