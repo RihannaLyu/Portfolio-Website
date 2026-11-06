@@ -298,9 +298,9 @@ $("#btnSave").addEventListener("click", async () => {
   const x = c.getContext("2d");
   x.fillStyle = "#FBF3EC"; x.fillRect(0, 0, W, H);
   x.textAlign = "center";
-  x.fillStyle = "#C2416B"; x.font = "72px 'Pinyon Script'"; x.fillText("Rihanna's", W / 2, 120);
-  x.fillStyle = "#3A1F2B"; x.font = "600 34px Fraunces"; x.fillText("Color Studio", W / 2, 170);
-  x.fillStyle = "#C2416B"; x.font = "italic 700 110px Fraunces"; x.fillText(s.name, W / 2, 300);
+  x.fillStyle = "#C2416B"; x.font = "italic 500 72px 'Cormorant Garamond'"; x.fillText("Rihanna's", W / 2, 120);
+  x.fillStyle = "#3A1F2B"; x.font = "600 34px 'Cormorant Garamond'"; x.fillText("Color Studio", W / 2, 170);
+  x.fillStyle = "#C2416B"; x.font = "italic 600 110px 'Cormorant Garamond'"; x.fillText(s.name, W / 2, 300);
   const d = document.createElement("canvas"); d.width = d.height = 440; drawDrape(d, s.colors[0][0]);
   x.save(); x.beginPath(); x.arc(W / 2, 560, 210, 0, Math.PI * 2); x.clip(); x.drawImage(d, W / 2 - 210, 350, 420, 420); x.restore();
   x.strokeStyle = "#3A1F2B"; x.lineWidth = 4; x.beginPath(); x.arc(W / 2, 560, 210, 0, Math.PI * 2); x.stroke();
@@ -311,8 +311,8 @@ $("#btnSave").addEventListener("click", async () => {
     x.fillStyle = hex; x.fillRect(px, py, cw, 120);
     x.strokeStyle = "#3A1F2B"; x.lineWidth = 3; x.strokeRect(px, py, cw, ch);
     x.beginPath(); x.moveTo(px, py + 120); x.lineTo(px + cw, py + 120); x.stroke();
-    x.textAlign = "left"; x.fillStyle = "#3A1F2B"; x.font = "600 18px Figtree"; x.fillText(name, px + 10, py + 148, cw - 16);
-    x.fillStyle = "#7D5E68"; x.font = "15px Figtree"; x.fillText(hex, px + 10, py + 172);
+    x.textAlign = "left"; x.fillStyle = "#3A1F2B"; x.font = "600 18px 'DM Sans'"; x.fillText(name, px + 10, py + 148, cw - 16);
+    x.fillStyle = "#7D5E68"; x.font = "15px 'DM Sans'"; x.fillText(hex, px + 10, py + 172);
     x.textAlign = "center";
   });
   c.toBlob((blob) => {

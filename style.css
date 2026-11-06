@@ -794,7 +794,7 @@ body.lights-off .dark-overlay { opacity: 1; }
   display: inline-block;
   margin: 0 0 26px;
   padding: 0 46px;
-  font-family: 'Caveat', 'Comic Sans MS', cursive;
+  font-family: var(--f-hand);
   font-size: 72px;
   font-weight: 700;
   line-height: 1;
@@ -847,7 +847,7 @@ body.lights-off .dark-overlay { opacity: 1; }
   display: block;
   min-height: 120px;
   resize: vertical;
-  font-family: 'Caveat', 'Comic Sans MS', cursive;
+  font-family: var(--f-hand);
   font-size: 28px;
   line-height: 1.25;
 }
@@ -893,7 +893,7 @@ body.lights-off .dark-overlay { opacity: 1; }
   border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;   /* hand-drawn pill */
   background: #f3a9bd;
   color: var(--ink);
-  font-family: 'Caveat', 'Comic Sans MS', cursive;
+  font-family: var(--f-hand);
   font-size: 26px;
   font-weight: 700;
   line-height: 1;
@@ -907,7 +907,7 @@ body.lights-off .dark-overlay { opacity: 1; }
 .note-status {
   min-height: 1.4em;
   margin: 12px 0 0;
-  font-family: 'Caveat', 'Comic Sans MS', cursive;
+  font-family: var(--f-hand);
   font-size: 24px;
   color: var(--ink);
 }
@@ -918,7 +918,7 @@ body.lights-off .dark-overlay { opacity: 1; }
   display: inline-block;
   margin: 10px 0 18px;
   padding-right: 52px;
-  font-family: 'Caveat', 'Comic Sans MS', cursive;
+  font-family: var(--f-hand);
   font-size: 30px;
   color: var(--ink);
   transform: rotate(-2deg);
@@ -967,7 +967,7 @@ body.lights-off .dark-overlay { opacity: 1; }
 .board-note:nth-child(3n)::before   { --tape: rgba(187, 212, 241, 0.75); --tape-tilt: -2deg; }
 .board-note-text {
   margin: 0;
-  font-family: 'Caveat', 'Comic Sans MS', cursive;
+  font-family: var(--f-hand);
   font-size: 24px;
   line-height: 1.2;
   white-space: pre-wrap;
@@ -988,7 +988,7 @@ body.lights-off .dark-overlay { opacity: 1; }
   grid-column: 1 / -1;
   align-self: center;
   margin: 0;
-  font-family: 'Caveat', 'Comic Sans MS', cursive;
+  font-family: var(--f-hand);
   font-size: 30px;
   color: #4a2a10;
   text-align: center;
@@ -3699,14 +3699,14 @@ body.lights-init *, body.lights-init *::before, body.lights-init *::after { tran
 /* ═══════════════════════════════════════════════════════════
    TYPE + UI SYSTEM — one voice for the whole site, in the manner of a gallery / high-end artist
    portfolio: an elegant serif for titles (Cormorant Garamond), one clean sans for everything you
-   click or read small (DM Sans), and handwriting (Caveat) kept only where it is the charm — the
+   click or read small (DM Sans), and handwriting-style notes (Cormorant Garamond bold) kept only where it is the charm — the
    sticky notes. Spaced capitals for captions, hairline rules, soft pills, quiet motion.
    The hand-painted wall objects are untouched; this only refines the interface around them.
    ═══════════════════════════════════════════════════════════ */
 :root {
   --f-serif: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
   --f-sans:  'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --f-hand:  'Caveat', 'Comic Sans MS', cursive;
+  --f-hand:  'Cormorant Garamond', Georgia, serif;   /* was Caveat: the site keeps to two fonts */
   --track:   0.16em;                       /* caption letter-spacing */
   --ease:    cubic-bezier(.2, .7, .2, 1);
 }
@@ -4257,7 +4257,7 @@ body.page-open .index-btn, body.index-open .index-btn, body.is-arriving .index-b
 .os-led { position: absolute; right: 38px; bottom: 16px; width: 12px; height: 12px; border-radius: 50%;
   background: #7CC08A; border: 2px solid #3A1F2B; box-shadow: 0 0 10px rgba(124, 192, 138, 0.9); }
 .os-sticky-bezel { position: absolute; z-index: 3; top: -18px; right: 60px; rotate: 8deg;
-  font: 700 22px/1 ui-monospace, Menlo, monospace; color: #2E4A3A; background: #A9D3B5;
+  font: 600 20px/1 var(--f-sans); color: #2E4A3A; background: #A9D3B5;
   border: 2px solid #3A1F2B; padding: 14px 14px 18px; box-shadow: 3px 4px 0 rgba(58, 31, 43, 0.35); }
 .os-screen {
   position: relative; height: 100%;
@@ -4629,7 +4629,7 @@ button.dock-app:hover, button.dock-app:focus-visible { transform: translateY(-10
    Every page is a page of the same sketchbook: warm paper with a faint dot grid, one brown-berry
    ink, a cute pastel set (butter, blush, sage, lilac, sky), washi tape, hand-inked borders with a
    little pop shadow, handwriting for captions, and a squiggle under every title.
-     type   Cormorant italic = titles · Caveat = captions, labels, notes · DM Sans = tiny UI text
+     type   Cormorant italic = titles · Cormorant bold = captions, labels, notes · DM Sans = tiny UI text
      parts  .sb tape labels · inked cards (2px ink, 12px radius, 4px pop shadow, a tilt, a tape strip)
             · ink pills · round inked close buttons · paper overlays for every viewer
    The room itself (the painted wall) is untouched.
@@ -5048,3 +5048,22 @@ body.is-deeplink :is(.models-page, .games-page, .flowers-page, .notes-page, .sof
   .m3-split .m3-section:not(.m3-env) .m3-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 14px; }
   .m3-split .m3-env .m3-canvas { aspect-ratio: 16 / 10; }
 }
+
+/* ── 3D MODELS TABS (phones, 768px and narrower): a "3D Models" bar with two tabs, like the Art and
+   Games pages — Environment Builds (left, opens first) and Individual Builds (right). One section
+   shows at a time; the bar sticks to the top while the cards scroll. (models3d.js: TABS) ── */
+.models-tabs { display: none; }
+@media (max-width: 768px) {
+  .models-page { padding-top: 0 !important; }
+  .models-page .models-title { display: none; }
+  .models-tabs {
+    display: block; position: sticky; top: 0; z-index: 6;
+    margin: 0 -16px 30px; padding-top: env(safe-area-inset-top, 0px);
+    background: var(--sb-paper) !important; border-bottom: 2px dashed rgba(58, 42, 38, 0.35) !important;
+  }
+  .models-page[data-tab="environment"] #m3Individual,
+  .models-page[data-tab="individual"] #m3Environment { display: none; }
+  .models-page .m3-section { animation: m3tab 0.25s ease both; }
+  .models-page .m3-h { display: none; }          /* the tab names the section */
+}
+@keyframes m3tab { from { opacity: 0; transform: translateY(8px); } }

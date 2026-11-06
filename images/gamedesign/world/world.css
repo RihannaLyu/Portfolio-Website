@@ -1,7 +1,7 @@
 /* Dragon Door, walkable — sketchbook overlay on a full-screen 3D world */
 :root {
   --ink: #3A2A26; --paper: #F6F0E6; --card: #FFFBF5; --berry: #C2416B; --butter: #F6D58E; --blush: #F6CFD3; --lilac: #DCCBEB;
-  --hand: 'Caveat', cursive; --serif: 'Cormorant Garamond', serif; --sans: 'DM Sans', system-ui, sans-serif;
+  --hand: 'Cormorant Garamond', serif; --serif: 'Cormorant Garamond', serif; --sans: 'DM Sans', system-ui, sans-serif;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; overflow: hidden; background: #2b1a14; overscroll-behavior: none; }

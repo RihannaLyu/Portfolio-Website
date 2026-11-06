@@ -1,6 +1,5 @@
 /* Rihanna's OOTD Studio: the same studio system as Rihanna's Color Studio (paper, berry + butter,
-   Fraunces / Pinyon Script / Figtree, inked borders and pop shadows), plus Caveat for the
-   handwritten notes on the flat-lays. */
+   the site's two fonts, Cormorant Garamond + DM Sans, inked borders and pop shadows). */
 :root {
   --paper: #FBF3EC;
   --paper-2: #F4E6DC;
@@ -14,10 +13,10 @@
   --line: #3A1F2B;
   --hair: rgba(58, 31, 43, 0.14);
   --pop: 4px 4px 0 var(--ink);
-  --display: "Fraunces", Georgia, serif;
-  --script: "Pinyon Script", cursive;
-  --sans: "Figtree", system-ui, sans-serif;
-  --hand: "Caveat", "Comic Sans MS", cursive;
+  --display: "Cormorant Garamond", Georgia, serif;
+  --script: "Cormorant Garamond", Georgia, serif;
+  --sans: "DM Sans", system-ui, sans-serif;
+  --hand: "Cormorant Garamond", Georgia, serif;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
@@ -51,7 +50,7 @@ h4 { font-family: var(--sans); font-size: .95rem; font-weight: 600; margin: 0 0 
 em { font-style: italic; color: var(--berry); }
 p { margin: 0 0 1em; }
 a { color: inherit; }
-.script { font-family: var(--script); font-weight: 400; color: var(--berry); letter-spacing: 0; }
+.script { font-family: var(--script); font-style: italic; font-weight: 500; color: var(--berry); letter-spacing: 0; }
 [hidden] { display: none !important; }
 
 #silk { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -2; display: block; }
@@ -128,7 +127,7 @@ main > section { padding: clamp(28px, 5vw, 64px) clamp(16px, 5vw, 64px); max-wid
   background: var(--card); padding: 3px 14px 3px 6px; }
 .wx svg { width: 30px; height: 30px; color: var(--ink); }
 .wx small { color: var(--ink-soft); font-weight: 500; }
-.ootd-label { font-family: var(--script); font-size: 2.3rem; line-height: 1; margin: 6px 0 0; color: var(--ink-soft); }
+.ootd-label { font-family: var(--script); font-style: italic; font-size: 2.3rem; line-height: 1; margin: 6px 0 0; color: var(--ink-soft); }
 .look-title { font-size: clamp(3rem, 6.4vw, 4.8rem); font-weight: 700; font-style: italic; color: var(--berry); margin: 0 0 .1em; }
 .look-cap { font-size: 1.15rem; color: var(--ink-soft); }
 .tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 20px; }

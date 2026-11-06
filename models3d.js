@@ -8,7 +8,9 @@
    Optional models.json in a folder sets order + titles:
      [{ "file": "dragon.fbx", "title": "Dragon", "process": "dragon-process.mp4" }, …]
    Each card: drag to turn the model. Tap: the model fills the page, beside its process video.
-   three.js loads only when the page first opens.
+   Loading stays light: three.js + the folder lists start when the visitor reaches for the shelf,
+   and each model downloads only when its card scrolls near the screen (on phones, only in the
+   open tab).
    ═══════════════════════════════════════════════════════════ */
 const ROOT = 'images/3Dmodels/models/';
 const SECTIONS = [
@@ -23,18 +25,30 @@ const phone  = document.getElementById('m3Phone');
 const proc   = document.getElementById('m3Process');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-let THREE, FBXLoader, GLTFLoader, DRACOLoader, OrbitControls, cloneObj, started = false;
+let THREE, FBXLoader, GLTFLoader, DRACOLoader, OrbitControls, cloneObj, draco, started = false;
 const cache = new Map();                 // url -> Promise<{ object, clips }>
 
-async function libs() {
-  if (THREE) return;
-  THREE = await import('three');
-  ({ FBXLoader } = await import('three/addons/loaders/FBXLoader.js'));
-  ({ GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js'));
-  ({ DRACOLoader } = await import('three/addons/loaders/DRACOLoader.js'));
-  ({ OrbitControls } = await import('three/addons/controls/OrbitControls.js'));
-  ({ clone: cloneObj } = await import('three/addons/utils/SkeletonUtils.js'));
+// all the three.js pieces download side by side, once
+let libsP = null;
+function libs() {
+  return libsP || (libsP = Promise.all([
+    import('three'),
+    import('three/addons/loaders/FBXLoader.js'),
+    import('three/addons/loaders/GLTFLoader.js'),
+    import('three/addons/loaders/DRACOLoader.js'),
+    import('three/addons/controls/OrbitControls.js'),
+    import('three/addons/utils/SkeletonUtils.js'),
+  ]).then(([t, f, g, d, o, u]) => {
+    THREE = t; FBXLoader = f.FBXLoader; GLTFLoader = g.GLTFLoader; DRACOLoader = d.DRACOLoader;
+    OrbitControls = o.OrbitControls; cloneObj = u.clone;
+  }).catch(err => { libsP = null; throw err; }));
 }
+let listsP = null;
+const lists = () => listsP || (listsP = Promise.all(SECTIONS.map(s => findModels(s.folder))));
+// warm up as soon as the visitor reaches for the 3D shelf (hover, touch, focus), before the click
+const warm = () => { lists(); libs().catch(() => {}); };
+document.querySelectorAll('#shelfItem, [data-target="shelfItem"]').forEach(el =>
+  ['pointerenter', 'touchstart', 'focus'].forEach(t => el.addEventListener(t, warm, { once: true, passive: true })));
 
 /* ── which models are there? ── */
 // "01-holy-crab" → "Holy Crab": a leading number only sets the order
@@ -98,7 +112,7 @@ function tidy(o) {
 function loadModel(url) {
   if (!cache.has(url)) cache.set(url, new Promise((res, rej) => {
     if (/\.glb(\?|$)/i.test(url)) {                                       // .glb (Draco-compressed scenes, e.g. whole rooms)
-      const draco = new DRACOLoader().setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');
+      draco ||= new DRACOLoader().setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');   // one decoder for every scene
       new GLTFLoader().setDRACOLoader(draco).load(url, (g) => res({ object: g.scene, clips: g.animations || [] }), undefined, rej);
     } else new FBXLoader().load(url, (o) => res({ object: tidy(o), clips: o.animations || [] }), undefined, rej);
   }));
@@ -154,8 +168,11 @@ class View {
     this.swayAmp = model.env ? 0.1 : 0.32;                    // scenes sway less, so they can fill their wide cards
     this.scene = new THREE.Scene(); lights(this.scene);
     this.camera = new THREE.PerspectiveCamera(35, 1, 0.01, 1000);
-    this.clock = new THREE.Clock(); this.ready = false; this.active = false;
-    this.loading = loadModel(model.file).then(({ object, clips }) => {
+    this.clock = new THREE.Clock(); this.ready = false; this.active = false; this.loading = null;
+  }
+  // the model's file is fetched the first time its card comes near the screen, not before
+  load() {
+    this.loading ||= loadModel(this.model.file).then(({ object, clips }) => {
       // the model sits in a pivot at its own centre, so the idle sway turns it in place
       this.object = object; this.pivot = new THREE.Group(); this.pivot.add(object); this.scene.add(this.pivot);
       if (clips.length) { this.mixer = new THREE.AnimationMixer(object); this.mixer.clipAction(clips[0]).play(); }
@@ -165,6 +182,7 @@ class View {
   }
   start() {
     if (this.renderer) return;
+    this.load();
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     this.renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -209,15 +227,14 @@ function loop() { if (raf) return; const go = () => { let any = false; views.for
 /* ── the gallery ── */
 let cards = [];
 async function build() {
-  const lists = await Promise.all(SECTIONS.map(s => findModels(s.folder)));
-  const total = lists.reduce((n, l) => n + l.length, 0);
+  const [found] = await Promise.all([lists(), libs()]);   // the folder lists and three.js, side by side
+  const total = found.reduce((n, l) => n + l.length, 0);
   empty.hidden = total > 0;
   if (!total) return;
-  await libs();
   const io = new IntersectionObserver(es => es.forEach(e => { const v = e.target._view; if (!v) return; if (e.isIntersecting) v.start(); else v.stop(); }), { root: page, rootMargin: '200px' });
-  SECTIONS.forEach((s, k) => { if (s.el) { s.el.hidden = !lists[k].length; s.el.querySelector('.m3-grid').innerHTML = ''; } });
+  SECTIONS.forEach((s, k) => { if (s.el) { s.el.hidden = !found[k].length; s.el.querySelector('.m3-grid').innerHTML = ''; } });
   let i = 0;
-  SECTIONS.forEach((s, k) => { if (s.el) lists[k].forEach(m => { m.env = /environment/.test(s.folder); addCard(m, i++, s.el.querySelector('.m3-grid'), io); }); });
+  SECTIONS.forEach((s, k) => { if (s.el) found[k].forEach(m => { m.env = /environment/.test(s.folder); addCard(m, i++, s.el.querySelector('.m3-grid'), io); }); });
 }
 function addCard(m, i, grid, io) {
   {
@@ -260,8 +277,43 @@ document.getElementById('m3Close').addEventListener('click', close);
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !view.hidden) { e.stopImmediatePropagation(); close(); } }, true);
 document.getElementById('modelsClose').addEventListener('click', close);
 
-// start the first time the page opens
+/* ── TABS (phones, 768px and narrower): Environment Builds | Individual Builds ── */
+const tabBtns = [...document.querySelectorAll('.models-tab')];
+const TAB_ORDER = ['environment', 'individual'];
+function showTab(name) {
+  page.dataset.tab = name;
+  tabBtns.forEach(btn => {
+    const on = btn.dataset.tab === name;
+    btn.classList.toggle('active', on); btn.setAttribute('aria-selected', on); btn.tabIndex = on ? 0 : -1;
+  });
+  page.scrollTop = 0;
+}
+tabBtns.forEach(btn => btn.addEventListener('click', () => showTab(btn.dataset.tab)));
+document.getElementById('modelsTabs').addEventListener('keydown', e => {
+  if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+  const next = e.key === 'ArrowRight' ? 'individual' : 'environment';
+  showTab(next); tabBtns.find(b => b.dataset.tab === next).focus();
+});
+// swipe left → Individual Builds, swipe right → Environment Builds (not on a card: that turns the model)
+let swX = null, swY = 0;
+page.addEventListener('touchstart', e => {
+  swX = (e.touches.length === 1 && view.hidden && !e.target.closest('.m3-canvas')) ? e.touches[0].clientX : null;
+  if (swX !== null) swY = e.touches[0].clientY;
+}, { passive: true });
+page.addEventListener('touchend', e => {
+  if (swX === null) return;
+  const t = e.changedTouches[0], dx = t.clientX - swX, dy = t.clientY - swY; swX = null;
+  if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+  const i = TAB_ORDER.indexOf(page.dataset.tab) + (dx < 0 ? 1 : -1);
+  if (i >= 0 && i < TAB_ORDER.length) showTab(TAB_ORDER[i]);
+});
+
+// start the first time the page opens; every visit opens on Environment Builds
+let wasOpen = false;
 new MutationObserver(() => {
+  const isOpen = page.classList.contains('open');
+  if (isOpen && !wasOpen) showTab('environment');
+  wasOpen = isOpen;
   if (page.classList.contains('open') && !started) { started = true; build().catch(err => { console.error(err); empty.hidden = false; }); }
   if (!page.classList.contains('open')) close();
 }).observe(page, { attributes: true, attributeFilter: ['class'] });
