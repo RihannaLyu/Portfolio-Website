@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Cormorant+Garamond:ital,wght@1,500&family=DM+Sans:wght@500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="world.css?v=1" />
+  <link rel="stylesheet" href="../world/world.css?v=2" />
   <script type="importmap">
   { "imports": {
       "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
@@ -16,7 +16,7 @@
   } }
   </script>
 </head>
-<body>
+<body data-demo="../../3Dmodels/dragondoor.mp4" data-island="dragonIsland" data-v="5">
   <canvas id="world" aria-label="Dragon Door, a walkable 3D world"></canvas>
 
   <!-- loading: a sketchbook card -->
@@ -38,6 +38,6 @@
     <video id="ddVideoEl" playsinline controls preload="none" poster="../../3Dmodels/thumbnaildragon.jpg"></video>
   </div>
 
-  <script type="module" src="world.js?v=6"></script>
+  <script type="module" src="../world/world.js?v=16"></script>
 </body>
 </html>

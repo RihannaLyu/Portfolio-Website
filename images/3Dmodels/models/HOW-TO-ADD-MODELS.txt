@@ -1,23 +1,27 @@
 ﻿How to add a 3D model to the 3D Models page
 ===========================================
 
-1. On GitHub, open this folder (images/3Dmodels/models) and choose "Add file" -> "Upload files".
+The page has two sections, one folder each:
+  individual/    Individual Builds  - single pieces: characters, props, sculpts
+  environment/   Environment Builds - whole scenes: rooms, islands (shown on bigger, wider cards)
+
+1. On GitHub, open the folder you want (images/3Dmodels/models/individual or /environment)
+   and choose "Add file" -> "Upload files".
 2. Drop in your model as an .fbx file, then press "Commit changes".
    It appears on the 3D Models page about a minute later.
 
 Optional, in the same folder:
 - A vertical "making of" video named after the model, ending in -process.mp4
-    dragon.fbx  ->  dragon-process.mp4
+    05-medusa.fbx  ->  05-medusa-process.mp4
   It plays in the tall screen beside the model when someone taps it.
 
 Tips
 - Export the FBX with "Embed Media" turned on, so its textures come along inside the file.
 - GitHub's website accepts files up to 25 MB each; keep models (and videos) under that.
-- The model's name on the page comes from the file name: "kung-fu-master.fbx" -> "Kung Fu Master".
-- A number at the start sets the order and is left out of the name:
-    01-dragon.fbx, 02-chippy.fbx, 03-holy-crab.fbx  ->  Dragon, Chippy, Holy Crab (in that order)
+- The name on the page comes from the file name, and a number at the start sets the order:
+    01-dragon.fbx, 02-chippy.fbx  ->  Dragon, Chippy (in that order)
   Files without a number come after the numbered ones.
 - Models from Nomad Sculpt are very detailed (big files). Running them through Blender with a
   Decimate modifier (about 150k triangles) keeps the look and makes them load much faster.
-- To choose the order or the titles yourself, add a models.json here:
+- To choose the order or the titles yourself, add a models.json in that folder:
     [ { "file": "dragon.fbx", "title": "Dragon", "process": "dragon-process.mp4" } ]

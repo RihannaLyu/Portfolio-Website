@@ -1,15 +1,20 @@
 /* ═══════════════════════════════════════════════════════════
-   DRAGON DOOR — the VR world, walkable in a browser.
-   world.glb  : every model in the Unity scene (02_Pond), placed exactly as in Unity (exported by SceneDump.cs)
-   world.json : materials, sun, sky, fog, the VR start spot, lantern spots
+   WALKABLE WORLDS — Rihanna's Unity scenes, walkable in a browser (shared by every world).
+   Each world folder (dragondoor/, masterbedroom/) has an index.html that loads this, plus:
+     world.glb  : every model in the Unity scene, placed exactly as in Unity (exported by SceneDump.cs)
+     world.json : materials, sun, sky, the start spot, and how to walk there:
+                  kind "outdoor" | "indoor", eye (eye height), step (how high a step you climb, × eye),
+                  speed, exposure
    Drag to look · WASD / arrows (Shift runs) or the joystick to walk · tap a spot to glide there.
-   The pond: Rihanna's "Dawn Water" shader, re-written for the web (ripples, sky reflection, sun glint).
-   Ambient life from the game's scripts: koi drift, lilies bob, lanterns flicker, the dragon hovers.
+   Walls and tall furniture stop you; low steps you climb.
+   Dragon Door extras (only when the scene has them): the "Dawn Water" pond, flickering lanterns,
+   drifting koi, bobbing lilies, the hovering dragon.
    ═══════════════════════════════════════════════════════════ */
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { Sky } from 'three/addons/objects/Sky.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { computeBoundsTree, acceleratedRaycast } from 'three-mesh-bvh';
 
 THREE.BufferGeometry.prototype.computeBoundsTree = computeBoundsTree;
@@ -37,7 +42,9 @@ const lin = (c) => new THREE.Color().setRGB(c[0], c[1], c[2], THREE.SRGBColorSpa
 
 /* ── load ── */
 const bar = $('ddBar'), loadText = $('ddLoadText');
-const world = await (await fetch('world.json')).json();
+const world = await (await fetch('world.json?v=' + (document.body.dataset.v || '1'))).json();
+const INDOOR = world.kind === 'indoor';
+if (world.exposure) renderer.toneMappingExposure = world.exposure;
 
 const texLoader = new THREE.TextureLoader();
 const texCache = new Map();
@@ -55,31 +62,50 @@ function tex(path, srgb, tiling) {
 }
 
 const draco = new DRACOLoader().setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');
-const gltf = await new GLTFLoader().setDRACOLoader(draco).loadAsync('world.glb?v=2', (e) => {
-  if (e.total) { const p = Math.round((e.loaded / e.total) * 100); bar.style.width = p + '%'; }
+const gltf = await new GLTFLoader().setDRACOLoader(draco).loadAsync('world.glb?v=' + (document.body.dataset.v || '1'), (e) => {
+  const total = e.total || world.bytes;
+  if (total) { const p = Math.min(100, Math.round((e.loaded / total) * 100)); bar.style.width = p + '%'; }
 });
-loadText.textContent = 'lighting the lanterns…';
+loadText.textContent = world.lightingText || 'lighting the lanterns…';
 const root = gltf.scene;
 scene.add(root);
 
 /* ── sky, sun, fog: a dawn/dusk like the Unity scene ── */
 const sunDir = new THREE.Vector3(...world.sun.toward).normalize();
 sunDir.y = Math.max(sunDir.y, 0.05); sunDir.normalize();                 // keep the sun just above the horizon
-const sky = new Sky(); sky.scale.setScalar(5000); scene.add(sky);
+const sky = new Sky(); sky.scale.setScalar(5000);
+if (INDOOR) {                                                              // indoors: a soft daylight gradient behind the windows
+  const c = document.createElement('canvas'); c.width = 4; c.height = 256;
+  const g = c.getContext('2d'), gr = g.createLinearGradient(0, 0, 0, 256);
+  gr.addColorStop(0, '#9fbbd8'); gr.addColorStop(0.55, '#e9eef2'); gr.addColorStop(1, '#f3e7da');
+  g.fillStyle = gr; g.fillRect(0, 0, 4, 256);
+  const bg = new THREE.CanvasTexture(c); bg.colorSpace = THREE.SRGBColorSpace; bg.mapping = THREE.EquirectangularReflectionMapping;
+  scene.background = bg;
+} else scene.add(sky);
 Object.assign(sky.material.uniforms.turbidity, { value: 6 });
 sky.material.uniforms.rayleigh.value = 2.2;
 sky.material.uniforms.mieCoefficient.value = 0.006;
 sky.material.uniforms.mieDirectionalG.value = 0.86;
 sky.material.uniforms.sunPosition.value.copy(sunDir);
-const fogColor = new THREE.Color(0xd98a5c);
-scene.fog = new THREE.Fog(fogColor, 90, 620);
+if (!INDOOR) scene.fog = new THREE.Fog(new THREE.Color(0xd98a5c), 90, 620);
 
 const sunColor = lin(world.sun.color).lerp(new THREE.Color(1, 0.86, 0.66), 0.35);
-const sun = new THREE.DirectionalLight(sunColor, 2.6);
+const sun = new THREE.DirectionalLight(sunColor, INDOOR ? 1.4 : 2.6);
 sun.position.copy(sunDir).multiplyScalar(300);
 scene.add(sun, sun.target);
-const hemi = new THREE.HemisphereLight(lin(world.ambient.sky).lerp(new THREE.Color(1, 0.9, 0.8), 0.45), lin(world.ambient.ground), 1.45);
+const hemi = INDOOR
+  ? new THREE.HemisphereLight(0xfff3e6, 0x6b5a50, 0.9)
+  : new THREE.HemisphereLight(lin(world.ambient.sky).lerp(new THREE.Color(1, 0.9, 0.8), 0.45), lin(world.ambient.ground), 1.45);
 scene.add(hemi);
+if (INDOOR) {
+  // a soft studio room for reflections and fill (Unity had baked lighting + reflection probes here)
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(new RoomEnvironment(renderer), 0.04).texture;
+  (world.lights || []).forEach((l) => {                                  // the room's lamps
+    const p = new THREE.PointLight(lin(l.color), l.intensity ?? 1.2, l.distance ?? 0, 1.2);
+    p.position.set(...l.position); scene.add(p);
+  });
+}
 
 /* ── materials from world.json ── */
 let waterY = null;
@@ -95,6 +121,7 @@ root.traverse((o) => {
       roughness: Math.max(0.35, cfg.roughness), emissive: lin(cfg.emissive), emissiveMap: tex(cfg.emissiveMap, true),
       transparent: cfg.transparent && cfg.opacity < 0.99, opacity: cfg.opacity, alphaTest: cfg.cutout ? 0.5 : 0,
       side: cfg.transparent || cfg.cutout ? THREE.DoubleSide : THREE.FrontSide,
+      envMapIntensity: world.envIntensity ?? 0.8,
     });
     mat.name = m.name;
     return mat;
@@ -104,14 +131,15 @@ root.traverse((o) => {
   if (isWater) { o.updateWorldMatrix(true, false); waterY = new THREE.Box3().setFromObject(o).max.y; o.visible = false; return; }
   const n = o.name || '';
   if (/^node_id39|goldfish/i.test(n)) koi.push(o);
-  else if (/waterlily|^leaf/i.test(n)) { lilies.push(o); walk.push(o); }
+  else if (/waterlily|^leaf/i.test(n)) { lilies.push(o); if (/^leaf/i.test(n)) walk.push(o); }   // only the stepping-stone leaves are floors; pads would bob you up and down
   else if (/^(head|body|eyes|whisker)(pm)?$/i.test(n.replace(/[._ ]/g, '')) || /^Leg_?(BL|BR|FL|FR)/i.test(n)) dragonParts.push(o);
-  else walk.push(o);
+  else if (!/tree|lantern|bamboo/i.test(n)) walk.push(o);                 // trees and lanterns: not floors
 });
 walk.forEach((o) => o.geometry.computeBoundsTree());
 
-/* ── the pond: Dawn Water, for the web ── */
-if (waterY === null) waterY = 122;
+/* ── the pond: Dawn Water, for the web (only in a scene that has water) ── */
+const HAS_WATER = waterY !== null;
+if (!HAS_WATER) waterY = -Infinity;
 const waterMat = new THREE.ShaderMaterial({
   transparent: true, depthWrite: false, fog: true,
   uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, {
@@ -156,9 +184,9 @@ const waterMat = new THREE.ShaderMaterial({
     }`,
 });
 const water = new THREE.Mesh(new THREE.PlaneGeometry(2400, 2400, 1, 1).rotateX(-Math.PI / 2), waterMat);
-water.position.y = waterY;
+water.position.y = HAS_WATER ? waterY : 0;
 water.renderOrder = 2;
-scene.add(water);
+if (HAS_WATER) scene.add(water);
 
 /* ── lanterns: soft flame + halo sprites that flicker (the game's LanternPath look) ── */
 function glowTex(inner, outer) {
@@ -200,15 +228,61 @@ const bases = new Map();
 /* ── walking ── */
 const down = new THREE.Raycaster(); down.firstHitOnly = true;
 const ray = new THREE.Raycaster(); ray.firstHitOnly = true;
-function groundAt(x, z, fromY) {
-  down.set(new THREE.Vector3(x, fromY, z), new THREE.Vector3(0, -1, 0)); down.far = 400;
+// The floor under your feet. The ray starts at knee height (not above your head), so roofs, branches,
+// hanging roots and lantern tops never count as "ground" — that is what made the camera jump.
+// A steep hit (a wall, a trunk) is ignored and the last floor is kept.
+const DOWN = new THREE.Vector3(0, -1, 0), from = new THREE.Vector3(), nrm = new THREE.Vector3();
+function groundAt(x, z, fromY, loose = false) {
+  down.set(from.set(x, fromY, z), DOWN); down.far = 400;
   const hit = down.intersectObjects(walk, false)[0];
+  if (!loose && hit && hit.face && Math.abs(nrm.copy(hit.face.normal).transformDirection(hit.object.matrixWorld).y) < 0.55) return null;
   return Math.max(hit ? hit.point.y : -Infinity, waterY);
 }
 const sp = world.spawn;
 const pos = new THREE.Vector3(...sp.position);
-let ground = groundAt(pos.x, pos.z, pos.y + 2);
-const EYE = THREE.MathUtils.clamp(pos.y - ground, 1.6, 8);            // the VR player is scaled up to suit the giant world
+// the start spot's floor: searched from a little above it (Dragon Door's VR rig sits just under the pavilion deck)
+scene.updateMatrixWorld(true);                                             // objects must be in place before the first floor check
+let ground = groundAt(pos.x, pos.z, pos.y + (world.spawnSearch ?? 2), true) ?? waterY;
+if (!isFinite(ground)) ground = pos.y - (world.eye || 1.7);
+const EYE = world.eye || THREE.MathUtils.clamp(pos.y - ground, 1.6, 8);  // Dragon Door: the VR player is scaled up for the giant world
+const STEP = world.step ?? 0.45;                                           // how high a step you climb, as a share of eye height
+const SPEED = world.speed ?? 9;
+const RADIUS = EYE * 0.14;                                                 // how close you get to a wall
+
+// The floor under you, checked at your feet and four points around them; the highest wins, so the gaps
+// between deck planks (or between rugs and tiles) don't drop you for a frame — that was the shake.
+const FOOT = [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1]];
+function floorUnder() {
+  let best = -Infinity;
+  const fy = eyeY - EYE * (1 - STEP), r = EYE * 0.12;
+  for (const [a, b] of FOOT) { const g = groundAt(pos.x + a * r, pos.z + b * r, fy); if (g !== null && isFinite(g)) best = Math.max(best, g); }
+  return isFinite(best) ? best : null;
+}
+
+// Walls and tall furniture stop you; you slide along them instead of passing through.
+const side = new THREE.Raycaster(); side.firstHitOnly = true;
+const stepV = new THREE.Vector3(), dirV = new THREE.Vector3(), wallN = new THREE.Vector3();
+function wallAhead(dir, L) {
+  for (const h of [0.5, 0.85]) {                                           // waist and chest height
+    side.set(from.set(pos.x, eyeY - EYE * (1 - h), pos.z), dir); side.far = L + RADIUS;
+    const hit = side.intersectObjects(walk, false)[0];
+    if (hit && hit.face) {
+      wallN.copy(hit.face.normal).transformDirection(hit.object.matrixWorld); wallN.y = 0;
+      if (wallN.lengthSq() > 0.01) return wallN.normalize();
+    }
+  }
+  return null;
+}
+function tryMove(dx, dz) {
+  stepV.set(dx, 0, dz);
+  for (let k = 0; k < 3; k++) {
+    const L = stepV.length(); if (L < 1e-5) return;
+    const n = wallAhead(dirV.copy(stepV).divideScalar(L), L);
+    if (!n) { pos.x += stepV.x; pos.z += stepV.z; return; }
+    if (n.dot(stepV) > 0) n.negate();
+    stepV.addScaledVector(n, -stepV.dot(n));                               // keep only the part along the wall
+  }
+}
 let yaw = Math.atan2(-sp.forward[0], -sp.forward[2]), pitch = -0.04;
 let eyeY = ground + EYE;
 const glide = { on: false, to: new THREE.Vector3() };
@@ -235,7 +309,7 @@ canvas.addEventListener('pointerup', (e) => {
   if (!tap) { hideHint(); return; }
   const ndc = new THREE.Vector2((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
   ray.setFromCamera(ndc, camera); ray.far = 500;
-  const hits = ray.intersectObjects([...walk, water], false);
+  const hits = ray.intersectObjects(HAS_WATER ? [...walk, water] : walk, false);
   const h = hits[0];
   if (h) { glide.to.set(h.point.x, 0, h.point.z); glide.on = true; hideHint(); }
 });
@@ -261,7 +335,15 @@ hint.textContent = touch ? 'drag to look · joystick to walk · tap a spot to go
 let hintTimer = setTimeout(hideHint, 9000);
 function hideHint() { clearTimeout(hintTimer); hint.classList.add('gone'); }
 const vid = $('ddVideo'), vidEl = $('ddVideoEl');
-$('ddDemo').addEventListener('click', () => { vidEl.src = '../../3Dmodels/dragondoor.mp4'; vid.hidden = false; vidEl.play().catch(() => {}); });
+// Inside the site, the site's own demo player plays it (phones can't play video inside the turned game window);
+// opened on its own, it plays here.
+const DEMO = document.body.dataset.demo, ISLAND = document.body.dataset.island;
+const embedded = window.parent !== window;
+$('ddDemo').hidden = !DEMO;
+$('ddDemo').addEventListener('click', () => {
+  if (embedded) { window.parent.postMessage({ type: 'play-demo', island: ISLAND }, location.origin); return; }
+  vidEl.src = DEMO; vid.hidden = false; vidEl.play().catch(() => {});
+});
 function closeVid() { vidEl.pause(); vid.hidden = true; vidEl.removeAttribute('src'); vidEl.load(); }
 $('ddVideoClose').addEventListener('click', closeVid);
 vid.addEventListener('click', (e) => { if (e.target === vid) closeVid(); });
@@ -281,17 +363,20 @@ function frame() {
   if (keys.has('d') || keys.has('arrowright')) move.add(right);
   if (keys.has('a') || keys.has('arrowleft')) move.sub(right);
   if (stick.id !== null) move.addScaledVector(fwd, -stick.y).addScaledVector(right, stick.x);
-  const speed = keys.has('shift') ? 22 : 9;
+  const speed = keys.has('shift') ? SPEED * 2.4 : SPEED;
   if (move.lengthSq() > 0.0001) {
     glide.on = false;
     if (move.length() > 1) move.normalize();
-    pos.addScaledVector(move, speed * dt);
+    tryMove(move.x * speed * dt, move.z * speed * dt);
   } else if (glide.on) {
     const d = new THREE.Vector3(glide.to.x - pos.x, 0, glide.to.z - pos.z); const L = d.length();
-    if (L < 0.3) glide.on = false; else pos.addScaledVector(d.normalize(), Math.min(L, Math.max(4, L * 2.2) * dt));
+    if (L < RADIUS * 1.5) glide.on = false;
+    else { const px = pos.x, pz = pos.z; d.normalize().multiplyScalar(Math.min(L, Math.max(SPEED * 0.45, L * 2.2) * dt));
+      tryMove(d.x, d.z); if (Math.hypot(pos.x - px, pos.z - pz) < 1e-4) glide.on = false; }   // stopped by a wall
   }
-  if (move.lengthSq() > 0.0001 || glide.on || t < 1) ground = groundAt(pos.x, pos.z, eyeY + 6);
-  eyeY += (ground + EYE - eyeY) * Math.min(1, dt * 8);  camera.position.set(pos.x, eyeY, pos.z);
+  if (move.lengthSq() > 0.0001 || glide.on) { const g = floorUnder(); if (g !== null) ground = g; }
+  eyeY += (ground + EYE - eyeY) * Math.min(1, dt * 5);                     // ease onto steps, no jolts
+  camera.position.set(pos.x, eyeY, pos.z);
   camera.rotation.set(pitch, yaw, 0);
   water.position.x = pos.x; water.position.z = pos.z;                       // endless water (WaterFollow)
   waterMat.uniforms.uTime.value = t;
@@ -318,4 +403,9 @@ function frame() {
 frame();
 $('ddLoad').classList.add('done');
 window.focus();                                                             // WASD works right away inside the site's game window
+if (new URLSearchParams(location.search).has('debug')) {                   // ?debug: for checking the walk
+  window.__dd = { camera, root, pos, look: (y, p) => { yaw = y; pitch = p; }, eye: () => eyeY, ground: () => ground, EYE, keys,
+                  fly: (y) => { eyeY = y; ground = y - EYE; }, groundAt,
+                  pick: (x, y) => { ray.setFromCamera(new THREE.Vector2(x, y), camera); ray.far = 1000; const h = ray.intersectObjects(walk, false)[0]; if (!h) return null; const m = [].concat(h.object.material)[h.face.materialIndex ?? 0]; return { mat: m.name, point: h.point.toArray().map(v => +v.toFixed(1)), dist: +h.distance.toFixed(1) }; } };
+}
 canvas.addEventListener('pointerdown', () => window.focus());

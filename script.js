@@ -391,7 +391,7 @@ function openGameVideo(island) {
   note.dataset.how = how;
   document.getElementById('gvAsk').href = `mailto:rihannalyu@gmail.com?subject=${encodeURIComponent('Playing ' + title)}`;
   gvVideo.poster = island.dataset.poster || '';
-  gvVideo.src = island.dataset.video;
+  gvVideo.src = island.dataset.video || island.dataset.demo;
   // show the demo at its own shape (the VR one is a tall headset recording)
   gvVideo.onloadedmetadata = () => document.getElementById('gvScreen').style.setProperty('--ar', gvVideo.videoWidth / gvVideo.videoHeight);
   gameVideo.hidden = false;
@@ -403,9 +403,22 @@ function closeGameVideo() {
   if (gameVideo.hidden) return false;
   gvVideo.pause();
   gameVideo.classList.remove('open');
-  setTimeout(() => { gameVideo.hidden = true; gvVideo.removeAttribute('src'); gvVideo.load(); }, 300);
+  setTimeout(() => {
+    gameVideo.hidden = true; gvVideo.removeAttribute('src'); gvVideo.load();
+    if (gameVideo.classList.contains('over-launch')) { gameVideo.classList.remove('over-launch'); gamesPage.appendChild(gameVideo); }
+  }, 300);
   return true;
 }
+// A walkable world (in the game window) asks for its VR demo: play it here, on top of the world.
+// Phones can't play video inside the turned game window, so the site's own player does it.
+addEventListener('message', (e) => {
+  if (e.origin !== location.origin || !e.data || e.data.type !== 'play-demo') return;
+  const island = document.getElementById(e.data.island);
+  if (!island || !(island.dataset.demo || island.dataset.video)) return;
+  document.body.appendChild(gameVideo);
+  gameVideo.classList.add('over-launch');
+  openGameVideo(island);
+});
 document.querySelectorAll('.city-island[data-video]').forEach(island => island.addEventListener('click', () => openGameVideo(island)));
 document.getElementById('gvClose').addEventListener('click', closeGameVideo);
 gameVideo.addEventListener('click', (e) => { if (e.target === gameVideo) closeGameVideo(); });
@@ -1268,7 +1281,7 @@ const MODEL_VIDEOS = [
     poster: "kungfumaster.jpg"
   },
   {
-    title: "Master Bedroom Design",
+    title: "Master Bedroom",
     video: "masterbedroom.mp4",
     poster: "masterbedroom.jpg"
   },

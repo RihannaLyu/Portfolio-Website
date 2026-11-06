@@ -5012,3 +5012,22 @@ body.is-deeplink :is(.models-page, .games-page, .flowers-page, .notes-page, .sof
   .m3-stage { height: 62vh; }
   .m3-phone { height: auto; width: min(64vw, 280px); margin: 26px auto 10px; }
 }
+
+/* the demo player, opened from inside a walkable world: over the game window */
+.gv.over-launch { position: fixed !important; inset: 0; z-index: 450 !important; background-color: var(--sb-paper); }
+
+/* 3D Models: two sections — Individual Builds, Environment Builds (bigger, wider cards: whole scenes) */
+.m3-section { max-width: 1400px; margin: 0 auto 46px; }
+.m3-section[hidden] { display: none; }
+.m3-h {
+  display: table; margin: 0 0 30px 6px; padding: 5px 18px 7px; rotate: -1.5deg;
+  font: 700 26px/1 var(--f-hand); color: var(--sb-ink); background: rgba(246, 213, 142, 0.92);
+  clip-path: polygon(0 8%, 3% 0, 6% 9%, 9% 0, 91% 0, 94% 9%, 97% 0, 100% 8%, 100% 92%, 97% 100%, 94% 91%, 91% 100%, 9% 100%, 6% 91%, 3% 100%, 0 92%);
+}
+.m3-env .m3-h { background: rgba(207, 227, 212, 0.95); rotate: 1deg; }
+.m3-env .m3-grid { grid-template-columns: repeat(auto-fill, minmax(460px, 1fr)); }
+.m3-env .m3-canvas { aspect-ratio: 4 / 3; }
+@media (max-width: 768px) {
+  .m3-h { font-size: 22px; margin-bottom: 22px; }
+  .m3-env .m3-grid { grid-template-columns: minmax(0, 1fr); }
+}

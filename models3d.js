@@ -1,16 +1,21 @@
 /* ═══════════════════════════════════════════════════════════
-   3D MODELS — a gallery that fills itself from a folder.
-   Put an .fbx in images/3Dmodels/models/ (on GitHub, "Add file → Upload files") and it shows
-   up here. Optional, same folder, same name:
-     <name>-process.mp4   a vertical video of making it (plays beside the close-up)
-   Optional images/3Dmodels/models/models.json sets order + titles:
+   3D MODELS — a gallery that fills itself from two folders:
+     images/3Dmodels/models/individual/    single pieces (characters, props, sculpts)
+     images/3Dmodels/models/environment/   whole scenes (rooms, islands)
+   Put an .fbx in one of them (on GitHub, "Add file → Upload files") and it shows up in that
+   section. A leading number sets the order: "01-dragon.fbx" → "Dragon", first.
+   Optional, same folder, same name:  <name>-process.mp4  a vertical making-of video (beside the close-up)
+   Optional models.json in a folder sets order + titles:
      [{ "file": "dragon.fbx", "title": "Dragon", "process": "dragon-process.mp4" }, …]
    Each card: drag to turn the model. Tap: the model fills the page, beside its process video.
    three.js loads only when the page first opens.
    ═══════════════════════════════════════════════════════════ */
-const FOLDER = 'images/3Dmodels/models/';
+const ROOT = 'images/3Dmodels/models/';
+const SECTIONS = [
+  { folder: ROOT + 'individual/',  el: document.getElementById('m3Individual') },
+  { folder: ROOT + 'environment/', el: document.getElementById('m3Environment') },
+];
 const page   = document.getElementById('modelsPage');
-const grid   = document.getElementById('m3Grid');
 const empty  = document.getElementById('m3Empty');
 const view   = document.getElementById('m3View');
 const stage  = document.getElementById('m3Stage');
@@ -18,13 +23,15 @@ const phone  = document.getElementById('m3Phone');
 const proc   = document.getElementById('m3Process');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-let THREE, FBXLoader, OrbitControls, cloneObj, started = false;
+let THREE, FBXLoader, GLTFLoader, DRACOLoader, OrbitControls, cloneObj, started = false;
 const cache = new Map();                 // url -> Promise<{ object, clips }>
 
 async function libs() {
   if (THREE) return;
   THREE = await import('three');
   ({ FBXLoader } = await import('three/addons/loaders/FBXLoader.js'));
+  ({ GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js'));
+  ({ DRACOLoader } = await import('three/addons/loaders/DRACOLoader.js'));
   ({ OrbitControls } = await import('three/addons/controls/OrbitControls.js'));
   ({ clone: cloneObj } = await import('three/addons/utils/SkeletonUtils.js'));
 }
@@ -32,41 +39,43 @@ async function libs() {
 /* ── which models are there? ── */
 // "01-holy-crab" → "Holy Crab": a leading number only sets the order
 const pretty = (s) => s.replace(/^\d+[\s._-]*/, '').replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim().replace(/\b\w/g, c => c.toUpperCase());
-const abs = (f) => (/^(https?:)?\//.test(f) ? f : FOLDER + f);
-function fromFiles(files) {
+const absIn = (folder) => (f) => (/^(https?:)?\//.test(f) ? f : folder + f);
+function fromFiles(files, folder) {
+  const abs = absIn(folder);
   const lower = files.map(f => f.toLowerCase());
   const pick = (base, sfx) => { for (const s of sfx) { const i = lower.indexOf((base + s).toLowerCase()); if (i >= 0) return files[i]; } return null; };
-  return files.filter(f => /\.fbx$/i.test(f)).sort((a, b) => a.localeCompare(b, undefined, { numeric: true })).map(f => {
-    const base = f.replace(/\.fbx$/i, '');
+  return files.filter(f => /\.(fbx|glb)$/i.test(f)).sort((a, b) => a.localeCompare(b, undefined, { numeric: true })).map(f => {
+    const base = f.replace(/\.(fbx|glb)$/i, '');
     const p = pick(base, ['-process.mp4', '-process.webm', '-process.mov', '_process.mp4', ' process.mp4']);
     return { title: pretty(base), file: abs(f), process: p ? abs(p) : null };
   });
 }
-async function findModels() {
+async function findModels(folder) {
+  const abs = absIn(folder);
   try {                                    // 1. an optional list, for order + titles
-    const r = await fetch(FOLDER + 'models.json', { cache: 'no-cache' });
+    const r = await fetch(folder + 'models.json', { cache: 'no-cache' });
     if (r.ok) {
       const j = await r.json();
       const list = (Array.isArray(j) ? j : j.models || []).filter(m => m && m.file);
-      if (list.length) return list.map(m => ({ title: m.title || pretty(m.file.split('/').pop().replace(/\.fbx$/i, '')), file: abs(m.file), process: m.process ? abs(m.process) : null }));
+      if (list.length) return list.map(m => ({ title: m.title || pretty(m.file.split('/').pop().replace(/\.(fbx|glb)$/i, '')), file: abs(m.file), process: m.process ? abs(m.process) : null }));
     }
   } catch {}
   let files = [];
   if (location.hostname.endsWith('github.io')) {   // 2. on the live site: the folder, as GitHub lists it
     const owner = location.hostname.split('.')[0];
     const repo = location.pathname.split('/').filter(Boolean)[0] || `${owner}.github.io`;
-    const key = 'm3-files-' + repo;
+    const key = 'm3-files-' + repo + '-' + folder;
     try { const hit = sessionStorage.getItem(key); if (hit) files = JSON.parse(hit); } catch {}
     if (!files.length) {
       try {
-        const r = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${FOLDER.replace(/\/$/, '')}`);
+        const r = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${folder.replace(/\/$/, '')}`);
         if (r.ok) { files = (await r.json()).map(f => f.name); try { sessionStorage.setItem(key, JSON.stringify(files)); } catch {} }
       } catch {}
     }
   } else {                                 // 3. while testing locally: the server's folder listing
-    try { const r = await fetch(FOLDER); if (r.ok) files = [...(await r.text()).matchAll(/href="([^"?#]+)"/g)].map(m => decodeURIComponent(m[1])); } catch {}
+    try { const r = await fetch(folder); if (r.ok) files = [...(await r.text()).matchAll(/href="([^"?#]+)"/g)].map(m => decodeURIComponent(m[1])); } catch {}
   }
-  return fromFiles(files);
+  return fromFiles(files, folder);
 }
 
 /* ── loading + framing a model ── */
@@ -87,10 +96,15 @@ function tidy(o) {
   return o;
 }
 function loadModel(url) {
-  if (!cache.has(url)) cache.set(url, new Promise((res, rej) => new FBXLoader().load(url, (o) => res({ object: tidy(o), clips: o.animations || [] }), undefined, rej)));
+  if (!cache.has(url)) cache.set(url, new Promise((res, rej) => {
+    if (/\.glb(\?|$)/i.test(url)) {                                       // .glb (Draco-compressed scenes, e.g. whole rooms)
+      const draco = new DRACOLoader().setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');
+      new GLTFLoader().setDRACOLoader(draco).load(url, (g) => res({ object: g.scene, clips: g.animations || [] }), undefined, rej);
+    } else new FBXLoader().load(url, (o) => res({ object: tidy(o), clips: o.animations || [] }), undefined, rej);
+  }));
   return cache.get(url).then(({ object, clips }) => ({ object: cloneObj(object), clips }));
 }
-function frame(object, camera, controls, pad = 1.25) {
+function frame(object, camera, controls, pad = 1.25, elev = 0.17) {
   const box = new THREE.Box3().setFromObject(object);
   const size = box.getSize(new THREE.Vector3()), center = box.getCenter(new THREE.Vector3());
   object.position.sub(center);                                     // centre it on the origin
@@ -99,7 +113,7 @@ function frame(object, camera, controls, pad = 1.25) {
   const vfov = camera.fov * Math.PI / 180, hfov = 2 * Math.atan(Math.tan(vfov / 2) * (camera.aspect || 1));
   const dist = Math.max((h / 2) / Math.tan(vfov / 2), (w / 2) / Math.tan(hfov / 2)) * pad + size.z / 2;
   camera.near = dist / 100; camera.far = dist * 100; camera.updateProjectionMatrix();
-  camera.position.set(0, dist * 0.17, dist * 0.985);               // straight at its face, a little above
+  camera.position.set(0, dist * elev, dist * Math.sqrt(1 - elev * elev));   // straight at its face, a little above (scenes: from above, to see inside)
   controls.target.set(0, 0, 0); controls.minDistance = dist * 0.25; controls.maxDistance = dist * 3; controls.update();
 }
 function lights(scene) {
@@ -112,6 +126,7 @@ function lights(scene) {
 class View {
   constructor(el, model, { zoom = false } = {}) {
     this.el = el; this.model = model; this.zoom = zoom; this.pad = zoom ? 1.12 : 1.3;
+    this.elev = model.env ? 0.6 : 0.17;                       // whole scenes (open-top rooms, islands): looked at from above
     this.scene = new THREE.Scene(); lights(this.scene);
     this.camera = new THREE.PerspectiveCamera(35, 1, 0.01, 1000);
     this.clock = new THREE.Clock(); this.ready = false; this.active = false;
@@ -119,7 +134,7 @@ class View {
       // the model sits in a pivot at its own centre, so the idle sway turns it in place
       this.object = object; this.pivot = new THREE.Group(); this.pivot.add(object); this.scene.add(this.pivot);
       if (clips.length) { this.mixer = new THREE.AnimationMixer(object); this.mixer.clipAction(clips[0]).play(); }
-      if (this.controls) frame(object, this.camera, this.controls, this.pad);
+      if (this.controls) frame(object, this.camera, this.controls, this.pad, this.elev);
       this.ready = true; this.el.classList.add('is-loaded');
     }).catch(() => this.el.classList.add('is-broken'));
   }
@@ -137,7 +152,7 @@ class View {
     this.sway = !reduced; this.t0 = performance.now();
     this.controls.addEventListener('start', () => { this.sway = false; });
     this.resize();
-    if (this.object) frame(this.object, this.camera, this.controls, this.pad);
+    if (this.object) frame(this.object, this.camera, this.controls, this.pad, this.elev);
     this.ro = new ResizeObserver(() => this.resize()); this.ro.observe(this.el);
     this.active = true; loop();
   }
@@ -169,13 +184,18 @@ function loop() { if (raf) return; const go = () => { let any = false; views.for
 /* ── the gallery ── */
 let cards = [];
 async function build() {
-  const models = await findModels();
-  grid.innerHTML = '';
-  empty.hidden = models.length > 0;
-  if (!models.length) return;
+  const lists = await Promise.all(SECTIONS.map(s => findModels(s.folder)));
+  const total = lists.reduce((n, l) => n + l.length, 0);
+  empty.hidden = total > 0;
+  if (!total) return;
   await libs();
   const io = new IntersectionObserver(es => es.forEach(e => { const v = e.target._view; if (!v) return; if (e.isIntersecting) v.start(); else v.stop(); }), { root: page, rootMargin: '200px' });
-  models.forEach((m, i) => {
+  SECTIONS.forEach((s, k) => { if (s.el) { s.el.hidden = !lists[k].length; s.el.querySelector('.m3-grid').innerHTML = ''; } });
+  let i = 0;
+  SECTIONS.forEach((s, k) => { if (s.el) lists[k].forEach(m => { m.env = /environment/.test(s.folder); addCard(m, i++, s.el.querySelector('.m3-grid'), io); }); });
+}
+function addCard(m, i, grid, io) {
+  {
     const card = document.createElement('figure');
     card.className = 'm3-card'; card.style.setProperty('--i', i); card.tabIndex = 0;
     card.setAttribute('role', 'button'); card.setAttribute('aria-label', `${m.title}: drag to turn, tap to open`);
@@ -188,7 +208,7 @@ async function build() {
     box.addEventListener('pointerup', e => { if (Math.hypot(e.clientX - sx, e.clientY - sy) < 6 && performance.now() - st < 400) open(m); }, true);
     card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(m); } });
     grid.appendChild(card); cards.push(card);
-  });
+  }
 }
 
 /* ── the close-up: the model fills the page, the making-of plays in a vertical screen ── */
