@@ -5031,3 +5031,20 @@ body.is-deeplink :is(.models-page, .games-page, .flowers-page, .notes-page, .sof
   .m3-h { font-size: 22px; margin-bottom: 22px; }
   .m3-env .m3-grid { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* 3D Models, split screen: small square stickers (Individual Builds) on the left,
+   long landscape cards (Environment Builds) on the right */
+.m3-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 0 44px; max-width: 1500px; margin: 0 auto; align-items: start; }
+.m3-split .m3-section { margin: 0; }
+.m3-split .m3-grid { max-width: none; }
+.m3-split .m3-section:not(.m3-env) .m3-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 26px 20px; }
+.m3-split .m3-section:not(.m3-env) .m3-card { padding: 7px 7px 2px; }
+.m3-split .m3-section:not(.m3-env) .m3-card figcaption { font-size: 19px; padding: 6px 2px 5px; }
+.m3-split .m3-section:not(.m3-env) .m3-card::before { width: 56px; height: 18px; margin-left: -28px; top: -10px; }
+.m3-split .m3-env .m3-grid { grid-template-columns: minmax(0, 1fr); gap: 34px; }
+.m3-split .m3-env .m3-canvas { aspect-ratio: 16 / 8; }
+@media (max-width: 768px) {
+  .m3-split { grid-template-columns: minmax(0, 1fr); gap: 40px; }
+  .m3-split .m3-section:not(.m3-env) .m3-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 14px; }
+  .m3-split .m3-env .m3-canvas { aspect-ratio: 16 / 10; }
+}

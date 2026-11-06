@@ -104,16 +104,40 @@ function loadModel(url) {
   }));
   return cache.get(url).then(({ object, clips }) => ({ object: cloneObj(object), clips }));
 }
-function frame(object, camera, controls, pad = 1.25, elev = 0.17) {
+function frame(object, camera, controls, pad = 1.25, elev = 0.17, sway = 0.32) {
   const box = new THREE.Box3().setFromObject(object);
   const size = box.getSize(new THREE.Vector3()), center = box.getCenter(new THREE.Vector3());
   object.position.sub(center);                                     // centre it on the origin
-  // fit its height and width as seen from the front (a little extra width for the sway), whichever is tighter
-  const w = Math.max(size.x, Math.hypot(size.x, size.z) * 0.8) || 1, h = size.y || 1;
-  const vfov = camera.fov * Math.PI / 180, hfov = 2 * Math.atan(Math.tan(vfov / 2) * (camera.aspect || 1));
-  const dist = Math.max((h / 2) / Math.tan(vfov / 2), (w / 2) / Math.tan(hfov / 2)) * pad + size.z / 2;
-  camera.near = dist / 100; camera.far = dist * 100; camera.updateProjectionMatrix();
-  camera.position.set(0, dist * elev, dist * Math.sqrt(1 - elev * elev));   // straight at its face, a little above (scenes: from above, to see inside)
+  // Zoom in until the model (at every angle of its idle sway) just fits the card: its corners are
+  // projected for real, so models nearly touch the edges whatever their shape or viewing angle.
+  const h = size.clone().multiplyScalar(0.5), dir = new THREE.Vector3(0, elev, Math.sqrt(1 - elev * elev));
+  // points on the model's actual surface (a sample of its vertices), so round shapes fill the card too
+  const corners = [];
+  object.updateMatrixWorld(true);
+  const parentInv = object.parent ? new THREE.Matrix4().copy(object.parent.matrixWorld).invert() : new THREE.Matrix4();
+  const meshes = []; object.traverse(o => { if (o.isMesh && o.geometry?.attributes?.position) meshes.push(o); });
+  const per = Math.max(20, Math.floor(1500 / Math.max(1, meshes.length)));
+  for (const o of meshes) {
+    const pos = o.geometry.attributes.position, step = Math.max(1, Math.floor(pos.count / per));
+    const m = new THREE.Matrix4().multiplyMatrices(parentInv, o.matrixWorld);
+    for (let i = 0; i < pos.count; i += step) corners.push(new THREE.Vector3().fromBufferAttribute(pos, i).applyMatrix4(m));
+  }
+  if (corners.length < 8) for (const sx of [-1, 1]) for (const sy of [-1, 1]) for (const sz of [-1, 1]) corners.push(new THREE.Vector3(sx * h.x, sy * h.y, sz * h.z));
+  const turns = [-1, -0.5, 0, 0.5, 1].map(a => new THREE.Matrix4().makeRotationY(a * sway));
+  const p = new THREE.Vector3();
+  const r = h.length() || 1;
+  const fits = (d) => {
+    camera.position.copy(dir).multiplyScalar(d); camera.lookAt(0, 0, 0);
+    camera.near = d / 100; camera.far = d * 100; camera.updateProjectionMatrix(); camera.updateMatrixWorld();
+    for (const m of turns) for (const c of corners) {
+      p.copy(c).applyMatrix4(m).project(camera);
+      if (p.z > 1 || Math.max(Math.abs(p.x), Math.abs(p.y)) * pad > 1) return false;
+    }
+    return true;
+  };
+  let lo = r * 0.3, hi = r * 40;
+  for (let i = 0; i < 30; i++) { const mid = (lo + hi) / 2; if (fits(mid)) hi = mid; else lo = mid; }
+  const dist = hi; fits(dist);
   controls.target.set(0, 0, 0); controls.minDistance = dist * 0.25; controls.maxDistance = dist * 3; controls.update();
 }
 function lights(scene) {
@@ -125,8 +149,9 @@ function lights(scene) {
 /* one 3D view inside an element: its own renderer, made while visible and released when not */
 class View {
   constructor(el, model, { zoom = false } = {}) {
-    this.el = el; this.model = model; this.zoom = zoom; this.pad = zoom ? 1.12 : 1.3;
+    this.el = el; this.model = model; this.zoom = zoom; this.pad = zoom ? 1.08 : 1.03;          // cards: the model almost touches the edges
     this.elev = model.env ? 0.6 : 0.17;                       // whole scenes (open-top rooms, islands): looked at from above
+    this.swayAmp = model.env ? 0.1 : 0.32;                    // scenes sway less, so they can fill their wide cards
     this.scene = new THREE.Scene(); lights(this.scene);
     this.camera = new THREE.PerspectiveCamera(35, 1, 0.01, 1000);
     this.clock = new THREE.Clock(); this.ready = false; this.active = false;
@@ -134,7 +159,7 @@ class View {
       // the model sits in a pivot at its own centre, so the idle sway turns it in place
       this.object = object; this.pivot = new THREE.Group(); this.pivot.add(object); this.scene.add(this.pivot);
       if (clips.length) { this.mixer = new THREE.AnimationMixer(object); this.mixer.clipAction(clips[0]).play(); }
-      if (this.controls) frame(object, this.camera, this.controls, this.pad, this.elev);
+      if (this.controls) frame(object, this.camera, this.controls, this.pad, this.elev, this.swayAmp);
       this.ready = true; this.el.classList.add('is-loaded');
     }).catch(() => this.el.classList.add('is-broken'));
   }
@@ -152,7 +177,7 @@ class View {
     this.sway = !reduced; this.t0 = performance.now();
     this.controls.addEventListener('start', () => { this.sway = false; });
     this.resize();
-    if (this.object) frame(this.object, this.camera, this.controls, this.pad, this.elev);
+    if (this.object) frame(this.object, this.camera, this.controls, this.pad, this.elev, this.swayAmp);
     this.ro = new ResizeObserver(() => this.resize()); this.ro.observe(this.el);
     this.active = true; loop();
   }
@@ -171,7 +196,7 @@ class View {
     const dt = this.clock.getDelta();
     if (this.mixer && !reduced) this.mixer.update(dt);
     if (this.pivot) {
-      const want = this.sway ? Math.sin((performance.now() - this.t0) / 1000 * (this.zoom ? 0.5 : 0.7)) * 0.32 : this.pivot.rotation.y;
+      const want = this.sway ? Math.sin((performance.now() - this.t0) / 1000 * (this.zoom ? 0.5 : 0.7)) * this.swayAmp : this.pivot.rotation.y;
       this.pivot.rotation.y += (want - this.pivot.rotation.y) * 0.08;
     }
     this.controls.update(); this.renderer.render(this.scene, this.camera);
