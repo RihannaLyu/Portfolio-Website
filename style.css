@@ -5067,3 +5067,16 @@ body.is-deeplink :is(.models-page, .games-page, .flowers-page, .notes-page, .sof
   .models-page .m3-h { display: none; }          /* the tab names the section */
 }
 @keyframes m3tab { from { opacity: 0; transform: translateY(8px); } }
+
+/* ── DIGITAL ART: LAYOUT DESIGN (Hookd Magazine spreads) — full width under the two columns ── */
+.layout-design-section { width: 100%; margin-top: 56px; }
+.layout-design-caption {
+  max-width: 640px; margin: 0 auto 28px; text-align: center;
+  font-family: var(--f-serif); font-size: 0.95rem; line-height: 1.5; color: var(--c-text-soft);
+}
+.layout-design-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; }
+@media (max-width: 768px) {
+  .layout-design-section { margin-top: 32px; }
+  .layout-design-caption { font-size: 14px; margin-bottom: 18px; }
+  .layout-design-grid { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+}
