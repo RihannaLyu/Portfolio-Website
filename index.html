@@ -524,6 +524,11 @@
     <button class="window-close" id="windowClose">✕</button>
     <div class="window-content">
       <h1 class="window-title">Digital Art</h1>
+      <!-- desktop: two tabs inside Digital Art (phones use the Art tab bar below instead) -->
+      <div class="digital-tabs" id="digitalTabs" role="tablist" aria-label="Digital Art">
+        <button type="button" class="art-tab digital-tab active" role="tab" data-panel="art" aria-selected="true">Illustration</button>
+        <button type="button" class="art-tab digital-tab" role="tab" data-panel="layout" aria-selected="false" tabindex="-1">Layout Design</button>
+      </div>
       
       <div class="window-split-container">
         
@@ -645,7 +650,7 @@
 
       </div>
 
-      <!-- Editorial layout work: full width under the two columns -->
+      <!-- Layout Design panel: shown by the "Layout Design" tab (desktop tab above / phone Art tab bar) -->
       <section class="layout-design-section">
         <h2 class="digital-section-subtitle">Layout Design for <i>Hookd Magazine</i></h2>
         <p class="layout-design-caption"><i>Smello Vision</i> &mdash; a four-spread fashion feature on fragrance advertising and celebrity culture. Layout by Rihanna Lyu; words by Ryker Saenz; photography by Jade Hack &amp; Emily Yao.</p>
@@ -672,7 +677,7 @@
   </div>
 
   <!-- ART TABS (phones only, 768px and narrower): the easel opens one "Art" page whose two tabs
-       switch between the Digital Art and Traditional Art pages above (see ART TABS in style.css / script.js) -->
+       switch between the Digital Art, Traditional Art and Layout Design pages above (see ART TABS in style.css / script.js) -->
   <div class="art-tabs-backdrop" aria-hidden="true"></div>
   <div class="art-tabs" id="artTabs">
     <div class="art-tabs-head">
@@ -682,6 +687,7 @@
     <div class="art-tabs-row" role="tablist" aria-label="Art">
       <button type="button" class="art-tab" role="tab" data-tab="digital" aria-controls="windowPage">Digital Art</button>
       <button type="button" class="art-tab" role="tab" data-tab="traditional" aria-controls="artPage">Traditional Art</button>
+      <button type="button" class="art-tab" role="tab" data-tab="layout" aria-controls="windowPage">Layout Design</button>
     </div>
   </div>
 

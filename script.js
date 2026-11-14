@@ -290,7 +290,7 @@ function showGamesTab(name) {
 
 gamesTabBtns.forEach(btn => btn.addEventListener('click', () => showGamesTab(btn.dataset.tab)));
 
-// arrow keys move between the two tabs
+// arrow keys move between the three tabs
 document.getElementById('gamesTabs').addEventListener('keydown', (e) => {
   if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
   const next = e.key === 'ArrowRight' ? 'videos' : 'builds';
@@ -1093,7 +1093,29 @@ const windowClose = document.getElementById('windowClose');
 windowItem.addEventListener('click', openWindow);
 windowClose.addEventListener('click', closeWindow);
 
+// two panels inside Digital Art: "art" (illustrations + pieces) and "layout" (Hookd spreads)
+const digitalTabBtns = [...document.querySelectorAll('#digitalTabs .digital-tab')];
+function showDigitalPanel(name) {
+  windowPage.classList.toggle('show-layout', name === 'layout');
+  digitalTabBtns.forEach(btn => {
+    const on = btn.dataset.panel === name;
+    btn.classList.toggle('active', on);
+    btn.setAttribute('aria-selected', on);
+    btn.tabIndex = on ? 0 : -1;
+  });
+  windowPage.scrollTop = 0;
+  if (name !== 'layout') queuePhoneGalleries();
+}
+digitalTabBtns.forEach(btn => btn.addEventListener('click', (e) => { e.stopPropagation(); showDigitalPanel(btn.dataset.panel); }));
+document.getElementById('digitalTabs').addEventListener('keydown', (e) => {
+  if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+  const next = e.key === 'ArrowRight' ? 'layout' : 'art';
+  showDigitalPanel(next);
+  digitalTabBtns.find(b => b.dataset.panel === next).focus();
+});
+
 function openWindow() {
+  showDigitalPanel('art');
   windowPage.classList.add('open');
   document.body.style.overflow = 'hidden';
   layoutPhoneGalleries();
@@ -1113,7 +1135,7 @@ const phoneArt     = window.matchMedia('(max-width: 768px)');
 const artTabs      = document.getElementById('artTabs');
 const artTabsClose = document.getElementById('artTabsClose');
 const artTabBtns   = [...artTabs.querySelectorAll('.art-tab')];
-const ART_TAB_ORDER = ['digital', 'traditional'];
+const ART_TAB_ORDER = ['digital', 'traditional', 'layout'];
 
 function showArtTab(name) {
   artTabBtns.forEach(btn => {
@@ -1122,13 +1144,15 @@ function showArtTab(name) {
     btn.setAttribute('aria-selected', on);
     btn.tabIndex = on ? 0 : -1;
   });
-  windowPage.classList.toggle('open', name === 'digital');
+  if (name !== 'traditional') showDigitalPanel(name === 'layout' ? 'layout' : 'art');
+  windowPage.classList.toggle('open', name !== 'traditional');
   artPage.classList.toggle('open', name === 'traditional');
   layoutPhoneGalleries();
 }
 
 function currentArtTab() {
-  return artPage.classList.contains('open') ? 'traditional' : 'digital';
+  if (artPage.classList.contains('open')) return 'traditional';
+  return windowPage.classList.contains('show-layout') ? 'layout' : 'digital';
 }
 
 function openArtTabs(name) {
@@ -1147,15 +1171,17 @@ function closeArtTabs() {
 artTabsClose.addEventListener('click', closeArtTabs);
 artTabBtns.forEach(btn => btn.addEventListener('click', () => showArtTab(btn.dataset.tab)));
 
-// arrow keys move between the two tabs
+// arrow keys move between the three tabs
 artTabs.addEventListener('keydown', (e) => {
   if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
-  const next = e.key === 'ArrowRight' ? 'traditional' : 'digital';
+  const i = ART_TAB_ORDER.indexOf(currentArtTab()) + (e.key === 'ArrowRight' ? 1 : -1);
+  if (i < 0 || i >= ART_TAB_ORDER.length) return;
+  const next = ART_TAB_ORDER[i];
   showArtTab(next);
   artTabBtns.find(b => b.dataset.tab === next).focus();
 });
 
-// swipe left → Traditional Art, swipe right → Digital Art
+// swipe left / right steps through Digital Art → Traditional Art → Layout Design
 let swipeX = null, swipeY = 0;
 [windowPage, artPage].forEach(page => {
   page.addEventListener('touchstart', (e) => {
